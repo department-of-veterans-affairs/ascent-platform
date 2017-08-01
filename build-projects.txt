@@ -1,0 +1,5 @@
+ascent-discovery
+ascent-config
+ascent-gateway
+ascent-dashboard
+ascent-zipkin
