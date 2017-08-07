@@ -5,9 +5,9 @@
 ##
 ## Usage: put a file called `ascent-builds.txt` in the folder of the script containing the name of projects, line by line:
 ##
-##ascent-discovery
-##ascent-config
-##ascent-gateway
+##git@github.com:department-of-veterans-affairs/ascent-discovery.git 
+##git@github.com:department-of-veterans-affairs/ascent-config.git 
+##git@github.com:department-of-veterans-affairs/ascent-gateway.git 
 ######################################
 
 cwd=`pwd`
@@ -17,24 +17,31 @@ do
   projects+=( "$line" )
 done < $cwd/build-projects.txt
 
-
 for project in "${projects[@]}"
 do
    :
-	name=$(echo $project | awk -F/ '{print $1}')
+	# try git@github.com:username/repo-name.git first
+    name=$(echo $project | awk -F/ '{print $2}')
+	if ! test -n "$name"; then
+	    name=$(echo $project | awk -F/ '{print $4}')
+	fi
 
+	# try https://github.com/username/repo-name.git
 	if ! test -n "$name"; then
 	    echo "Unable to parse directory for $project"
 	    continue
-	fi	
+	fi
 
-	# if the directory exist, then run maven
-	if [ -d "../$name" ]; then
+	name=${name%.git}	
+	
+	# if the directory does not exist, clone the repos and run maven
+	if [ ! -d "name" ]; then
+		git clone $project ../$name
 		cd ../$name
-		echo "\nBuilding the project $name\n"
-		mvn clean install
+		git checkout development
+		git pull
+		echo "\nBuilding the project $name for $project\n"
+		mvn clean install -DskipTests=true
 		cd $cwd
-	else 
-		echo "\nSkipping the project $name\n"
 	fi
 done
