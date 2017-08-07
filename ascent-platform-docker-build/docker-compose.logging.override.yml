@@ -1,0 +1,16 @@
+#Overrides for local development.
+version: '3'
+
+services:
+    filebeat:
+        build:
+            context: ./filebeat
+        # Enable to turn on filebeat debugging
+        #command: ["filebeat", "-e", "-d", "publish"]
+    logstash:
+        build:
+            context: ./logstash
+
+networks:
+  logging:
+    driver: bridge

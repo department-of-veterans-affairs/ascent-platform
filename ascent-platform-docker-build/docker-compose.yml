@@ -1,0 +1,84 @@
+version: '3'
+services:
+  ascent-amqp:
+    image: rabbitmq
+    hostname: ascent-amqp
+    networks:
+        - ascentnet
+  ascent-discovery:
+    image: ascent-discovery
+    hostname: ascent-discovery
+    ports:
+     - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DISCOVERY_USERNAME=${DISCOVERY_USERNAME}
+      - DISCOVERY_PASSWORD=${DISCOVERY_PASSWORD}
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://$DISCOVERY_USERNAME:$DISCOVERY_PASSWORD@localhost:8761"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+    networks:
+        - ascentnet
+  ascent-config: 
+    image: ascent-config
+    hostname: ascent-config
+    ports:
+     - "8760:8760"
+    environment: 
+      - git.passphrase=${GIT_PASSPHRASE}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    volumes:
+      - ~/.ssh:/root/.ssh
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8760/info"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+    depends_on:
+      - ascent-discovery
+    networks:
+        - ascentnet
+  ascent-gateway:
+    image: ascent-gateway
+    hostname: ascent-gateway
+    ports:
+      - "8762:8762"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    depends_on:
+      - ascent-config
+      - ascent-discovery
+    networks:
+        - ascentnet
+  ascent-dashboard:
+    image: ascent-dashboard
+    hostname: ascent-dashboard
+    ports:
+     - "8763:8763"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    depends_on:
+      - ascent-config
+      - ascent-discovery
+    networks:
+        - ascentnet
+  ascent-zipkin:
+      image: ascent-zipkin
+      hostname: ascent-zipkin
+      ports:
+       - "8700:8700"
+      environment:
+        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      depends_on: 
+        - ascent-discovery
+        - ascent-config
+      networks: 
+        - ascentnet
+        - logging 
+networks:
+  ascentnet:
+    driver: overlay
+  logging:
+    driver: overlay

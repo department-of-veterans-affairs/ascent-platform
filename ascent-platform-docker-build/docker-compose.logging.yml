@@ -1,0 +1,117 @@
+version: '3'
+
+services:
+
+    #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.5.0
+        networks: 
+            - logging
+        #TODO Add authentication to health check
+        #healthcheck:
+            #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
+            #timeout: 5s
+        deploy:
+            placement:
+                constraints: [node.role == worker]
+            resources:
+                reservations:
+                    memory: 1536m
+
+    filebeat:
+        image: jluck/brownbag-filebeat
+        volumes:
+            - "/var/lib/docker/containers:/dockerlogs:ro"
+        logging:
+            driver: none
+        networks: 
+            - logging
+        depends_on:
+            - logstash
+        deploy:
+            mode: global
+    
+    logstash:
+        image: jluck/brownbag-logging
+        logging:
+            driver: none
+        networks: 
+            - logging
+        depends_on:
+            - elasticsearch
+        deploy:
+            placement:
+                constraints: [node.role == worker]
+
+    kibana:
+        image: docker.elastic.co/kibana/kibana:5.5.0
+        ports: 
+            - 5601:5601
+        networks: 
+            - logging
+        depends_on: 
+            - elasticsearch
+        labels:
+            gov.va.ascent.component: "logging"
+        logging:
+            driver: json-file
+            options:
+                labels: "gov.va.ascent.component"
+        deploy:
+            placement:
+                constraints: [node.role == worker]
+                
+    redis-master:
+      image: redis:4.0.1-alpine
+      volumes:
+        - "./.data:/data"
+      ports:
+        - "6379:6379"
+      networks: 
+        - logging
+        - ascentnet
+        
+    redis-slave:
+      image: redis:4.0.1-alpine
+      command: redis-server --slaveof redis-master 6379
+      links:
+        - redis-master
+      volumes:
+        - "./.data:/data"
+      networks: 
+        - logging
+        - ascentnet
+        
+    # Instance 1
+    redis-sentinel:
+      build: 
+        context: ./redis-sentinel
+      links:
+        - redis-master
+      networks: 
+        - logging
+        - ascentnet
+        
+    # Instance 2
+    redis-sentinel2:
+      build: 
+        context: ./redis-sentinel
+      links:
+        - redis-master
+      networks: 
+        - logging
+        - ascentnet
+   
+    # Instance 3
+    redis-sentinel3:
+      build: 
+        context: ./redis-sentinel
+      links:
+        - redis-master
+      networks: 
+        - logging
+        - ascentnet
+        
+networks:
+  logging:
+    driver: overlay
