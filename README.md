@@ -18,10 +18,10 @@ Spring Cloud Zuul Gateway Service. It provides Dynamic routing, monitoring, resi
 
 **ascent-dashboard: Dashboard(s)**
 
-Demo of various dashboards such as Hystrix which is a provided dashboard, Turbine to monitor a single server or a cluster of servers aggregated, custom consolidated swagger dashboard and Monitoring Dashboard (Spring Boot Actuator URLs).  Other dashboards, if we decided to tinker, can go here so we don't need to deploy 50 applications locally to test out basic dashboards.See [Ascent-Dashboard](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Dashboard) for additional details
+Demo of various dashboards such as Hystrix which is a provided dashboard, Turbine to monitor a single server or a cluster of servers aggregated, custom consolidated swagger dashboard and Monitoring Dashboard (Spring Boot Actuator URLs).  Other dashboards, if we decided to tinker, can go here so we don't need to deploy 50 applications locally to test out basic dashboards. See [Ascent-Dashboard](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Dashboard) for additional details
 
 **ascent-zipkin: Instrumentation and Audit**
-Zipkin service lets aggregate and track the time-span for processing every incoming request within sleuth-enabled services by consuming the instrumentation data and persisting them in elasticsearch index. It also provides a simple yet intuitive UI to visually view the request spans across multiple services.See [Ascent-Zipkin](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Instrumentation-Sleuth-and-Zipkin) for additional details
+Zipkin service lets aggregate and track the time-span for processing every incoming request within sleuth-enabled services by consuming the instrumentation data and persisting them in elasticsearch index. It also provides a simple yet intuitive UI to visually view the request spans across multiple services. See [Ascent-Zipkin](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Instrumentation-Sleuth-and-Zipkin) for additional details
 
 **Service Application Ports**
 * Discovery - 8761
@@ -38,7 +38,7 @@ The repository contains the start up script **ascent-builds.sh** that gets the c
 
 <h3>Running the core services in docker-demo profile</h3>
 
-Upon successfully building the docker images, running the **start-all.sh** script under **ascent-platform-docker-build** should bring up the docker containers for the platform core services,elk stack,filebeat and redis. Run the **stop-all.sh** script to bring down the docker containers.
+Upon successfully building the docker images, running the **start-all.sh** script under **ascent-platform-docker-build** should bring up the docker containers for the core platform services,elk stack,filebeat and redis. Run the **stop-all.sh** script to bring down the docker containers.
 
 <h3>Integrating application services with platform core services</h3>
 
