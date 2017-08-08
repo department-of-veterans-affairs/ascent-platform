@@ -141,6 +141,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		                            <include>${project.build.finalName}.jar</include>
 		                        </resource>
 		                    </resources>
+		                    <serverId>docker-hub</serverId>
+		                    <imageName>ascent/${project.artifactId}</imageName>
 		                </configuration>
 		                <executions>
 		                    <execution>
@@ -150,6 +152,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		                            <goal>build</goal>
 		                        </goals>
 		                    </execution>
+							<execution>
+						      <id>push-image</id>
+						      <phase>deploy</phase>
+						      <goals>
+						        <goal>push</goal>
+						      </goals>
+						      <configuration>
+						        <imageName>ascent/${project.artifactId}</imageName>
+						      </configuration>
+						    </execution>
 		                </executions>
 		            </plugin>
 				</plugins>
