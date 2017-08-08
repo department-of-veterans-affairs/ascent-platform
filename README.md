@@ -43,3 +43,5 @@ Upon successfully building the docker images, running the **start-all.sh** scrip
 <h3>Integrating application services with core platform services</h3>
 
 A few sample services are created in order to demonstrate how the applications would integrate with the core platform services. The code base for these services are pushed under the **ascent-sample** repository.
+See the [Ascent Sample quick start guide](https://github.com/department-of-veterans-affairs/ascent-sample/wiki/Ascent-Sample-Quick-Start-Guide) for step by step details.
+
