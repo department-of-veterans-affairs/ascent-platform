@@ -34,9 +34,9 @@ For more documentation details, please see the [wiki](https://github.com/departm
 
 ## How do I get set up? ##
 
-Create a GitHub account. Make sure to follow the [Ascent Quick Start Guide](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Quick-Start-Guide) for the system prerequisites that needs to be installed in your machine  and follow the steps  for generating new SSH key with passphrase to connect to GitHub using your account. 
+Create a **GitHub** account. Make sure to follow the [Ascent Quick Start Guide](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Quick-Start-Guide) for the system prerequisites that needs to be installed in your machine  and follow the steps  for generating new SSH key with passphrase to connect to GitHub using your account. 
 
-Create a project workspace locally. Go to your project workspace and run the below command to checkout ascent-platform code base. 
+Create a project workspace locally. From the command line, go to your project workspace and run the below command to checkout ascent-platform code base. 
 
 *git clone https://github.com/department-of-veterans-affairs/ascent-platform.git*
 
