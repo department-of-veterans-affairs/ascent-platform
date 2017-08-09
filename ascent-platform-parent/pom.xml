@@ -87,6 +87,17 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
     	</dependency>
+		<!-- Ascent starters-->
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-security</artifactId>
+			<version>${version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-swagger</artifactId>
+			<version>${version}</version>
+		</dependency>
 	</dependencies>
   </dependencyManagement>
   
