@@ -48,6 +48,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<!-- Docker properties to add min and max memory for spring boot jar start up -->
 	<docker.java.opts.ms>-Xms32m</docker.java.opts.ms>
 	<docker.java.opts.mx>-Xmx256m</docker.java.opts.mx>
+	  <ascent.starter.version>0.0.1-SNAPSHOT</ascent.starter.version>
   </properties>
   
   <dependencyManagement>
@@ -91,12 +92,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-security</artifactId>
-			<version>${version}</version>
+			<version>${ascent.starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-swagger</artifactId>
-			<version>${version}</version>
+			<version>${ascent.starter.version}</version>
 		</dependency>
 	</dependencies>
   </dependencyManagement>
