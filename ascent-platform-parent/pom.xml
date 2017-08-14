@@ -99,6 +99,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<artifactId>ascent-platform-starter-swagger</artifactId>
 			<version>${ascent.starter.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-cache</artifactId>
+			<version>${ascent.starter.version}</version>
+		</dependency>
 	</dependencies>
   </dependencyManagement>
   
