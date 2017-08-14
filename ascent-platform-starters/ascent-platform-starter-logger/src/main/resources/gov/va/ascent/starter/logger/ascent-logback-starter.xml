@@ -6,6 +6,8 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
     <springProperty scope="context" name="app_name" source="spring.application.name"/>
+    <springProperty scope="context" name="app_profile" source="spring.profiles.active"/>
+    <springProperty scope="context" name="app_version" source="info.build.version"/>
 
     <appender name="ASCENT_CONSOLE_LOG_ENCODER" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
@@ -18,7 +20,7 @@
 	        <pattern>
 	            <pattern>
                   {
-                  "document_type": "appLogs",
+                  "logType": "appLogs",
                   "severity": "%level",
                   "class": "%logger{40}",
                   "pid": "${PID:-}"
@@ -48,7 +50,7 @@
          	<pattern>
               <pattern>
                   {
-                  "document_type": "auditLogs",
+                  "logType": "auditLogs",
                   "severity": "%level",
                   "class": "%logger{40}",
                   "pid": "${PID:-}"
