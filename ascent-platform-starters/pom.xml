@@ -17,6 +17,7 @@
 	<module>ascent-platform-starter-swagger</module>
 	<module>ascent-platform-starter-security</module>
 	<module>ascent-platform-starter-cache</module>
+	<module>ascent-platform-starter-logger</module>
   </modules>
 
   <properties>
