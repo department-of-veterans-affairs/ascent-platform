@@ -2,26 +2,37 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <groupId>gov.va.ascent</groupId>
-    <artifactId>ascent-platform-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../ascent-platform-parent</relativePath>
+      <groupId>gov.va.ascent</groupId>
+      <artifactId>ascent-platform-starters</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
   </parent>
   
   <artifactId>ascent-platform-starter-cache</artifactId>
   <name>${project.artifactId}</name>
   <description>Starter for using Ascent Platform's caching support</description>
   
-  <build>
-    <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-                <skip>true</skip>
-            </configuration>
-        </plugin>
-    </plugins>
-  </build>
+  <dependencies>
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-data-redis</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-test</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-cache</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <scope>test</scope>
+      </dependency>
+  </dependencies>
   
 </project>
