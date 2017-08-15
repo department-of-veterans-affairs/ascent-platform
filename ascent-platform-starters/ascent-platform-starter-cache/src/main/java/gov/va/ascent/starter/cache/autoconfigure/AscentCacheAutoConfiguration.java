@@ -36,7 +36,7 @@ public class AscentCacheAutoConfiguration {
     private AscentCacheProperties ascentCacheProperties;
 
     @Bean
-    public CacheManagerCustomizers ascentCacheManagerCustomizers(){
+    public CacheManagerCustomizers cacheManagerCustomizers(){
         return new CacheManagerCustomizers(Arrays.asList(new RedisCacheManagerCustomizer(ascentCacheProperties)));
     }
 
