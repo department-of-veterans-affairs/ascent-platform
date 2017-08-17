@@ -15,8 +15,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix="ascent.cache")
 public class AscentCacheProperties {
 
-    private boolean enabled = false;
-
     private Map<String, Long> expires;
 
     private Long defaultExpires = 86400L;

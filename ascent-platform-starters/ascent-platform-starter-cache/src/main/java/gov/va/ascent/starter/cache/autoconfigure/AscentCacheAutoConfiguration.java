@@ -27,7 +27,7 @@ import java.util.Arrays;
 @EnableConfigurationProperties(AscentCacheProperties.class)
 @AutoConfigureAfter(CacheAutoConfiguration.class)
 @EnableCaching
-@ConditionalOnProperty(name = "ascent.cache.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class AscentCacheAutoConfiguration {
 
     final static Logger LOGGER = LoggerFactory.getLogger(AscentCacheAutoConfiguration.class);
