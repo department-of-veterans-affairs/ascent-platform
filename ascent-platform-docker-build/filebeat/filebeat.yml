@@ -3,7 +3,7 @@ path.data: /var/lib/beats
 filebeat.prospectors:
 - input_type: log
   paths:
-    - /dockerlogs/*/*-json.log
+    - ${LOGPATH:/dockerlogs}/*/*-json.log
   fields:
     type: docker
   json.message_key: log

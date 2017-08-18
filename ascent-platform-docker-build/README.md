@@ -25,3 +25,10 @@ docker stack deploy -c docker-compose.yml logging
 The Kibana UI should be available at [http://localhost:5601](http://localhost:5601). The default credentials are:<br/>
 _Username:_ elastic<br/>
 _Password:_ changeme
+
+## Custom Configuration
+The following environment variables can be set when the containers are launched in order to customize their configuration:
+* Filebeat
+    * __LOGPATH__ - Path to the Docker logs directory in the container. Defaults to "/dockerlogs".
+    * __LS_HOST__ - The Logstash service hostname. Defaults to "logstash".
+    * __LS_PORT__ - The port of the Logstash service. Defaults to "5044".
