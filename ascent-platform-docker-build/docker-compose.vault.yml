@@ -1,0 +1,20 @@
+version: '3'
+services:
+  vault:
+    image: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      SKIP_SETCAP: "True"
+      VAULT_ADDR: "http://127.0.0.1:8200"
+    volumes:
+      - ./vault/config:/config
+    ports:
+      - "8200:8200"
+    command: server -config /config/vault.conf
+    networks:
+        - vaultnet
+networks:
+  vaultnet:
+    driver: overlay
+

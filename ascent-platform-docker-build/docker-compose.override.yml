@@ -6,3 +6,5 @@ networks:
         driver: bridge
     logging:
         driver: bridge
+    vaultnet:
+        driver: bridge

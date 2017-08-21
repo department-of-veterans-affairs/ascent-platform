@@ -1,0 +1,6 @@
+#Overrides for local development.
+version: '3'
+networks:
+  vaultnet:
+    driver: bridge
+
