@@ -2,6 +2,7 @@ version: '3'
 services:
   vault:
     image: vault
+    hostname: vault
     cap_add:
       - IPC_LOCK
     environment:
@@ -13,8 +14,8 @@ services:
       - "8200:8200"
     command: server -config /config/vault.conf
     networks:
-        - vaultnet
+        - ascentnet
 networks:
-  vaultnet:
+  ascentnet:
     driver: overlay
 

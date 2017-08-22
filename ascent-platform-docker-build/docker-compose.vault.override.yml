@@ -1,6 +1,6 @@
 #Overrides for local development.
 version: '3'
 networks:
-  vaultnet:
+  ascentnet:
     driver: bridge
 

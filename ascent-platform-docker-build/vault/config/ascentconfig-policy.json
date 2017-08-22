@@ -1,0 +1,11 @@
+{
+    "name": "ascent-config",
+
+
+    "path": {
+        "secret/*": {
+
+            "capabilities": ["create", "update", "list", "read", "delete"]
+        }
+     }
+}
