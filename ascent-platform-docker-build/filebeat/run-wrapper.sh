@@ -13,7 +13,7 @@ if [[ -z $VAULT_ADDR ]]; then
     VAULT_ADDR="http://vault:8200"
 fi
 
-# If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
+# If VAULT_TOKEN is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" $CMD -c $SSL_CONFIG

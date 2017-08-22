@@ -1,4 +1,4 @@
   ssl.certificate_authorities: ["${CA_CERT:/usr/share/filebeat/ca.pem}"]
   ssl.certificate: "${CLIENT_CERT:/usr/share/filebeat/client.pem}"
   ssl.key: "${CLIENT_KEY:/usr/share/filebeat/client.key}"
-  ssl.key_phrase: "${FB_PRIVATEKEY_PASSWORD}"
+  ssl.key_passphrase: "${FB_PRIVATEKEY_PASSWORD}"
