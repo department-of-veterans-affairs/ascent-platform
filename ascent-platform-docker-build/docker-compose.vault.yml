@@ -6,8 +6,8 @@ services:
     cap_add:
       - IPC_LOCK
     environment:
-      SKIP_SETCAP: "True"
-      VAULT_ADDR: "http://127.0.0.1:8200"
+      - SKIP_SETCAP=$SKIP_SETCAP
+      - VAULT_ADDR=$VAULT_ADDR 
     volumes:
       - ./vault/config:/config
     ports:

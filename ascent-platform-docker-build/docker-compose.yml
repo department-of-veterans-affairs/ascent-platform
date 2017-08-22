@@ -29,7 +29,7 @@ services:
     environment: 
       - git.passphrase=${GIT_PASSPHRASE}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - VAULT_ADDR=vault
+      - VAULT_HOST=${VAULT_HOST}
       - VAULT_TOKEN=${VAULT_TOKEN}
     volumes:
       - ~/.ssh:/root/.ssh
@@ -42,7 +42,6 @@ services:
       - ascent-discovery
     networks:
         - ascentnet
-        - vaultnet
   ascent-gateway:
     image: ascent/ascent-gateway
     hostname: ascent-gateway
@@ -50,6 +49,7 @@ services:
       - "8762:8762"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     depends_on:
       - ascent-config
       - ascent-discovery
@@ -62,6 +62,7 @@ services:
      - "8763:8763"
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     depends_on:
       - ascent-config
       - ascent-discovery
@@ -74,6 +75,7 @@ services:
        - "8700:8700"
       environment:
         - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+        - VAULT_TOKEN=${VAULT_TOKEN}        
       depends_on: 
         - ascent-discovery
         - ascent-config
