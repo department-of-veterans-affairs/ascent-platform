@@ -29,6 +29,8 @@ services:
     environment: 
       - git.passphrase=${GIT_PASSPHRASE}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - VAULT_ADDR=localhost
+      - VAULT_TOKEN=${VAULT_TOKEN}
     volumes:
       - ~/.ssh:/root/.ssh
     healthcheck:
@@ -82,4 +84,6 @@ networks:
   ascentnet:
     driver: overlay
   logging:
+    driver: overlay
+  vaultnet:
     driver: overlay
