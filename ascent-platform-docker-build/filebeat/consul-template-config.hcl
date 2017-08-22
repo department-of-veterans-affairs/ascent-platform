@@ -29,5 +29,5 @@ template {
 template {
   source = "/usr/share/filebeat/template/client.key.tpl"
   destination = "/usr/share/filebeat/client.key"
-  perms = 0644
+  perms = 0600
 }
