@@ -6,7 +6,11 @@ SSL_CONFIG="/usr/share/filebeat/filebeat.ssl.yml"
 
 CMD=$1
 if [[ -z $CMD ]]; then
-    CMD="filebeat -e"
+    CMD='filebeat -e'
+fi
+
+if [[ $VAULT_TOKEN_FILE ]]; then
+    VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
 fi
 
 if [[ -z $VAULT_ADDR ]]; then

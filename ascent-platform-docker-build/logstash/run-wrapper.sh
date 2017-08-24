@@ -19,7 +19,7 @@ fi
 if [[ $VAULT_TOKEN ]]; then
     #Use the SSL config
     cp $FILEBEAT_SSL $FILEBEAT_CONFIG
-    cp $ES_SSL $ES_CONFIG
+    cp $ES $ES_CONFIG
 
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" $CMD "$@"
