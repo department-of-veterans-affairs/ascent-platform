@@ -2,9 +2,6 @@ package gov.va.ascent.starter.service.autoconfigure;
 
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import static org.junit.Assert.*;
@@ -12,7 +9,7 @@ import static org.junit.Assert.*;
 /**
  * Created by rthota on 8/24/17.
  */
-public class AscentServiceRestConfigurationTest {
+public class AscentServiceAutoConfigurationTest {
 
     private AnnotationConfigWebApplicationContext context;
 
@@ -23,13 +20,13 @@ public class AscentServiceRestConfigurationTest {
         }
     }
 
-/*    @Test
+   @Test
     public void testWebConfiguration() throws Exception {
         context = new AnnotationConfigWebApplicationContext();
-        context.register(SecurityAutoConfiguration.class, ServerPropertiesAutoConfiguration.class, AscentAuditAutoConfiguration.class);
+        context.register(AscentServiceAutoConfiguration.class);
         context.refresh();
         assertNotNull(context);
-        assertEquals(this.context.getBean(FilterChainProxy.class).getFilterChains().size(), 11);
+        assertNotNull(this.context.getBean(AscentServiceAutoConfiguration.class));
 
-    }*/
+    }
 }
