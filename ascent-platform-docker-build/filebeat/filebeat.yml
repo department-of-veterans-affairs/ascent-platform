@@ -14,3 +14,4 @@ filebeat.prospectors:
 
 output.logstash:
   hosts: ["${LS_HOST:logstash}:${LS_PORT:5044}"]
+  #This needs to be at the end of the filebeat configuration so our SSL config appending works

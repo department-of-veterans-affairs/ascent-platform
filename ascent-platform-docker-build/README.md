@@ -32,3 +32,11 @@ The following environment variables can be set when the containers are launched 
     * __LOGPATH__ - Path to the Docker logs directory in the container. Defaults to "/dockerlogs".
     * __LS_HOST__ - The Logstash service hostname. Defaults to "logstash".
     * __LS_PORT__ - The port of the Logstash service. Defaults to "5044".
+    * __VAULT_TOKEN__ - The token to authenticate to vault with. When this is specified, Filebeat will configure itself to use SSL authentication with Logstash. It will pull its SSL information from Vault using the VAULT_ADDR env variable value.
+    * __VAULT_ADDR__ - The address of the vault server. Defaults to "https://vault:8200"
+* LogStash
+    * __ES_HOST__ - Hostname of the ElasticSearch service. Defaults to "elasticsearch"
+    * __ES_USER__ - Username to authenticate to ElasticSearch service. Defaults to "elastic".
+    * __ES_PASSWORD__ - Password for the ElasticSearch user. Defaults to "changeme".
+    * __VAULT_TOKEN__ - The token to authenticate to vault with. When this is specified, Logstash will configure itself to use SSL authentication with Filebeat. It will pull its SSL information from Vault using the VAULT_ADDR env variable value.
+    * __VAULT_ADDR__ - The address of the vault server. Defaults to "https://vault:8200"

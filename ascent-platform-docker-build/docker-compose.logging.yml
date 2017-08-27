@@ -19,7 +19,7 @@ services:
                     memory: 1536m
 
     filebeat:
-        image: jluck/brownbag-filebeat
+        image: jluck/ascent-filebeat
         volumes:
             - "/var/lib/docker/containers:/dockerlogs:ro"
         logging:
@@ -32,7 +32,7 @@ services:
             mode: global
     
     logstash:
-        image: jluck/brownbag-logging
+        image: jluck/ascent-logstash
         logging:
             driver: none
         networks: 
@@ -60,57 +60,7 @@ services:
         deploy:
             placement:
                 constraints: [node.role == worker]
-                
-    redis-master:
-      image: redis:4.0.1-alpine
-      volumes:
-        - "./.data:/data"
-      ports:
-        - "6379:6379"
-      networks: 
-        - logging
-        - ascentnet
-        
-    redis-slave:
-      image: redis:4.0.1-alpine
-      command: redis-server --slaveof redis-master 6379
-      links:
-        - redis-master
-      volumes:
-        - "./.data:/data"
-      networks: 
-        - logging
-        - ascentnet
-        
-    # Instance 1
-    redis-sentinel:
-      build: 
-        context: ./redis-sentinel
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
-        
-    # Instance 2
-    redis-sentinel2:
-      build: 
-        context: ./redis-sentinel
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
-   
-    # Instance 3
-    redis-sentinel3:
-      build: 
-        context: ./redis-sentinel
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
+            
         
 networks:
   logging:
