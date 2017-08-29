@@ -1,0 +1,29 @@
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+discovery.zen.minimum_master_nodes: 1
+
+# See https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#mlockall
+bootstrap.memory_lock: true
+
+# X Pack Security
+# See https://www.elastic.co/guide/en/elasticsearch/reference/current/security-settings.html
+xpack.security.enabled: true
+xpack.security.authc.accept_default_password: true
+xpack.ssl.client_authentication: required
+xpack.ssl.verification_mode: none
+# SSL file paths must be relative to the /usr/share/elasticsearch/config directory.
+xpack.ssl.key: "server.key"
+xpack.ssl.key_passphrase: "${ES_PRIVATEKEY_PASSWORD}"
+xpack.ssl.certificate: "server.pem"
+xpack.ssl.certificate_authorities: ["ca.pem"]
+
+# Use PKI for client authentication
+# xpack.security.authc.realms:
+#   realm1:
+#     type: pki
+#     order: 0
+#     certificate_authorities: ["ca.pem"]
