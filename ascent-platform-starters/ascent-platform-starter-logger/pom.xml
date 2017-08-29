@@ -11,15 +11,4 @@
   <artifactId>ascent-platform-starter-logger</artifactId>
   <name>${project.artifactId}</name>
   <description>Ascent platform starter for Logger</description>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.ascent</groupId>
-      <artifactId>ascent-framework</artifactId>
-    </dependency>
-  </dependencies>
 </project>
