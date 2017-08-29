@@ -2,9 +2,6 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
 
 LABEL gov.va.ascent.component="logging"
 
-# Add our customizations to the ElasticSearch config
-ADD elasticsearch.yml config/
-
 # Change ownership and permissions
 USER root
 
@@ -31,7 +28,7 @@ COPY template/ template/
 COPY run-wrapper.sh run-wrapper.sh
 
 # Change file permissions to elasticsearch user
-RUN chown -R elasticsearch:elasticsearch template config/elasticsearch.yml run-wrapper.sh; \
+RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh; \
     chmod 750 run-wrapper.sh
 
 USER elasticsearch
