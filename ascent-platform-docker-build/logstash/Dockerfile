@@ -18,6 +18,9 @@ RUN curl -L -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/en
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
+# Install OpenSSL
+RUN yum install -y openssl 
+
 WORKDIR /usr/share/logstash
 
 #To install additional plugins use the following command:

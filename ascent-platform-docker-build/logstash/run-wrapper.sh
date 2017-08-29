@@ -19,9 +19,13 @@ fi
 if [[ $VAULT_TOKEN ]]; then
     #Use the SSL config
     cp $FILEBEAT_SSL $FILEBEAT_CONFIG
-    cp $ES $ES_CONFIG
+    cp $ES_SSL $ES_CONFIG
 
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
+
+    #Create PKCS12 keystore for mutual auth
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" openssl pkcs12 -export -in server.pem -inkey server.key -out keystore.p12 -passout env:LS_KEYSTORE_PASSWORD -passin env:LS_PRIVATEKEY_PASSWORD
+
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" $CMD "$@"
 else
     #Use the non SSL config
