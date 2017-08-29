@@ -28,6 +28,7 @@ WORKDIR /usr/share/logstash
 #Example: RUN /usr/share/logstash/bin/logstash-plugin install logstash-filter-json
 
 COPY logstash.conf pipeline/logstash.conf
+COPY logstash.yml config/logstash.yml
 
 # Add our runwrapper
 COPY run-wrapper.sh run-wrapper.sh
@@ -39,7 +40,7 @@ EXPOSE 5044
 COPY template/ template/
 
 # Change file permissions to logstash user
-RUN chown -R logstash:logstash template pipeline/logstash.conf run-wrapper.sh; \
+RUN chown -R logstash:logstash template pipeline/logstash.conf run-wrapper.sh config/logstash.yml; \
     chmod 750 run-wrapper.sh
 
 USER logstash

@@ -21,6 +21,11 @@ if [[ $VAULT_TOKEN ]]; then
     cp $FILEBEAT_SSL $FILEBEAT_CONFIG
     cp $ES_SSL $ES_CONFIG
 
+    # Export XPack Monitoring variables defined in logstash.yml
+    export ES_HTTP_PROTOCOL="https"
+    export LS_CA_FILE="/usr/share/logstash/ca.pem"
+    export LS_KEYSTORE_FILE="/usr/share/logstash/keystore.p12"
+
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
 
     #Create PKCS12 keystore for mutual auth

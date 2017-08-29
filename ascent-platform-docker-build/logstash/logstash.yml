@@ -1,0 +1,8 @@
+http.host: "0.0.0.0"
+path.config: /usr/share/logstash/pipeline
+xpack.monitoring.elasticsearch.url: ${ES_HTTP_PROTOCOL:http}://${ES_HOST:elasticsearch}:9200
+xpack.monitoring.elasticsearch.username: ${ES_SYSTEM_USER:logstash_system}
+xpack.monitoring.elasticsearch.password: ${ES_SYSTEM_USER_PASSWORD:changeme}
+xpack.monitoring.elasticsearch.ssl.ca: ${LS_CA_FILE:}
+xpack.monitoring.elasticsearch.ssl.keystore.path: ${LS_KEYSTORE_FILE:}
+xpack.monitoring.elasticsearch.ssl.keystore.password: ${LS_KEYSTORE_PASSWORD:}
