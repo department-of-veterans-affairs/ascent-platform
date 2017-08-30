@@ -67,10 +67,16 @@
          </providers>
      	</encoder>
     </appender>
-    
+
+    <appender name="ASYNC_AUDIT_APPENDER" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>262144</queueSize> <!--default is 256-->
+        <discardingThreshold>0</discardingThreshold> <!--events are not discarded-->
+        <appender-ref ref="ASCENT_CONSOLE_AUDIT_ENCODER" />
+    </appender>
+
     <logger name="gov.va.ascent.framework.audit" additivity="false">
         <level value="TRACE" />
-        <appender-ref ref="ASCENT_CONSOLE_AUDIT_ENCODER" />
+        <appender-ref ref="ASYNC_AUDIT_APPENDER" />
 	 </logger>  
 	   
 
