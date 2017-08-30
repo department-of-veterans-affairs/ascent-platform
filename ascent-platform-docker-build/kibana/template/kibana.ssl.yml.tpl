@@ -1,6 +1,6 @@
 ---
 server.name: kibana
-server.host: "0"
+server.host: "kibana"
 
 {{ with secret "secret/kibana" }}
 # Elastic Search Client
