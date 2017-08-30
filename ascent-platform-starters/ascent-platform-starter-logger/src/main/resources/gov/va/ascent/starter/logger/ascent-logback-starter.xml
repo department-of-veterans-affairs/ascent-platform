@@ -20,7 +20,7 @@
 	        <pattern>
 	            <pattern>
                   {
-                  "logType": "appLogs",
+                  "logType": "applogs",
                   "severity": "%level",
                   "class": "%logger{40}",
                   "pid": "${PID:-}"
@@ -50,7 +50,7 @@
          	<pattern>
               <pattern>
                   {
-                  "logType": "auditLogs",
+                  "logType": "auditlogs",
                   "severity": "%level",
                   "class": "%logger{40}",
                   "pid": "${PID:-}"

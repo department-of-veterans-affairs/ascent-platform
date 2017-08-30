@@ -2,3 +2,6 @@
   ssl.certificate: "${CLIENT_CERT:/usr/share/filebeat/client.pem}"
   ssl.key: "${CLIENT_KEY:/usr/share/filebeat/client.key}"
   ssl.key_passphrase: "${FB_PRIVATEKEY_PASSWORD}"
+  ssl.enabled: true
+  ssl.verification_mode: full
+  
