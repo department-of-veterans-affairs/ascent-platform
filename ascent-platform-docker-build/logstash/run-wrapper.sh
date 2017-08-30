@@ -31,6 +31,9 @@ if [[ $VAULT_TOKEN ]]; then
     #Create PKCS12 keystore for mutual auth
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" openssl pkcs12 -export -in server.pem -inkey server.key -out keystore.p12 -passout env:LS_KEYSTORE_PASSWORD -passin env:LS_PRIVATEKEY_PASSWORD
 
+    #Create PKCS8 private key for filebeat input
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" openssl pkcs8 -topk8 -in server.key -out server.p8 -outform PEM -nocrypt -passin env:LS_PRIVATEKEY_PASSWORD
+
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" $CMD "$@"
 else
     #Use the non SSL config
