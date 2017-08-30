@@ -23,17 +23,26 @@ services:
         environment: 
             - VAULT_TOKEN=$VAULT_TOKEN
             - VAULT_ADDR=$VAULT_ADDR
+        ports:
+            - 9200:9200
+
+    kibana:
+        build:
+            context: ./kibana
+        environment: 
+            - VAULT_TOKEN=$VAULT_TOKEN
+            - VAULT_ADDR=$VAULT_ADDR
     
-    vault:
-        image: vault
-        networks: 
-            - logging
-        ports: 
-            - 8200:8200
-        environment:
-            - VAULT_DEV_ROOT_TOKENID=vaultroot
-        cap_add:
-            - IPC_LOCK
+    # vault:
+    #     image: vault
+    #     networks: 
+    #         - logging
+    #     ports: 
+    #         - 8200:8200
+    #     environment:
+    #         - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
+    #     cap_add:
+    #         - IPC_LOCK
 
 networks:
   logging:
