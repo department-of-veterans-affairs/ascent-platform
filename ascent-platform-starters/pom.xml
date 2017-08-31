@@ -37,7 +37,7 @@
         <groupId>gov.va.ascent</groupId>
         <artifactId>ascent-framework</artifactId>
         <version>${ascent.framework.version}</version>
-      </dependency>
+      </dependency>    	
     </dependencies>
   </dependencyManagement>
 
