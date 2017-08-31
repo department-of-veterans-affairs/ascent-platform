@@ -1,0 +1,5 @@
+git@github.com:department-of-veterans-affairs/ascent-discovery.git 
+git@github.com:department-of-veterans-affairs/ascent-config.git 
+git@github.com:department-of-veterans-affairs/ascent-gateway.git 
+git@github.com:department-of-veterans-affairs/ascent-dashboard.git 
+git@github.com:department-of-veterans-affairs/ascent-zipkin.git

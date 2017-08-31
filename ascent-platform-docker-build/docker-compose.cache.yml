@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+                
+    redis-master:
+      image: redis:4.0.1-alpine
+      volumes:
+        - "./.data:/data"
+      ports:
+        - "6379:6379"
+      networks: 
+        - logging
+        - ascentnet
+        
+    redis-slave:
+      image: redis:4.0.1-alpine
+      command: redis-server --slaveof redis-master 6379
+      links:
+        - redis-master
+      volumes:
+        - "./.data:/data"
+      networks: 
+        - logging
+        - ascentnet
+        
+    # Instance 1
+    redis-sentinel:
+      build: 
+        context: ./redis-sentinel
+      links:
+        - redis-master
+      networks: 
+        - logging
+        - ascentnet
+        
+    # Instance 2
+    redis-sentinel2:
+      build: 
+        context: ./redis-sentinel
+      links:
+        - redis-master
+      networks: 
+        - logging
+        - ascentnet
+   
+    # Instance 3
+    redis-sentinel3:
+      build: 
+        context: ./redis-sentinel
+      links:
+        - redis-master
+      networks: 
+        - logging
+        - ascentnet
+        
+networks:
+  ascentnet:
+    driver: overlay

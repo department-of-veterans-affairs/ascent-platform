@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProperty scope="context" name="app_name" source="spring.application.name"/>
+    <springProperty scope="context" name="app_profile" source="spring.profiles.active"/>
+    <springProperty scope="context" name="app_version" source="info.build.version"/>
+
+    <appender name="ASCENT_CONSOLE_LOG_ENCODER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+         <providers>
+         
+         	<timestamp>
+            	<timeZone>UTC</timeZone>
+            </timestamp>
+            <context/> <!--Outputs entries from logback's context --> 
+	        <pattern>
+	            <pattern>
+                  {
+                  "logType": "appLogs",
+                  "severity": "%level",
+                  "class": "%logger{40}",
+                  "pid": "${PID:-}"
+                  }
+	            </pattern>
+	         </pattern>
+	         <threadName/>
+	         <mdc/> <!-- MDC variables on the Thread will be written as JSON fields-->
+	         <message/>
+	         <logstashMarkers/> <!-- Useful so we can add extra information for specific log lines as Markers--> 
+	         <arguments/> <!--or through StructuredArguments-->
+	         <stackTrace/>
+            
+         </providers>
+     </encoder>
+    </appender>
+
+    
+    <appender name="ASCENT_CONSOLE_AUDIT_ENCODER" class="ch.qos.logback.core.ConsoleAppender">
+    	<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+         <providers>
+         
+         	<timestamp>
+            	<timeZone>UTC</timeZone>
+            </timestamp>
+            <context/> <!--Outputs entries from logback's context --> 
+         	<pattern>
+              <pattern>
+                  {
+                  "logType": "auditLogs",
+                  "severity": "%level",
+                  "class": "%logger{40}",
+                  "pid": "${PID:-}"
+                  }
+              </pattern>
+         	</pattern>
+         	<threadName/>
+         	<mdc/> <!-- MDC variables on the Thread will be written as JSON fields-->
+         	<message/>
+         	<logstashMarkers/> <!-- Useful so we can add extra information for specific log lines as Markers--> 
+         	<arguments/> <!--or through StructuredArguments-->
+         	<stackTrace/>
+            
+         </providers>
+     	</encoder>
+    </appender>
+    
+    <logger name="gov.va.ascent.framework.audit" additivity="false">
+        <level value="TRACE" />
+        <appender-ref ref="ASCENT_CONSOLE_AUDIT_ENCODER" />
+	 </logger>  
+	   
+
+</included>

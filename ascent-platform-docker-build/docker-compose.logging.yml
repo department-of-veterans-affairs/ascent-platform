@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+
+    #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.5.0
+        networks: 
+            - logging
+        #TODO Add authentication to health check
+        #healthcheck:
+            #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
+            #timeout: 5s
+        deploy:
+            placement:
+                constraints: [node.role == worker]
+            resources:
+                reservations:
+                    memory: 1536m
+
+    filebeat:
+        image: jluck/ascent-filebeat
+        volumes:
+            - "/var/lib/docker/containers:/dockerlogs:ro"
+        logging:
+            driver: none
+        networks: 
+            - logging
+        depends_on:
+            - logstash
+        deploy:
+            mode: global
+    
+    logstash:
+        image: jluck/ascent-logstash
+        logging:
+            driver: none
+        networks: 
+            - logging
+        depends_on:
+            - elasticsearch
+        deploy:
+            placement:
+                constraints: [node.role == worker]
+
+    kibana:
+        image: docker.elastic.co/kibana/kibana:5.5.0
+        ports: 
+            - 5601:5601
+        networks: 
+            - logging
+        depends_on: 
+            - elasticsearch
+        labels:
+            gov.va.ascent.component: "logging"
+        logging:
+            driver: json-file
+            options:
+                labels: "gov.va.ascent.component"
+        deploy:
+            placement:
+                constraints: [node.role == worker]
+            
+        
+networks:
+  logging:
+    driver: overlay

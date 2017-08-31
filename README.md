@@ -6,6 +6,28 @@ Ascent Platform Repository is a suite of Project POM files that provides applica
 **ascent-discovery: Discovery Service**
 
 Spring Cloud Netflix Eureka Discovery Service. REST-based service discovery and registration for fail over and load-balancing.
+
+See [Ascent-Discovery](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Discovery) or go to [Ascent Discovery Repository](https://github.com/department-of-veterans-affairs/ascent-discovery) for additional details.
+
+
+**ascent-config: Cloud Config Service**
+
+Spring Cloud Config to centralize external configuration management, backed by Git. See [Ascent-Config](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Config) or go to [Ascent Config Repository](https://github.com/department-of-veterans-affairs/ascent-config) for additional details.
+
+
+**ascent-gateway: API Gateway**
+
+Spring Cloud Zuul Gateway Service. It provides Dynamic routing, monitoring, resiliency, security, and more. See [Ascent-Gateway](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Gateway) or go to [Ascent Gateway Repository](https://github.com/department-of-veterans-affairs/ascent-gateway) for additional details.
+
+
+**ascent-dashboard: Dashboard(s)**
+
+Demo of various dashboards such as Hystrix which is a provided dashboard, Turbine to monitor a single server or a cluster of servers aggregated, custom consolidated swagger dashboard and Monitoring Dashboard (Spring Boot Actuator URLs).  Other dashboards, if we decided to tinker, can go here so we don't need to deploy 50 applications locally to test out basic dashboards. See [Ascent-Dashboard](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Dashboard) or go to [Ascent Dashboard Repository](https://github.com/department-of-veterans-affairs/ascent-dashboard) for additional details.
+
+
+**ascent-zipkin: Instrumentation and Audit**
+Zipkin service lets aggregate and track the time-span for processing every incoming request within sleuth-enabled services by consuming the instrumentation data and persisting them in elasticsearch index. It also provides a simple yet intuitive UI to visually view the request spans across multiple services. See [Ascent-Zipkin](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Instrumentation-Sleuth-and-Zipkin) or go to [Ascent Zipkin Repository](https://github.com/department-of-veterans-affairs/ascent-zipkin) for additional details.
+
 See [Ascent-Discovery](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Discovery) for additional details.
 
 **ascent-config: Cloud Config Service**
@@ -22,6 +44,7 @@ Demo of various dashboards such as Hystrix which is a provided dashboard, Turbin
 
 **ascent-zipkin: Instrumentation and Audit**
 Zipkin service lets aggregate and track the time-span for processing every incoming request within sleuth-enabled services by consuming the instrumentation data and persisting them in elasticsearch index. It also provides a simple yet intuitive UI to visually view the request spans across multiple services. See [Ascent-Zipkin](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Ascent-Instrumentation-Sleuth-and-Zipkin) for additional details.
+
 
 **Service Application Ports**
 * Discovery - 8761

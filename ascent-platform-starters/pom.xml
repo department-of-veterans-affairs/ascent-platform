@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>gov.va.ascent</groupId>
+    <artifactId>ascent-platform-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../ascent-platform-parent</relativePath>
+  </parent>
+  
+  <artifactId>ascent-platform-starters</artifactId>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>Ascent Platform Starters</description>
+  
+  <modules>
+	<module>ascent-platform-starter-swagger</module>
+	<module>ascent-platform-starter-security</module>
+	<module>ascent-platform-starter-cache</module>
+	<module>ascent-platform-starter-logger</module>
+  </modules>
+
+  <properties>
+    <ascent.security.version>0.0.1-SNAPSHOT</ascent.security.version>
+    <ascent.framework.version>0.0.1-SNAPSHOT</ascent.framework.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>gov.va.ascent</groupId>
+        <artifactId>ascent-security</artifactId>
+        <version>${ascent.security.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>gov.va.ascent</groupId>
+        <artifactId>ascent-framework</artifactId>
+        <version>${ascent.framework.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
