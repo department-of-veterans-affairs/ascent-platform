@@ -1,20 +1,11 @@
 package gov.va.ascent.starter.audit.autoconfigure;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import gov.va.ascent.framework.rest.provider.RestProviderHttpResponseCodeAspect;
-import gov.va.ascent.framework.rest.provider.RestProviderTimerAspect;
-import gov.va.ascent.framework.service.ServiceExceptionHandlerAspect;
-import gov.va.ascent.framework.service.ServiceTimerAspect;
-import gov.va.ascent.framework.service.ServiceValidationToMessageAspect;
+import gov.va.ascent.framework.audit.RequestResponseAspect;
 
 
 /**
@@ -24,12 +15,11 @@ import gov.va.ascent.framework.service.ServiceValidationToMessageAspect;
 @Configuration
 public class AscentAuditAutoConfiguration {
 
-	/*    @Bean
+    @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "ascent.security.jwt", name = "enabled", matchIfMissing = true)
-    public TokenResource tokenResource(){
-        return new TokenResource();
-    }*/ 
+    public RequestResponseAspect requestResponseAspect(){
+        return new RequestResponseAspect();
+    } 
 }
 
 

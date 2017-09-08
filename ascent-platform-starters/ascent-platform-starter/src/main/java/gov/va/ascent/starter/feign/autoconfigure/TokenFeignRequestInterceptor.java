@@ -12,7 +12,7 @@ import gov.va.ascent.security.jwt.JwtTokenService;
 public class TokenFeignRequestInterceptor implements RequestInterceptor {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(TokenFeignRequestInterceptor.class);
-
+            
 	@Autowired
 	private JwtTokenService tokenService;
 
