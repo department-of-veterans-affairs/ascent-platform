@@ -19,6 +19,20 @@
             <groupId>gov.va.ascent</groupId>
             <artifactId>ascent-framework</artifactId>
         </dependency>
+	   <dependency>
+	    		<groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-commons</artifactId>
+	   </dependency> 
+        <!-- Spring-cloud Netflix Feign dependency for defining declarative REST clients -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
+        </dependency>
+        <!-- Spring-cloud Netflix hystrix dependency for circuit breaker implementation -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-hystrix</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -3,4 +3,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 gov.va.ascent.starter.service.autoconfigure.AscentServiceAutoConfiguration,\
 gov.va.ascent.starter.rest.autoconfigure.AscentRestAutoConfiguration,\
 gov.va.ascent.starter.audit.autoconfigure.AscentAuditAutoConfiguration,\
-gov.va.ascent.starter.ModelValidator.autoconfigure.AscentModelValidatorAutoConfiguration
+gov.va.ascent.starter.ModelValidator.autoconfigure.AscentModelValidatorAutoConfiguration,\
+gov.va.ascent.starter.feign.autoconfigure.AscentFeignAutoConfiguration
