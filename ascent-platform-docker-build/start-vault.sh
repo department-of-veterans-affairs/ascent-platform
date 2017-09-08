@@ -11,7 +11,4 @@ docker-compose -f docker-compose.vault.yml -f docker-compose.vault.override.yml 
 
 sleep 1 # wait for Vault to come up
 docker-compose -f docker-compose.vault.yml -f docker-compose.vault.override.yml exec vault vault auth $VAULT_TOKEN
-docker-compose -f docker-compose.vault.yml -f docker-compose.vault.override.yml exec vault vault write secret/application ascent.security.jwt.secret=vetsGov
-docker-compose -f docker-compose.vault.yml -f docker-compose.vault.override.yml exec vault vault write secret/application,docker-demo spring.rabbitmq.password=guest
-docker-compose -f docker-compose.vault.yml -f docker-compose.vault.override.yml exec vault vault write secret/ascent-demo-service,docker-demo ascent-demo-service.password=guest
-docker-compose -f docker-compose.vault.yml -f docker-compose.vault.override.yml exec vault vault write secret/ascent-document-service,docker-demo ascent-document-service.password=guest
+source ./writesecrets.sh
