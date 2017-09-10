@@ -7,6 +7,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import gov.va.ascent.framework.audit.RequestResponseAspect;
 
 import static org.junit.Assert.*;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 
 /**
  * Created by rthota on 8/24/17.
@@ -25,9 +26,9 @@ public class AscentAuditAutoConfigurationTest {
     @Test
     public void testWebConfiguration() throws Exception {
         context = new AnnotationConfigWebApplicationContext();
-        context.register(AscentAuditAutoConfiguration.class);
-        //context.refresh();
+        context.register(JacksonAutoConfiguration.class, AscentAuditAutoConfiguration.class);
+        context.refresh();
         assertNotNull(context);
-        //assertNotNull(this.context.getBean(RequestResponseAspect.class));
+        assertNotNull(this.context.getBean(RequestResponseAspect.class));
     }
 }

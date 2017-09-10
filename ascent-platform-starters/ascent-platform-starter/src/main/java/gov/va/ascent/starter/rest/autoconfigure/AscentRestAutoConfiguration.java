@@ -1,14 +1,10 @@
 package gov.va.ascent.starter.rest.autoconfigure;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 import gov.va.ascent.framework.rest.client.resttemplate.RestClientTemplate;
@@ -41,15 +37,17 @@ public class AscentRestAutoConfiguration {
         return new RestClientTemplate();
     }    
         
-    @Autowired
-    @Qualifier("tokenClientHttpRequestInterceptor")
-    private ClientHttpRequestInterceptor httpRequestInterceptor;
-
 	@Bean
     @LoadBalanced
     RestTemplate restTemplate() {
-        return new RestTemplateBuilder().interceptors(httpRequestInterceptor).build();
+        return new RestTemplateBuilder().interceptors(tokenClientHttpRequestInterceptor()).build();
 	}
+	
+    @Bean
+    @ConditionalOnMissingBean
+    public TokenClientHttpRequestInterceptor tokenClientHttpRequestInterceptor(){
+        return new TokenClientHttpRequestInterceptor();
+    }    
 }
 
 

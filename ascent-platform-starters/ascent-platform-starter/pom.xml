@@ -17,6 +17,10 @@
         </dependency>
         <dependency>
             <groupId>gov.va.ascent</groupId>
+            <artifactId>ascent-platform-starter-security</artifactId>
+        </dependency>        
+        <dependency>
+            <groupId>gov.va.ascent</groupId>
             <artifactId>ascent-framework</artifactId>
         </dependency>
 	   <dependency>

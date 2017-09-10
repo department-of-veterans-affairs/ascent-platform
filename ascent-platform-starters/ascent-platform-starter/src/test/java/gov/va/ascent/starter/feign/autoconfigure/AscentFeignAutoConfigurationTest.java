@@ -1,7 +1,10 @@
 package gov.va.ascent.starter.feign.autoconfigure;
 
+import gov.va.ascent.starter.security.autoconfigure.AscentSecurityAutoConfiguration;
 import org.junit.After;
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import static org.junit.Assert.*;
@@ -23,10 +26,11 @@ public class AscentFeignAutoConfigurationTest {
    @Test
     public void testWebConfiguration() throws Exception {
         context = new AnnotationConfigWebApplicationContext();
-        context.register(AscentFeignAutoConfiguration.class);
-        //context.refresh();
-        //assertNotNull(context);
-        //assertNotNull(this.context.getBean(TokenFeignRequestInterceptor.class));
+        context.register(SecurityAutoConfiguration.class, ServerPropertiesAutoConfiguration.class, AscentSecurityAutoConfiguration.class,
+        		TokenFeignRequestInterceptor.class, AscentFeignAutoConfiguration.class);
+        context.refresh();
+        assertNotNull(context);
+        assertNotNull(this.context.getBean(TokenFeignRequestInterceptor.class));
 
     }
 }
