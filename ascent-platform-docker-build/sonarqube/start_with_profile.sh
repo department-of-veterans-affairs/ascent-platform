@@ -21,10 +21,11 @@ do
     PING=`isUp`
 done
 
-# Restore qualityprofile
+# Restore qualityprofile and exclude Spring Boot Main Application.java class
 if [ "$LANGUAGE" ] && [ "$PROFILE_NAME" ]; then
     curlAdmin -F "backup=@/qualityprofile/java-ascent-32413.xml" -X POST "$BASE_URL/api/qualityprofiles/restore"
     curlAdmin -X POST "$BASE_URL/api/qualityprofiles/set_default?language=$LANGUAGE&profileName=$PROFILE_NAME"
+    curlAdmin -X POST "$BASE_URL/api/settings/set?key=sonar.coverage.exclusions&values=%22**/*Application.java%22"
 fi
 
 wait
