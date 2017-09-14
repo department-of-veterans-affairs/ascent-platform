@@ -14,6 +14,7 @@
   <description>Ascent Platform Starters</description>
   
   <modules>
+  	<module>ascent-platform-starter</module>
 	<module>ascent-platform-starter-swagger</module>
 	<module>ascent-platform-starter-security</module>
 	<module>ascent-platform-starter-cache</module>
@@ -36,7 +37,7 @@
         <groupId>gov.va.ascent</groupId>
         <artifactId>ascent-framework</artifactId>
         <version>${ascent.framework.version}</version>
-      </dependency>
+      </dependency>    	
     </dependencies>
   </dependencyManagement>
 
