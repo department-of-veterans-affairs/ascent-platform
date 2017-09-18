@@ -10,6 +10,8 @@ services:
         environment: 
             - VAULT_TOKEN=$VAULT_TOKEN
             - VAULT_ADDR=$VAULT_ADDR
+        volumes:
+            - "/var/lib/docker/containers:/dockerlogs:ro"
     logstash:
         build:
             context: ./logstash
