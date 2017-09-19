@@ -1,0 +1,23 @@
+version: '3'
+services:
+  vault:
+    image: vault
+    hostname: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - SKIP_SETCAP=$SKIP_SETCAP
+      - VAULT_ADDR=$VAULT_ADDR
+      - VAULT_DEV_ROOT_TOKEN_ID=$VAULT_TOKEN
+      - tls_disable=1
+    volumes:
+      - ./vault/config:/config
+    ports:
+      - "8200:8200"
+    command: server -dev #-config /config/vault.conf
+    networks:
+        - ascentnet
+networks:
+  ascentnet:
+    driver: overlay
+
