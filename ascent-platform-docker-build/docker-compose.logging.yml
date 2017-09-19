@@ -7,8 +7,6 @@ services:
         image: docker.io/jluck/ascent-elasticsearch
         networks: 
             - logging
-        environment:
-          - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
         ulimits:
             nproc: 655350
             nofile: 655350
