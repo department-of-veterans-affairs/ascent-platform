@@ -49,6 +49,30 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<docker.java.opts.ms>-Xms32m</docker.java.opts.ms>
 	<docker.java.opts.mx>-Xmx256m</docker.java.opts.mx>
 	  <ascent.starter.version>0.0.1-SNAPSHOT</ascent.starter.version>
+	  <springfox.version>2.7.0</springfox.version>
+	  <cucumber.version>1.2.5</cucumber.version>
+	  <restassured.version>2.9.0</restassured.version>
+	  <jacoco.outputRootDir>${project.basedir}/target/jacoco</jacoco.outputRootDir>
+	  <jacoco.dataFile>${jacoco.outputRootDir}/jacoco.exec</jacoco.dataFile>
+	  <jacoco.reportDir>${jacoco.outputRootDir}/jacoco</jacoco.reportDir>
+	  <sonar.host.url>http://localhost:9000</sonar.host.url>
+	  <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+	  <sonar.jacoco.reportPath>${jacoco.dataFile}</sonar.jacoco.reportPath>
+	  <sonar.profile.java>ASCENT</sonar.profile.java>
+	  <sonar.maven.plugin.version>3.2</sonar.maven.plugin.version>
+	  <jgitflow.keepBranch>false</jgitflow.keepBranch>
+
+	  <!-- fortify properties for easy override -->
+	  <!-- fortify scan properties -->
+	  <fortify.scanEnabled>true</fortify.scanEnabled>
+	  <fortify.jre64>true</fortify.jre64>
+	  <fortify.debug>false</fortify.debug>
+	  <fortify.maxHeap>1024m</fortify.maxHeap>
+	  <fortify.maxPermGen>512m</fortify.maxPermGen>
+	  <!-- fortify upload properties -->
+	  <fortify.upload>false</fortify.upload> <!-- pass as -D from build server where upload is desired -->
+	  <fortify.token>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.token>
+	  <fortify.url>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.url>
   </properties>
   
   <dependencyManagement>
@@ -140,9 +164,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>${sonar.maven.plugin.version}</version>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.7.9</version>
+				<configuration>
+					<destFile>${jacoco.dataFile}</destFile>
+					<append>true</append>
+					<excludes>
+						<exclude>**/static/features/**/*</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
@@ -164,11 +200,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 							<goal>report</goal>
 						</goals>
 						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-
-							<dataFile>target/jacoco.exec</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>target/jacoco-ut</outputDirectory>
+							<dataFile>${jacoco.dataFile}</dataFile>
+							<outputDirectory>${jacoco.reportDir}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
