@@ -7,6 +7,7 @@ services:
         image: jluck/ascent-elasticsearch
         networks: 
             - logging
+            - ascentnet
         ulimits:
             memlock:
                 soft: -1
@@ -28,6 +29,7 @@ services:
             - "/var/lib/docker/containers:/dockerlogs:ro"
         networks: 
             - logging
+            - ascentnet
         depends_on:
             - logstash
         deploy:
@@ -37,6 +39,7 @@ services:
         image: jluck/ascent-logstash
         networks: 
             - logging
+            - ascentnet
         depends_on:
             - elasticsearch
         deploy:
@@ -49,6 +52,7 @@ services:
             - 5601:5601
         networks: 
             - logging
+            - ascentnet
         depends_on: 
             - elasticsearch
         labels:
@@ -65,3 +69,6 @@ services:
 networks:
   logging:
     driver: overlay
+  ascentnet:
+    driver: overlay
+

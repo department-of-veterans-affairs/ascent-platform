@@ -8,14 +8,14 @@ services:
         # Enable to turn on filebeat debugging
         #command: ["filebeat", "-e", "-d", "publish"]
         environment: 
-            - VAULT_TOKEN=$VAULT_TOKEN
-            - VAULT_ADDR=$VAULT_ADDR
+           - VAULT_TOKEN=$VAULT_TOKEN
+           - VAULT_ADDR=$VAULT_ADDR
     logstash:
         build:
             context: ./logstash
         environment: 
-            - VAULT_TOKEN=$VAULT_TOKEN
-            - VAULT_ADDR=$VAULT_ADDR
+           - VAULT_TOKEN=$VAULT_TOKEN
+           - VAULT_ADDR=$VAULT_ADDR
     
     elasticsearch:
         build:
@@ -45,5 +45,7 @@ services:
     #         - IPC_LOCK
 
 networks:
+  ascentnet:
+    driver: bridge
   logging:
     driver: bridge
