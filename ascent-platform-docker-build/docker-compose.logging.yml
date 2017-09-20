@@ -4,11 +4,13 @@ services:
 
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
     elasticsearch:
-        image: jluck/ascent-elasticsearch
+        image: docker.io/jluck/ascent-elasticsearch
         networks: 
             - logging
             - ascentnet
         ulimits:
+            nproc: 655350
+            nofile: 655350
             memlock:
                 soft: -1
                 hard: -1
@@ -24,9 +26,9 @@ services:
                     memory: 1536m
 
     filebeat:
-        image: jluck/ascent-filebeat
+        image: docker.io/jluck/ascent-filebeat
         volumes:
-            - "/var/lib/docker/containers:/dockerlogs:ro"
+            - "/var/lib/docker-latest/containers:/dockerlogs:ro"
         networks: 
             - logging
             - ascentnet
@@ -36,7 +38,7 @@ services:
             mode: global
     
     logstash:
-        image: jluck/ascent-logstash
+        image: docker.io/jluck/ascent-logstash
         networks: 
             - logging
             - ascentnet
@@ -47,7 +49,7 @@ services:
                 constraints: [node.role == worker]
 
     kibana:
-        image: jluck/ascent-kibana
+        image: docker.io/jluck/ascent-kibana
         ports: 
             - 5601:5601
         networks: 

@@ -1,10 +1,10 @@
 #Overrides for local development.
 version: '3'
 
-#services:
-#    vault:
-#        build:
-#            context: ./vault
+services:
+    vault:
+        build:
+            context: ./vault
 networks:
   ascentnet:
     driver: bridge

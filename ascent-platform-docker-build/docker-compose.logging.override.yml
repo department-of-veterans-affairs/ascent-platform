@@ -8,21 +8,24 @@ services:
         # Enable to turn on filebeat debugging
         #command: ["filebeat", "-e", "-d", "publish"]
         environment: 
-           - VAULT_TOKEN=$VAULT_TOKEN
-           - VAULT_ADDR=$VAULT_ADDR
+           - VAULT_TOKEN=
+           - VAULT_ADDR=
+        volumes:
+            - "/var/lib/docker/containers:/dockerlogs:ro"
     logstash:
         build:
             context: ./logstash
         environment: 
-           - VAULT_TOKEN=$VAULT_TOKEN
-           - VAULT_ADDR=$VAULT_ADDR
+           - VAULT_TOKEN=
+           - VAULT_ADDR=
     
     elasticsearch:
         build:
             context: ./elasticsearch
         environment: 
-            - VAULT_TOKEN=$VAULT_TOKEN
-            - VAULT_ADDR=$VAULT_ADDR
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
+            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
         ports:
             - 9200:9200
 
@@ -30,8 +33,8 @@ services:
         build:
             context: ./kibana
         environment: 
-            - VAULT_TOKEN=$VAULT_TOKEN
-            - VAULT_ADDR=$VAULT_ADDR
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
     
     # vault:
     #     image: vault

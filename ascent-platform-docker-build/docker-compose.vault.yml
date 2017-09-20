@@ -10,6 +10,7 @@ services:
       - VAULT_ADDR=$VAULT_ADDR
       - VAULT_DEV_ROOT_TOKEN_ID=$VAULT_TOKEN
       - tls_disable=1
+      - VAULT_SECRETS_FILE=$VAULT_SECRETS_FILE
     volumes:
       - ./vault/config:/config
     ports:
