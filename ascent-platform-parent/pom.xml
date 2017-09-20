@@ -15,21 +15,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Ascent Platform Parent</description>
-  
-  <repositories>
-	<repository>
-		<id>vets</id>
-		<name>EVSS Nexus Repository</name>
-		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
-	</repository>
-  </repositories>
-  <pluginRepositories>
-	<pluginRepository>
-		<id>vets</id>
-		<name>EVSS Nexus Repository</name>
-		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
-	</pluginRepository>
-  </pluginRepositories>
+
   <distributionManagement>
 	<repository>
 		<id>vets.release</id>
@@ -59,7 +45,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	  <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 	  <sonar.jacoco.reportPath>${jacoco.dataFile}</sonar.jacoco.reportPath>
 	  <sonar.profile.java>ASCENT</sonar.profile.java>
-	  <sonar.maven.plugin.version>3.2</sonar.maven.plugin.version>
+	  <sonar.maven.plugin.version>3.3.0.603</sonar.maven.plugin.version>
+	  <include.int.tests.pattern>**/*IT.java,**/*Runner.java</include.int.tests.pattern>
 	  <jgitflow.keepBranch>false</jgitflow.keepBranch>
 
 	  <!-- fortify properties for easy override -->
@@ -164,7 +151,141 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<configuration>
+					<failOnError>false</failOnError>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Build-Time>${maven.build.timestamp}</Build-Time>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Implementation-GIT-Revision>${GIT_COMMIT}</Implementation-GIT-Revision>
+							<Implementation-Build-Number>${BUILD_NUMBER}</Implementation-Build-Number>
+						</manifestEntries>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.20.1</version>
+				<configuration>
+					<skipTests>${skipTests}</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.20.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<skipTests>${skipITs}</skipTests>
+							<includes>
+								<include>${include.int.tests.pattern}</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<!-- Add a new inttest source directory to our build -->
+					<execution>
+						<id>add-integration-test-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/inttest/java</source>
+							</sources>
+						</configuration>
+					</execution>
+					<!-- Add a new inttest resource directory to our build -->
+					<execution>
+						<id>add-integration-test-resources</id>
+						<phase>generate-test-resources</phase>
+						<goals>
+							<goal>add-test-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/inttest/resources</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<!-- add the parsed version properties into the build environment for usage as needed -->
+					<execution>
+						<phase>initialize</phase>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>${sonar.maven.plugin.version}</version>
 			</plugin>
@@ -205,6 +326,49 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<executions>
+					<execution>
+						<id>enforce-java</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>display-info</goal>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireNoRepositories>
+									<message>
+										Best Practice is to never define repositories in pom.xml (we use
+										Nexus as a repository manager instead)
+									</message>
+								</requireNoRepositories>
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.hpe.security.fortify.maven.plugin</groupId>
+				<artifactId>sca-maven-plugin</artifactId>
+				<version>17.10</version>
+				<configuration>
+					<scanEnabled>${fortify.scanEnabled}</scanEnabled>
+					<projectName>${project.artifactId}</projectName>
+					<projectVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</projectVersion>
+					<upload>${fortify.upload}</upload>
+					<f360Url>${fortify.url}</f360Url>
+					<f360AuthToken>${fortify.token}</f360AuthToken>
+					<jre64>${fortify.jre64}</jre64>
+					<debug>${fortify.debug}</debug>
+					<maxHeap>${fortify.maxHeap}</maxHeap>
+					<maxPermGen>${fortify.maxPermGen}</maxPermGen>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -260,6 +424,27 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		            </plugin>
 				</plugins>
 			</build>
+		</profile>
+		<!-- The Configuration of the development profile -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<!-- Only unit tests are run when the development profile is active -->
+				<skipTests>false</skipTests>
+				<skipITs>true</skipITs>
+			</properties>
+		</profile>
+		<!-- The Configuration of the inttest profile -->
+		<profile>
+			<id>inttest</id>
+			<properties>
+				<!-- Only int tests are run when this inttest profile is active -->
+				<skipTests>true</skipTests>
+				<skipITs>false</skipITs>
+			</properties>
 		</profile>
 	</profiles>
   
