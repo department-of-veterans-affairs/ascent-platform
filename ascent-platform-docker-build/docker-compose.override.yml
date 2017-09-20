@@ -1,6 +1,38 @@
 #Overrides for local development.
 version: '3'
 
+services:
+    ascent-discovery:
+        build:
+            context: ../../ascent-discovery
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            #- DISCOVERY_USERNAME=${DISCOVERY_USERNAME}
+            #- DISCOVERY_PASSWORD=${DISCOVERY_PASSWORD}
+            #- VAULT_ADDR=""
+            #- VAULT_TOKEN=""
+
+    ascent-config:
+        build:
+            context: ../../ascent-config
+        environment: 
+            #- git.passphrase=${GIT_PASSPHRASE}
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            #- VAULT_ADDR=""
+            #- VAULT_TOKEN=""
+    
+    ascent-gateway:
+        build:
+            context: ../../ascent-gateway
+
+    ascent-dashboard:
+        build:
+            context: ../../ascent-dashboard
+    
+    ascent-zipkin:
+        build:
+            context: ../../ascent-zipkin
+
 networks:
     ascentnet:
         driver: bridge
