@@ -25,6 +25,7 @@ services:
         environment: 
             - VAULT_TOKEN=$VAULT_TOKEN
             - VAULT_ADDR=$VAULT_ADDR
+            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
         ports:
             - 9200:9200
 
