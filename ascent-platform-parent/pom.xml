@@ -16,6 +16,20 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <name>${project.artifactId}</name>
   <description>Ascent Platform Parent</description>
 
+	<repositories>
+		<repository>
+			<id>vets</id>
+			<name>Vets.gov Nexus Repository</name>
+			<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>vets</id>
+			<name>Vets.gov Nexus Repository</name>
+			<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
+		</pluginRepository>
+	</pluginRepositories>
   <distributionManagement>
 	<repository>
 		<id>vets.release</id>
@@ -323,32 +337,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 						<configuration>
 							<dataFile>${jacoco.dataFile}</dataFile>
 							<outputDirectory>${jacoco.reportDir}</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M1</version>
-				<executions>
-					<execution>
-						<id>enforce-java</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>display-info</goal>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireNoRepositories>
-									<message>
-										Best Practice is to never define repositories in pom.xml (we use
-										Nexus as a repository manager instead)
-									</message>
-								</requireNoRepositories>
-							</rules>
-							<fail>true</fail>
 						</configuration>
 					</execution>
 				</executions>
