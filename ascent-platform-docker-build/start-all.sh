@@ -1,7 +1,8 @@
 # Starts the entire Ascent platform, including all log aggregation services
 
-source ./start-vault.sh
-docker-compose -f docker-compose.yml \
+docker-compose -f docker-compose.vault.yml \
+	-f docker-compose.vault.override.yml \
+	-f docker-compose.yml \
 	-f docker-compose.override.yml \
 	-f docker-compose.logging.yml \
 	-f docker-compose.logging.override.yml \
