@@ -21,4 +21,4 @@ RUN curl -L -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/en
 COPY envconsul-config.hcl $ENVCONSUL_CONFIG
 COPY run-wrapper.sh /run-wrapper.sh
 
-ENTRYPOINT ["/run-wrapper.sh"]
+ENTRYPOINT /run-wrapper.sh
