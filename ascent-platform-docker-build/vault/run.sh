@@ -33,8 +33,16 @@ sleep 1 # wait for Vault to come up
 if [[ -f "$VAULT_SECRETS_FILE" ]]; then
   for path in $(jq -r 'keys[]' < "$VAULT_SECRETS_FILE"); do
     jq -rj ".\"${path}\"" < "$VAULT_SECRETS_FILE" > /tmp/value
-    echo "writing value to ${path}"
-    vault write "${path}" "value=@/tmp/value"
+    finalstring=""
+    for path2 in $(jq -r 'keys[]' < "/tmp/value"); do
+        #echo "Key: ${path2}"
+        jq -rj ".\"${path2}\"" < "/tmp/value" > /tmp/value2
+        #echo "Value $(cat /tmp/value2)"
+        keyval="${path2}=$(cat /tmp/value2) "
+        finalstring="$finalstring$keyval"
+    done
+    #echo "Vault Command: ${path} $finalstring"
+    vault write "${path}" $finalstring
     rm -f /tmp/value
   done
 else
