@@ -27,7 +27,7 @@ services:
     ports:
      - "8760:8760"
     environment: 
-      - git.passphrase=${GIT_PASSPHRASE}
+      - git.access_token=${GIT_ACCESS_TOKEN}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     volumes:
       - ~/.ssh:/root/.ssh
