@@ -15,6 +15,7 @@ services:
             context: ../../ascent-config
         environment:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - git.access_token=${GIT_ACCESS_TOKEN}
             - VAULT_ADDR=
             - VAULT_TOKEN=
     

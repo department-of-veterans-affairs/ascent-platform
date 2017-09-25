@@ -7,6 +7,7 @@ services:
         image: docker.io/jluck/ascent-elasticsearch
         networks: 
             - logging
+            - ascentnet
         ulimits:
             nproc: 655350
             nofile: 655350
@@ -30,6 +31,7 @@ services:
             - "/var/lib/docker-latest/containers:/dockerlogs:ro"
         networks: 
             - logging
+            - ascentnet
         depends_on:
             - logstash
         deploy:
@@ -39,6 +41,7 @@ services:
         image: docker.io/jluck/ascent-logstash
         networks: 
             - logging
+            - ascentnet
         depends_on:
             - elasticsearch
         deploy:
@@ -51,6 +54,7 @@ services:
             - 5601:5601
         networks: 
             - logging
+            - ascentnet
         depends_on: 
             - elasticsearch
         labels:
@@ -67,3 +71,6 @@ services:
 networks:
   logging:
     driver: overlay
+  ascentnet:
+    driver: overlay
+

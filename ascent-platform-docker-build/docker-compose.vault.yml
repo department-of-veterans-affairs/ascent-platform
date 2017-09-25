@@ -9,6 +9,7 @@ services:
       - SKIP_SETCAP=$SKIP_SETCAP
       - VAULT_ADDR=$VAULT_ADDR
       - VAULT_DEV_ROOT_TOKEN_ID=$VAULT_TOKEN
+      - VAULT_SECRETS_FILE=$VAULT_SECRETS_FILE
       - tls_disable=1
     volumes:
       - ./vault/config:/config
