@@ -6,7 +6,7 @@ services:
     networks:
         - ascentnet
   ascent-discovery:
-    image: jluck/ascent-discovery
+    image: ascent/ascent-discovery
     hostname: ascent-discovery
     ports:
      - "8761:8761"
@@ -22,7 +22,7 @@ services:
     networks:
         - ascentnet
   ascent-config: 
-    image: jluck/ascent-config
+    image: ascent/ascent-config
     hostname: ascent-config
     ports:
      - "8760:8760"
@@ -40,7 +40,7 @@ services:
     networks:
         - ascentnet
   ascent-gateway:
-    image: jluck/ascent-gateway
+    image: ascent/ascent-gateway
     hostname: ascent-gateway
     ports:
       - "8762:8762"
@@ -54,7 +54,7 @@ services:
     networks:
         - ascentnet
   ascent-dashboard:
-    image: jluck/ascent-dashboard
+    image: ascent/ascent-dashboard
     hostname: ascent-dashboard
     ports:
      - "8763:8763"
@@ -68,7 +68,7 @@ services:
     networks:
         - ascentnet
   ascent-zipkin:
-      image: jluck/ascent-zipkin
+      image: ascent/ascent-zipkin
       hostname: ascent-zipkin
       ports:
        - "8700:8700"
