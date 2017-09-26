@@ -143,6 +143,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   </dependencyManagement>
   
   <build>
+	  <finalName>${project.artifactId}</finalName>
 		<resources>
     		<resource>
 		        <directory>src/main/resources</directory>
@@ -179,7 +180,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 				<version>3.0.0-M1</version>
 				<configuration>
 					<failOnError>false</failOnError>
-					<jarOutputDirectory>${project.build.directory}/javadocs-jar</jarOutputDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -204,7 +204,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 							<Implementation-Build-Number>${BUILD_NUMBER}</Implementation-Build-Number>
 						</manifestEntries>
 					</archive>
-					<outputDirectory>${project.build.directory}/test-jar</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -285,7 +284,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -386,7 +384,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 								<id>default</id>
 								<goals>
 									<goal>build</goal>
-									<goal>push</goal>
 								</goals>
 							</execution>
 						</executions>
