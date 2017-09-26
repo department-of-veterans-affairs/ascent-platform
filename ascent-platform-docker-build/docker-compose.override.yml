@@ -7,41 +7,30 @@ services:
             context: ../../ascent-discovery
         environment:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-            - VAULT_ADDR=
-            - VAULT_TOKEN=
 
     ascent-config:
         build:
             context: ../../ascent-config
         environment:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-            - git.access_token=${GIT_ACCESS_TOKEN}
-            - VAULT_ADDR=
-            - VAULT_TOKEN=
     
     ascent-gateway:
         build:
             context: ../../ascent-gateway
         environment:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-            - VAULT_ADDR=
-            - VAULT_TOKEN=
 
     ascent-dashboard:
         build:
             context: ../../ascent-dashboard
         environment:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-            - VAULT_ADDR=
-            - VAULT_TOKEN=
     
     ascent-zipkin:
         build:
             context: ../../ascent-zipkin
         environment:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-            - VAULT_ADDR=
-            - VAULT_TOKEN=
 
 networks:
     ascentnet:

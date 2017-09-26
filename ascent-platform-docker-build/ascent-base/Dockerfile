@@ -1,7 +1,5 @@
 FROM java:8
 
-ENV VAULT_ADDR ""
-ENV VAULT_TOKEN ""
 ENV ENVCONSUL_CONFIG "/envconsul-config.hcl"
 
 # Install consul-template to populate secret data into files on disk
