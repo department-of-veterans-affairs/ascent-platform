@@ -1,16 +1,17 @@
 version: '3'
 services:
   vault:
-    image: vault
+    image: ascent/ascent-vault
     hostname: vault
     cap_add:
       - IPC_LOCK
     environment:
       - SKIP_SETCAP=$SKIP_SETCAP
-      - VAULT_ADDR=$VAULT_ADDR
-      - VAULT_DEV_ROOT_TOKEN_ID=$VAULT_TOKEN
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
       - VAULT_SECRETS_FILE=$VAULT_SECRETS_FILE
       - tls_disable=1
+      - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
     volumes:
       - ./vault/config:/config
     ports:

@@ -143,6 +143,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   </dependencyManagement>
   
   <build>
+	  <finalName>${project.artifactId}</finalName>
 		<resources>
     		<resource>
 		        <directory>src/main/resources</directory>
@@ -295,6 +296,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 							<goal>jar</goal>
 							<goal>test-jar</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/sources</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -372,44 +376,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<build>
 				<plugins>
 					<plugin>
-		                <groupId>com.spotify</groupId>
-		                <artifactId>docker-maven-plugin</artifactId>
-		                <version>0.4.13</version>
-		                <configuration>
-		                    <imageName>${project.artifactId}</imageName>
-		                    <baseImage>java:8</baseImage>
-		                    <entryPoint>["java", "${docker.java.opts.ms}", "${docker.java.opts.mx}", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
-		                    <!-- copy the service's jar file from target into the root directory of the image -->
-		                    <resources>
-		                        <resource>
-		                            <targetPath>/</targetPath>
-		                            <directory>${project.build.directory}</directory>
-		                            <include>${project.build.finalName}.jar</include>
-		                        </resource>
-		                    </resources>
-		                    <serverId>docker-hub</serverId>
-		                    <imageName>ascent/${project.artifactId}</imageName>
-		                </configuration>
-		                <executions>
-		                    <execution>
-		                        <id>build-image</id>
-		                        <phase>package</phase>
-		                        <goals>
-		                            <goal>build</goal>
-		                        </goals>
-		                    </execution>
+						<groupId>com.spotify</groupId>
+						<artifactId>dockerfile-maven-plugin</artifactId>
+						<version>1.3.6</version>
+						<executions>
 							<execution>
-						      <id>push-image</id>
-						      <phase>deploy</phase>
-						      <goals>
-						        <goal>push</goal>
-						      </goals>
-						      <configuration>
-						        <imageName>ascent/${project.artifactId}</imageName>
-						      </configuration>
-						    </execution>
-		                </executions>
-		            </plugin>
+								<id>default</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<repository>ascent/${project.artifactId}</repository>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
