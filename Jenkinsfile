@@ -14,7 +14,6 @@ pipeline {
         }
       }
     }
-
     stage('Ascent Base') {
       tools {
         docker 'latest'
