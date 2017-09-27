@@ -8,7 +8,7 @@ pipeline {
       }
       steps {
         dir('ascent-platform-parent') {
-          sh 'mvn -Dmaven.wagon.http.ssl.insecure=true clean install'
+          sh 'mvn -Dmaven.wagon.http.ssl.insecure=true clean deploy'
         }
       }
       // post {
