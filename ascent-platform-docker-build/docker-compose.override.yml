@@ -17,6 +17,8 @@ services:
             - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
             - VAULT_ADDR=http://vault:8200
             - VAULT_TOKEN=vaultroot
+            - VAULT_HOST=vault
+            - VAULT_SCHEME=http
     ascent-gateway:
         build:
             context: ../../ascent-gateway
