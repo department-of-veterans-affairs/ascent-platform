@@ -31,14 +31,14 @@ pipeline {
               sh 'docker build -t ascent/ascent-base .'
             }
           }
-          post {
-            success {
-              withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin'
-                sh 'docker push ascent/ascent-base'
-              }
-            }
-          }
+          // post {
+          //   success {
+          //     withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+          //       sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin'
+          //       sh 'docker push ascent/ascent-base'
+          //     }
+          //   }
+          // }
         }
       }
     }
