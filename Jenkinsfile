@@ -2,16 +2,18 @@ pipeline {
   agent any
   
   stages {
-    stage('Maven Build') {
+    stage('Build Ascent Parent POM') {
       tools {
         maven 'Maven'
       }
-      steps {
-        sh 'mvn -Dmaven.wagon.http.ssl.insecure=true clean install'
-      }
-      post {
-        always {
-          junit 'target/surefire-reports/**/*.xml'
+      dir('ascent-platform-parent') {
+        steps {
+          sh 'mvn -Dmaven.wagon.http.ssl.insecure=true clean install'
+        }
+        post {
+          always {
+            junit 'target/surefire-reports/**/*.xml'
+          }
         }
       }
     }
