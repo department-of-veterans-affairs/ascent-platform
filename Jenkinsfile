@@ -6,14 +6,14 @@ pipeline {
       tools {
         maven 'Maven'
       }
-      dir('ascent-platform-parent') {
-        steps {
+      steps {
+        dir('ascent-platform-parent') {
           sh 'mvn -Dmaven.wagon.http.ssl.insecure=true clean install'
         }
-        post {
-          always {
-            junit 'target/surefire-reports/**/*.xml'
-          }
+      }
+      post {
+        always {
+          junit 'target/surefire-reports/**/*.xml'
         }
       }
     }
