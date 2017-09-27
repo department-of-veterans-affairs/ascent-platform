@@ -20,27 +20,25 @@ pipeline {
       // }
     }
 
-    stage('Build Docker Images') {
-        parallel {
-          stage('Ascent Base') {
-            tools {
-              docker 'latest'
-            }
-            steps {
-              dir('ascent-platform-docker-build/ascent-base') {
-                sh 'docker build -t ascent/ascent-base .'
-              }
-            }
-            post {
-              success {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
-                  sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin'
-                  sh 'docker push ascent/ascent-base'
-                }
-              }
-            }
+    stage('Ascent Base') {
+      tools {
+        docker 'latest'
+      }
+      steps {
+        dir('ascent-platform-docker-build/ascent-base') {
+          sh 'docker build -t ascent/ascent-base .'
+        }
+      }
+      post {
+        success {
+          withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
+            sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USER --password-stdin'
+            sh 'docker push ascent/ascent-base'
           }
         }
       }
+    }
+
+    
   }
 }
