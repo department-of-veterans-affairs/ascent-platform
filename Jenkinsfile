@@ -18,8 +18,9 @@ pipeline {
       //     junit '**/target/surefire-reports/**/*.xml'
       //   }
       // }
+    }
 
-      stage('Build Docker Images') {
+    stage('Build Docker Images') {
         parallel {
           stage('Ascent Base') {
             tools {
@@ -41,6 +42,5 @@ pipeline {
           }
         }
       }
-    }
   }
 }
