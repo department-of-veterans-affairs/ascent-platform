@@ -15,12 +15,10 @@ pipeline {
       }
     }
     stage('Ascent Base') {
-      tools {
-        org.jenkinsci.plugins.docker.commons.tools.DockerTool 'latest'
-      }
       steps {
         dir('ascent-platform-docker-build/ascent-base') {
-          sh 'docker build -t ascent/ascent-base .'
+          docker.build("ascent/ascent-base")
+          //sh 'docker build -t ascent/ascent-base .'
         }
       }
       // post {
