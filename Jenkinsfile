@@ -7,7 +7,7 @@ pipeline {
         maven 'Maven'
       }
       steps {
-        sh 'mvn clean install'
+        sh 'mvn -Dmaven.wagon.http.ssl.insecure=true clean install'
       }
       post {
         always {
