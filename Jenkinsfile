@@ -8,7 +8,9 @@ pipeline {
       }
       steps {
         dir('ascent-platform-parent') {
-          sh 'mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true clean deploy'
+          withCredentials([usernamePasswordMultiBinding(credentialsId: 'nexus', usernameVariable: 'DEPLOY_USER', passwordVariable: 'DEPLOY_PASSWORD')]) {
+            sh 'mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -s ../settings.xml clean deploy'
+          }
         }
       }
       // post {
