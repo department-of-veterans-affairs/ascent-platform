@@ -31,7 +31,7 @@ pipeline {
       //       sh 'docker push ascent/ascent-base'
       //     }
       //   }
-      }
+      // }
     }
 
 
