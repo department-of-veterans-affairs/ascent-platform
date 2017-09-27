@@ -17,8 +17,7 @@ pipeline {
     stage('Ascent Base') {
       steps {
         dir('ascent-platform-docker-build/ascent-base') {
-          docker.build("ascent/ascent-base")
-          //sh 'docker build -t ascent/ascent-base .'
+          sh 'docker build -t ascent/ascent-base .'
         }
       }
       // post {
