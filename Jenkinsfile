@@ -18,7 +18,7 @@ pipeline {
       steps {
         dir('ascent-platform-docker-build/ascent-base') {
           script {
-            def image = docker.build('ascent/ascent-base')
+            def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
           }
         }
       }
