@@ -2,6 +2,7 @@ pipeline {
   agent any
 
   triggers {
+    //Check SCM every 5 minutes
     pollSCM('*/5 * * * *')
   }
   
