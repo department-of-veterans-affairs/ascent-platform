@@ -1,5 +1,9 @@
 pipeline {
   agent any
+
+  triggers {
+    pollSCM('*/5 * * * *')
+  }
   
   stages {
     stage('Build Ascent Parent POM') {
