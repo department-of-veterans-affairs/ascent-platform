@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ######################################
 ## Shell script to run `mvn clean install` on each of the ascent projects
@@ -23,7 +23,7 @@ do
 	# try git@github.com:username/repo-name.git first
     name=$(echo $project | awk -F/ '{print $2}')
 	if ! test -n "$name"; then
-	    name=$(echo $project | awk -F/ '{print $4}')
+	    name=$(echo $project | awk -F/ '{print $5}')
 	fi
 
 	# try https://github.com/username/repo-name.git
@@ -32,8 +32,8 @@ do
 	    continue
 	fi
 
-	name=${name%.git}	
-	
+	name=${name%.git}
+	echo $name
 	# if the directory does not exist, clone the repos and run maven
 	if [ ! -d "name" ]; then
 		git clone $project ../$name
