@@ -11,14 +11,14 @@ services:
     ports:
      - "8761:8761"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-      - DISCOVERY_USERNAME=${DISCOVERY_USERNAME}
-      - DISCOVERY_PASSWORD=${DISCOVERY_PASSWORD}
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://$DISCOVERY_USERNAME:$DISCOVERY_PASSWORD@localhost:8761"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
+      - SPRING_PROFILES_ACTIVE=aws-prod
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+    # healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://$DISCOVERY_USERNAME:$DISCOVERY_PASSWORD@localhost:8761"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 5
     networks:
         - ascentnet
   ascent-config: 
@@ -26,16 +26,17 @@ services:
     hostname: ascent-config
     ports:
      - "8760:8760"
-    environment: 
-      - git.access_token=${GIT_ACCESS_TOKEN}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
-    volumes:
-      - ~/.ssh:/root/.ssh
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:8760/info"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
+    environment:
+      - SPRING_PROFILES_ACTIVE=aws-prod
+      - VAULT_ADDR=https://${VAULT_HOST}:8200
+      - VAULT_TOKEN=${VAULT_TOKEN}
+      - VAULT_HOST=${VAULT_HOST}
+      - VAULT_SCHEME=https
+    # healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://localhost:8760/info"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 5
     depends_on:
       - ascent-discovery
     networks:
@@ -46,7 +47,9 @@ services:
     ports:
       - "8762:8762"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=aws-prod
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     depends_on:
       - ascent-config
       - ascent-discovery
@@ -58,7 +61,9 @@ services:
     ports:
      - "8763:8763"
     environment:
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=aws-prod
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     depends_on:
       - ascent-config
       - ascent-discovery
@@ -70,7 +75,9 @@ services:
       ports:
        - "8700:8700"
       environment:
-        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+        - SPRING_PROFILES_ACTIVE=aws-prod
+        - VAULT_ADDR=${VAULT_ADDR}
+        - VAULT_TOKEN=${VAULT_TOKEN}      
       depends_on: 
         - ascent-discovery
         - ascent-config

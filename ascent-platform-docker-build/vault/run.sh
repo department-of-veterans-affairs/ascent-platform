@@ -38,7 +38,7 @@ if [[ -f "$VAULT_SECRETS_FILE" ]]; then
         #echo "Key: ${path2}"
         jq -rj ".\"${path2}\"" < "/tmp/value" > /tmp/value2
         #echo "Value $(cat /tmp/value2)"
-        keyval="${path2}=$(cat /tmp/value2) "
+        keyval="${path2}=$(eval echo $(cat /tmp/value2)) "
         finalstring="$finalstring$keyval"
     done
     #echo "Vault Command: ${path} $finalstring"
