@@ -14,8 +14,7 @@ pipeline {
         }
       }
     }
-    stage('Docker Image Builds') {
-      parallel {
+
         stage('Ascent Base') {
           steps {
             dir('ascent-platform-docker-build/ascent-base') {
@@ -51,8 +50,7 @@ pipeline {
             }
           }
         }
-      }
-    }
+
 
     
 
