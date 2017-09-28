@@ -20,24 +20,24 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<repository>
 			<id>vets</id>
 			<name>Vets.gov Nexus Repository</name>
-			<url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository/maven-public/</url>
+			<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>vets</id>
 			<name>Vets.gov Nexus Repository</name>
-			<url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository/maven-public/</url>
+			<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
   <distributionManagement>
 	<repository>
 		<id>vets.release</id>
-		<url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository/maven-releases/</url>
+		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/repositories/releases/</url>
 	</repository>
 	<snapshotRepository>
 		<id>vets.snapshot</id>
-		<url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository/maven-snapshots/</url>
+		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/repositories/snapshots/</url>
 	</snapshotRepository>
   </distributionManagement>
 

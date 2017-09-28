@@ -3,6 +3,15 @@
       xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                           https://maven.apache.org/xsd/settings-1.0.0.xsd">
 
+      <mirrors>
+            <mirror>
+                  <id>vets.gov</id>
+                  <name>Vets.gov Nexus Repository</name>
+                  <url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository/maven-public</url>
+                  <mirrorOf>*</mirrorOf>
+            </mirror>
+      </mirrors>
+
       <servers>
             <server>
                   <id>vets.release</id>
