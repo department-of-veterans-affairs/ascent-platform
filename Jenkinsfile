@@ -20,14 +20,6 @@ pipeline {
           script {
             docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2375') {
               def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
-            }
-          }
-        }
-      }
-      post {
-        success {
-          script {
-            docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2375') {
               image.push()
               if (env.BRANCH_NAME == 'development') {
                 image.push('latest')
