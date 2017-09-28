@@ -24,4 +24,19 @@
                   <password>${DEPLOY_PASSWORD}</password>
             </server>
       </servers>
+
+      <profiles>
+            <profile>
+                  <id>ci</id>
+                  <activation>
+                        <activeByDefault>true</activeByDefault>
+                  </activation>
+
+                  <properties>
+                        <repo.baseurl>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository</repo.url>
+                        <repo.release>${repo.baseurl}/maven-releases</repo.release>
+                        <repo.snapshot>${repo.baseurl}/maven-snapshots</repo.snapshot>
+                  </properties>
+            </profile>
+      </profiles>
 </settings>

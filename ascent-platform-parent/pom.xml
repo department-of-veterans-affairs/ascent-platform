@@ -33,11 +33,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <distributionManagement>
 	<repository>
 		<id>vets.release</id>
-		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/repositories/releases/</url>
+		<url>${repo.release}</url>
 	</repository>
 	<snapshotRepository>
 		<id>vets.snapshot</id>
-		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/repositories/snapshots/</url>
+		<url>${repo.snapshot}</url>
 	</snapshotRepository>
   </distributionManagement>
 
@@ -45,6 +45,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	<java.version>1.8</java.version>
+	<repo.baseurl>http://csraciapp1.evss.srarad.com:8081/nexus/content</repo.baseurl>
+	<repo.release>${repo.baseurl}/repositories/releases</repo.release>
+	<repo.snapshot>${repo.baseurl}/repositories/snapshots</repo.snapshot>
 	<!-- Docker properties to add min and max memory for spring boot jar start up -->
 	<docker.java.opts.ms>-Xms32m</docker.java.opts.ms>
 	<docker.java.opts.mx>-Xmx256m</docker.java.opts.mx>
