@@ -18,7 +18,9 @@ pipeline {
       steps {
         dir('ascent-platform-docker-build/ascent-base') {
           script {
-            def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
+            docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2376', 'swarm-certs') {
+              def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
+            }
           }
         }
       }
