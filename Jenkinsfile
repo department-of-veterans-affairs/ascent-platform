@@ -18,10 +18,8 @@ pipeline {
       steps {
         dir('ascent-platform-docker-build/ascent-base') {
           script {
-            docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-              docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2375') {
-                def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
-              }
+            docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2375') {
+              def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
             }
           }
         }
@@ -29,9 +27,10 @@ pipeline {
       post {
         success {
           script {
-            docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-              docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2375') {
-                def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
+            docker.withServer('tcp://ip-10-247-80-51.us-gov-west-1.compute.internal:2375') {
+              def image = docker.build('ascent/ascent-base:${BRANCH_NAME}')
+
+              docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
                 image.push()
                 if (env.BRANCH_NAME == 'development') {
                   image.push('latest')
