@@ -8,7 +8,9 @@ pipeline {
         pollSCM('*/5 * * * *')
     }
 
-    mavenBuild {
-        directory = 'ascent-platform-parent'
+    stages {
+        mavenBuild {
+            directory = 'ascent-platform-parent'
+        }
     }
 }
