@@ -1,5 +1,5 @@
 @Library('ascent') _
 
-mavenBuild {
+mavenPipeline {
     directory = 'ascent-platform-parent'
 }
