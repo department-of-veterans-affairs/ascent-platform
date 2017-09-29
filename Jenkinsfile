@@ -1,5 +1,14 @@
 @Library('ascent') _
 
-mavenBuild {
-    directory = 'ascent-platform-parent'
+pipeline {
+    agent any
+
+    triggers {
+        //Check SCM every 5 minutes
+        pollSCM('*/5 * * * *')
+    }
+
+    mavenBuild {
+        directory = 'ascent-platform-parent'
+    }
 }
