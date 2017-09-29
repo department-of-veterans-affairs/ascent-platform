@@ -1,0 +1,42 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                          https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+      <mirrors>
+            <mirror>
+                  <id>vets.gov</id>
+                  <name>Vets.gov Nexus Repository</name>
+                  <url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository/maven-public</url>
+                  <mirrorOf>*</mirrorOf>
+            </mirror>
+      </mirrors>
+
+      <servers>
+            <server>
+                  <id>vets.release</id>
+                  <username>${DEPLOY_USER}</username>
+                  <password>${DEPLOY_PASSWORD}</password>
+            </server>
+            <server>
+                  <id>vets.snapshot</id>
+                  <username>${DEPLOY_USER}</username>
+                  <password>${DEPLOY_PASSWORD}</password>
+            </server>
+      </servers>
+
+      <profiles>
+            <profile>
+                  <id>ci</id>
+                  <activation>
+                        <activeByDefault>true</activeByDefault>
+                  </activation>
+
+                  <properties>
+                        <repo.baseurl>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/repository</repo.baseurl>
+                        <repo.release>${repo.baseurl}/maven-releases</repo.release>
+                        <repo.snapshot>${repo.baseurl}/maven-snapshots</repo.snapshot>
+                  </properties>
+            </profile>
+      </profiles>
+</settings>
