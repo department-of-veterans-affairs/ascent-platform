@@ -2,6 +2,7 @@
 
 CMD="java -Xms64m -Xmx256m -jar $JAR_FILE"
 
+export INSTANCE_HOST_NAME=$(hostname)
 
 if [[ $VAULT_TOKEN_FILE ]]; then
     VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
