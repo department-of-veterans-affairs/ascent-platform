@@ -23,7 +23,6 @@ services:
         - ascentnet
   ascent-config: 
     image: ascent/ascent-config
-    hostname: ascent-config
     ports:
      - "8760:8760"
     environment:
@@ -43,7 +42,6 @@ services:
         - ascentnet
   ascent-gateway:
     image: ascent/ascent-gateway
-    hostname: ascent-gateway
     ports:
       - "8762:8762"
     environment:
@@ -57,7 +55,6 @@ services:
         - ascentnet
   ascent-dashboard:
     image: ascent/ascent-dashboard
-    hostname: ascent-dashboard
     ports:
      - "8763:8763"
     environment:
@@ -71,7 +68,6 @@ services:
         - ascentnet
   ascent-zipkin:
       image: ascent/ascent-zipkin
-      hostname: ascent-zipkin
       ports:
        - "8700:8700"
       environment:
