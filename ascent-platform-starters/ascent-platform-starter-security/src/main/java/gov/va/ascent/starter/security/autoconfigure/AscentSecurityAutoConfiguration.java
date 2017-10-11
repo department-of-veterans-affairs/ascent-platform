@@ -53,20 +53,7 @@ public class AscentSecurityAutoConfiguration {
 			http.httpBasic().and()
 			.authorizeRequests()
 			.antMatchers(HttpMethod.GET, "/info").permitAll()//
-			.antMatchers("/actuator/**").permitAll()//
-			.antMatchers("/manage/**").authenticated()//
-			.antMatchers("/beans/**").authenticated()//
-			.antMatchers("/auditevents/**").authenticated()//
-			.antMatchers("/autoconfig/**").authenticated()//
-			.antMatchers("/configprops/**").authenticated()//
-			.antMatchers("/env/**").authenticated()//
-			.antMatchers("/dump/**").authenticated()//
-			.antMatchers("/health/**").authenticated()//
-			.antMatchers("/mappings/**").authenticated()//
-			.antMatchers("/metrics/**").authenticated()//
-			.antMatchers("/refresh/**").authenticated()//
-			.antMatchers("/trace/**").authenticated()//
-			.antMatchers("/loggers/**").authenticated()//
+			.antMatchers("/actuator/**").authenticated()//
 			.and().csrf().disable();   
         }
 
