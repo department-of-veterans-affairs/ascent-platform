@@ -60,7 +60,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	  <jacoco.reportDir>${jacoco.outputRootDir}/jacoco</jacoco.reportDir>
 	  <sonar.host.url>http://localhost:9000</sonar.host.url>
 	  <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-	  <sonar.jacoco.reportPath>${jacoco.dataFile}</sonar.jacoco.reportPath>
+	  <sonar.jacoco.reportPaths>${jacoco.dataFile}</sonar.jacoco.reportPaths>
 	  <sonar.profile.java>ASCENT</sonar.profile.java>
 	  <sonar.maven.plugin.version>3.3.0.603</sonar.maven.plugin.version>
 	  <include.int.tests.pattern>**/*IT.java,**/*Runner.java</include.int.tests.pattern>
