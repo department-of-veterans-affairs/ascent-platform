@@ -4,6 +4,10 @@ mavenPipeline {
     directory = 'ascent-platform-parent'
 }
 
+mavenPipeline {
+    directory = 'ascent-platform-starters'
+}
+
 dockerPipeline {
     directory = 'ascent-platform-docker-build/ascent-base'
     imageName = 'ascent/ascent-base'
