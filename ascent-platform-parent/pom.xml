@@ -162,6 +162,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 				<directory>src/main/resources/cert</directory>
 			</resource>
     	</resources>
+
 		<plugins>
 			<!-- repackages jar and war plugins so they can be executed with command line -->
 			<plugin>
@@ -358,6 +359,28 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 					<maxHeap>${fortify.maxHeap}</maxHeap>
 					<maxPermGen>${fortify.maxPermGen}</maxPermGen>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.0.0-M1</version>
+				<executions>
+					<execution>
+						<id>enforce-no-snapshots</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+						<rules>
+							<requireReleaseDeps>
+							<message>No Snapshot Dependencies Allowed!</message>
+							<onlyWhenRelease>true</onlyWhenRelease>
+							</requireReleaseDeps>
+						</rules>
+						<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
