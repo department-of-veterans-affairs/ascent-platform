@@ -11,14 +11,18 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
+
+import java.lang.reflect.Method;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -44,6 +48,26 @@ public class AscentCacheAutoConfigurationTests {
         assertNotNull(context);
         CacheManager cacheManager = context.getBean(CacheManager.class);
         assertNotNull(cacheManager);
+    }
+
+    @Test
+    public void testAscentCacheConfigurationKeyGenerator() throws Exception {
+        context = new AnnotationConfigApplicationContext();
+        EnvironmentTestUtils.addEnvironment(context, "spring.cache.type=redis", "ascent.cache.enabled=true");
+        context.register(RedisAutoConfiguration.class, AscentCacheAutoConfiguration.class, RedisCacheConfiguration.class);
+        context.refresh();
+        assertNotNull(context);
+        KeyGenerator keyGenerator = context.getBean(KeyGenerator.class);
+        String key = (String)keyGenerator.generate(new Object(),myMethod(),new Object());
+        assertNotNull(key);
+    }
+
+    public Method myMethod() throws NoSuchMethodException{
+        return getClass().getDeclaredMethod("someMethod");
+    }
+
+    public void someMethod(){
+        //do nothing
     }
 }
 

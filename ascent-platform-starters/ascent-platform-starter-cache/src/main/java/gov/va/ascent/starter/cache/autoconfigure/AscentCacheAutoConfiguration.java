@@ -18,7 +18,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 
 import java.lang.reflect.Method;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 
 /**
@@ -30,7 +29,7 @@ import java.util.Arrays;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class AscentCacheAutoConfiguration {
 
-    final static Logger LOGGER = LoggerFactory.getLogger(AscentCacheAutoConfiguration.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(AscentCacheAutoConfiguration.class);
 
     @Autowired
     private AscentCacheProperties ascentCacheProperties;
@@ -43,7 +42,7 @@ public class AscentCacheAutoConfiguration {
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(
             RedisConnectionFactory redisConnectionFactory)
-            throws UnknownHostException {
+            {
         RedisTemplate<Object, Object> template = new RedisTemplate<Object, Object>();
         template.setConnectionFactory(redisConnectionFactory);
         template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());

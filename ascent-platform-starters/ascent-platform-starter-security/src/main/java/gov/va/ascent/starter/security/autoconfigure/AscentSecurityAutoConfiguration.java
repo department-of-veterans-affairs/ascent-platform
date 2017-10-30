@@ -44,6 +44,7 @@ public class AscentSecurityAutoConfiguration {
         private SecurityProperties securityProperties;
 		
 		@Autowired
+        @Override
 		protected void configure(AuthenticationManagerBuilder auth) {
 		   addInMemoryAuthenticationProvider(auth);
 		}
