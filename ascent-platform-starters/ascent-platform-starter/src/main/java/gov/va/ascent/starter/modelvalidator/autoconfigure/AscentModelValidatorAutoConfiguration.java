@@ -1,4 +1,4 @@
-package gov.va.ascent.starter.ModelValidator.autoconfigure;
+package gov.va.ascent.starter.modelvalidator.autoconfigure;
 
 import gov.va.ascent.framework.validation.ModelValidator;
 
