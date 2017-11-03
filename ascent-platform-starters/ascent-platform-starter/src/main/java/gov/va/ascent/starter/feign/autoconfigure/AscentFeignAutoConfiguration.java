@@ -25,9 +25,12 @@ import feign.hystrix.SetterFactory;
 @Configuration
 public class AscentFeignAutoConfiguration {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
 
-	private String groupKey = "dafaultGroup";
+	private String groupKey = "defaultGroup";
+
+	@Autowired
+	public TokenFeignRequestInterceptor feignRequestInterceptor;
 
 	public String getGroupKey() {
 		return groupKey;
@@ -36,9 +39,6 @@ public class AscentFeignAutoConfiguration {
 	public void setGroupKey(String groupKey) {
 		this.groupKey = groupKey;
 	}
-
-	@Autowired
-	public TokenFeignRequestInterceptor feignRequestInterceptor;
 	
     @Bean
     @ConditionalOnMissingBean

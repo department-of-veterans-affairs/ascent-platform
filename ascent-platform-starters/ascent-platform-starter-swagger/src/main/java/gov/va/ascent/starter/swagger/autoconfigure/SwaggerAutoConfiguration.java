@@ -42,6 +42,8 @@ public class SwaggerAutoConfiguration {
     private static final String MESSAGE_403 = "The request is not authorized.  Please verify credentials used in the request.";
     private static final String MESSAGE_400 = "There was an error encountered processing the Request.  Response will contain a  \"messages\" element that will provide further information on the error.  This request shouldn\'t be retried until corrected.";
     private static final String MESSAGE_500 = "There was an error encountered processing the Request.  Response will contain a  \"messages\" element that will provide further information on the error.  Please retry.  If problem persists, please contact support with a copy of the Response.";
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String SERVICE_RESPONSE = "ServiceResponse";
 
     @Autowired
     private SwaggerProperties swaggerProperties;
@@ -76,7 +78,7 @@ public class SwaggerAutoConfiguration {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("Authorization", "Authorization", "header");
+        return new ApiKey(AUTHORIZATION, AUTHORIZATION, "header");
     }
 
     private SecurityContext securityContext() {
@@ -93,20 +95,20 @@ public class SwaggerAutoConfiguration {
         authorizationScopes[0] = authorizationScope;
 
         List<SecurityReference> list = new ArrayList<>();
-        list.add(new SecurityReference("Authorization", authorizationScopes));
+        list.add(new SecurityReference(AUTHORIZATION, authorizationScopes));
         return list;
     }
 
     private List<ResponseMessage> globalResponseMessages(){
         List<ResponseMessage> responseMessages = new ArrayList<>();
         responseMessages.add(new ResponseMessageBuilder().code(200).message(MESSAGE_200).
-                responseModel(new ModelRef("ServiceResponse")).build());
+                responseModel(new ModelRef(SERVICE_RESPONSE)).build());
         responseMessages.add(new ResponseMessageBuilder().code(400).message(MESSAGE_400).
-                responseModel(new ModelRef("ServiceResponse")).build());
+                responseModel(new ModelRef(SERVICE_RESPONSE)).build());
         responseMessages.add(new ResponseMessageBuilder().code(500).message(MESSAGE_500).
-                responseModel(new ModelRef("ServiceResponse")).build());
+                responseModel(new ModelRef(SERVICE_RESPONSE)).build());
         responseMessages.add(new ResponseMessageBuilder().code(403).message(MESSAGE_403).
-                responseModel(new ModelRef("ServiceResponse")).build());
+                responseModel(new ModelRef(SERVICE_RESPONSE)).build());
         return responseMessages;
     }
 }

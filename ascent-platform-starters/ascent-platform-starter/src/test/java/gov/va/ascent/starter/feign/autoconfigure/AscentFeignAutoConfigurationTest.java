@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerPropertiesAutoConfiguration;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import static org.junit.Assert.*;
@@ -30,7 +31,16 @@ public class AscentFeignAutoConfigurationTest {
         		TokenFeignRequestInterceptor.class, AscentFeignAutoConfiguration.class);
         context.refresh();
         assertNotNull(context);
-        assertNotNull(this.context.getBean(TokenFeignRequestInterceptor.class));
+        TokenFeignRequestInterceptor tokenFeignRequestInterceptor = this.context.getBean(TokenFeignRequestInterceptor.class);
+        assertNotNull(tokenFeignRequestInterceptor);
 
+    }
+
+    @Test
+    public void testGetterSettingAscentFiegnConfig() throws Exception {
+        AscentFeignAutoConfiguration ascentFeignAutoConfiguration = new AscentFeignAutoConfiguration();
+        assertEquals("defaultGroup", ascentFeignAutoConfiguration.getGroupKey());
+        ascentFeignAutoConfiguration.setGroupKey("NewGroupKey");
+        assertEquals("NewGroupKey", ascentFeignAutoConfiguration.getGroupKey());
     }
 }
