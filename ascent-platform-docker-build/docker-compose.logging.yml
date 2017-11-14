@@ -53,6 +53,9 @@ services:
             driver: fluentd
             options:
                 labels: "gov.va.ascent.component"
+                fluentd-async-connect: true
+                fluentd-max-retries: 10
+                fluentd-retry-wait: 30
         deploy:
             placement:
                 constraints: [node.role == worker]
