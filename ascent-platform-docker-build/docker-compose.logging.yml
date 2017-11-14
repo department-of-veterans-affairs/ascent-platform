@@ -25,26 +25,16 @@ services:
                 reservations:
                     memory: 1536m
 
-    filebeat:
-        image: docker.io/ascent/ascent-filebeat
-        volumes:
-            - "/var/lib/docker-latest/containers:/dockerlogs:ro"
-        networks: 
+    fluentd:
+        image: ascent/fluentd
+        ports:
+            - 24224:24224
+        networks:
             - logging
-            - ascentnet
-        depends_on:
-            - logstash
-        deploy:
-            mode: global
-    
-    logstash:
-        image: docker.io/ascent/ascent-logstash
-        networks: 
-            - logging
-            - ascentnet
         depends_on:
             - elasticsearch
         deploy:
+            mode: global
             placement:
                 constraints: [node.role == worker]
 
@@ -60,7 +50,7 @@ services:
         labels:
             gov.va.ascent.component: "logging"
         logging:
-            driver: json-file
+            driver: fluentd
             options:
                 labels: "gov.va.ascent.component"
         deploy:
