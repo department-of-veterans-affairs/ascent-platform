@@ -5,6 +5,12 @@ services:
     hostname: ascent-amqp
     networks:
         - ascentnet
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
   ascent-discovery:
     image: ascent/ascent-discovery
     hostname: ascent-discovery
@@ -14,11 +20,12 @@ services:
       - SPRING_PROFILES_ACTIVE=aws-prod
       - VAULT_ADDR=${VAULT_ADDR}
       - VAULT_TOKEN=${VAULT_TOKEN}
-    # healthcheck:
-    #     test: ["CMD", "curl", "-f", "http://$DISCOVERY_USERNAME:$DISCOVERY_PASSWORD@localhost:8761"]
-    #     interval: 30s
-    #     timeout: 10s
-    #     retries: 5
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
     networks:
         - ascentnet
   ascent-config: 
@@ -31,11 +38,12 @@ services:
       - VAULT_TOKEN=${VAULT_TOKEN}
       - VAULT_HOST=${VAULT_HOST}
       - VAULT_SCHEME=https
-    # healthcheck:
-    #     test: ["CMD", "curl", "-f", "http://localhost:8760/info"]
-    #     interval: 30s
-    #     timeout: 10s
-    #     retries: 5
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
     depends_on:
       - ascent-discovery
     networks:
@@ -48,6 +56,12 @@ services:
       - SPRING_PROFILES_ACTIVE=aws-prod
       - VAULT_ADDR=${VAULT_ADDR}
       - VAULT_TOKEN=${VAULT_TOKEN}
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
     depends_on:
       - ascent-config
       - ascent-discovery
@@ -61,25 +75,37 @@ services:
       - SPRING_PROFILES_ACTIVE=aws-prod
       - VAULT_ADDR=${VAULT_ADDR}
       - VAULT_TOKEN=${VAULT_TOKEN}
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
     depends_on:
       - ascent-config
       - ascent-discovery
     networks:
         - ascentnet
   ascent-zipkin:
-      image: ascent/ascent-zipkin
-      ports:
-       - "8700:8700"
-      environment:
-        - SPRING_PROFILES_ACTIVE=aws-prod
-        - VAULT_ADDR=${VAULT_ADDR}
-        - VAULT_TOKEN=${VAULT_TOKEN}      
-      depends_on: 
-        - ascent-discovery
-        - ascent-config
-      networks: 
-        - ascentnet
-        - logging 
+    image: ascent/ascent-zipkin
+    ports:
+      - "8700:8700"
+    environment:
+      - SPRING_PROFILES_ACTIVE=aws-prod
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN} 
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"     
+    depends_on: 
+      - ascent-discovery
+      - ascent-config
+    networks: 
+      - ascentnet
+      - logging 
 networks:
   ascentnet:
     driver: overlay
