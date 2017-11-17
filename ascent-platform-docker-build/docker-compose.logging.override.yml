@@ -2,23 +2,6 @@
 version: '3'
 
 services:
-    filebeat:
-        build:
-            context: ./filebeat
-        # Enable to turn on filebeat debugging
-        #command: ["filebeat", "-e", "-d", "publish"]
-        environment: 
-           - VAULT_TOKEN=
-           - VAULT_ADDR=
-        volumes:
-            - "/var/lib/docker/containers:/dockerlogs:ro"
-    logstash:
-        build:
-            context: ./logstash
-        environment: 
-           - VAULT_TOKEN=
-           - VAULT_ADDR=
-    
     elasticsearch:
         build:
             context: ./elasticsearch
@@ -35,17 +18,16 @@ services:
         environment: 
             - VAULT_TOKEN=
             - VAULT_ADDR=
-    
-    # vault:
-    #     image: vault
-    #     networks: 
-    #         - logging
-    #     ports: 
-    #         - 8200:8200
-    #     environment:
-    #         - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
-    #     cap_add:
-    #         - IPC_LOCK
+        logging:
+            driver: fluentd
+            options:
+                fluentd-async-connect: "true"
+                fluentd-max-retries: "10"
+                fluentd-retry-wait: "30s"    
+
+    fluentd:
+        build:
+            context: ./fluentd
 
 networks:
   ascentnet:
