@@ -24,6 +24,11 @@ dockerPipeline {
 }
 
 dockerPipeline {
+    directory = 'ascent-platform-docker-build/fluentd'
+    imageName = 'ascent/fluentd'
+}
+
+dockerPipeline {
     directory = 'ascent-platform-docker-build/elasticsearch'
     imageName = 'ascent/ascent-elasticsearch'
 }
