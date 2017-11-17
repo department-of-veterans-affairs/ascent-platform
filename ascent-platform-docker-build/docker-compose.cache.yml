@@ -3,7 +3,8 @@ version: '3'
 services:
                 
     redis-master:
-      image: redis:4.0.1-alpine
+      image: redis:4.0.2-alpine
+      command: redis-server --appendonly no --save "" --repl-diskless-sync yes
       volumes:
         - "./.data:/data"
       ports:
@@ -13,8 +14,8 @@ services:
         - ascentnet
         
     redis-slave:
-      image: redis:4.0.1-alpine
-      command: redis-server --slaveof redis-master 6379
+      image: redis:4.0.2-alpine
+      command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes
       links:
         - redis-master
       volumes:
