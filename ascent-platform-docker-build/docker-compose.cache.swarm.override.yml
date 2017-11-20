@@ -1,0 +1,10 @@
+#Overrides for local development.
+version: '3'
+
+networks:
+    ascentnet:
+        driver: bridge
+    host:
+        driver: bridge
+    logging:
+        driver: bridge
