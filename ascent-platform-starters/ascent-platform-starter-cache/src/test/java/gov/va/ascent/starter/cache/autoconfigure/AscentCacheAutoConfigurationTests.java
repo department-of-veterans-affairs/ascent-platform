@@ -1,5 +1,10 @@
 package gov.va.ascent.starter.cache.autoconfigure;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.lang.reflect.Method;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -17,13 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
-
-
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by vgadda on 8/11/17.

@@ -1,19 +1,18 @@
 package gov.va.ascent.starter.swagger.autoconfigure;
 
-import com.fasterxml.classmate.TypeResolver;
-import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+
+import com.fasterxml.classmate.TypeResolver;
+
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 public class SwaggerAutoConfigurationTest {

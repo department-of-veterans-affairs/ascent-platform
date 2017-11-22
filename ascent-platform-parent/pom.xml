@@ -15,9 +15,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <description>Ascent Platform Parent</description>
   
   <properties>
-	<!-- ascent library versions -->
+  	<!-- ascent starter projects version -->
 	<ascent.starter.version>0.0.1-SNAPSHOT</ascent.starter.version>
+	<!-- ascent test framework version -->
 	<ascent.test.framework.version>0.0.1-SNAPSHOT</ascent.test.framework.version>
+	<!-- ascent framework library version -->
+	<ascent.framework.version>0.0.1-SNAPSHOT</ascent.framework.version>
+	<!-- ascent security library version -->
+	<ascent.security.version>0.0.1-SNAPSHOT</ascent.security.version>
   </properties>
     
   <dependencyManagement>
@@ -39,6 +44,17 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>1.5.4.RELEASE</version>
         </dependency>
+		<!-- Ascent Libraries -->
+	  	<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-framework</artifactId>
+			<version>${ascent.framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-security</artifactId>
+			<version>${ascent.security.version}</version>
+		</dependency>
 		<!-- Ascent starters-->
 		<dependency>
 			<groupId>gov.va.ascent</groupId>

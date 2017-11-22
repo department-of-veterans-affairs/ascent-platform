@@ -2,10 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <groupId>gov.va.ascent</groupId>
-    <artifactId>ascent-platform-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../ascent-platform-parent</relativePath>
+	<groupId>gov.va.ascent</groupId>
+	<artifactId>ascent-platform-parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<relativePath>../ascent-platform-parent</relativePath>
   </parent>
   
   <artifactId>ascent-platform-starters</artifactId>
@@ -14,17 +14,12 @@
   <description>Ascent Platform Starters</description>
   
   <modules>
-  	<module>ascent-platform-starter</module>
+  	<module>ascent-platform-starter-security</module>
 	<module>ascent-platform-starter-swagger</module>
-	<module>ascent-platform-starter-security</module>
 	<module>ascent-platform-starter-cache</module>
 	<module>ascent-platform-starter-logger</module>
+	<module>ascent-platform-starter</module>
   </modules>
-
-  <properties>
-    <ascent.security.version>0.0.1-SNAPSHOT</ascent.security.version>
-    <ascent.framework.version>0.0.1-SNAPSHOT</ascent.framework.version>
-  </properties>
 
   <dependencyManagement>
     <dependencies>
