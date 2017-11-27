@@ -38,6 +38,7 @@ services:
       - VAULT_TOKEN=${VAULT_TOKEN}
       - VAULT_HOST=${VAULT_HOST}
       - VAULT_SCHEME=https
+      - BASE_DIR=/configrepo/repo
     logging:
       driver: fluentd
       options:
@@ -46,6 +47,8 @@ services:
         fluentd-retry-wait: "30s"
     depends_on:
       - ascent-discovery
+    volumes:
+      - configrepo:/configrepo
     networks:
         - ascentnet
   ascent-gateway:
@@ -111,3 +114,6 @@ networks:
     driver: overlay
   logging:
     driver: overlay
+volumes:
+  configrepo:
+  
