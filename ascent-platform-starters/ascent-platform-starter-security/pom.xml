@@ -19,11 +19,6 @@
             <groupId>gov.va.ascent</groupId>
             <artifactId>ascent-framework</artifactId>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
