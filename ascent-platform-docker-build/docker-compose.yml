@@ -28,6 +28,25 @@ services:
         fluentd-retry-wait: "30s"
     networks:
         - ascentnet
+  ascent-discovery-peer:
+    image: ascent/ascent-discovery
+    hostname: ascent-discovery-peer
+    ports:
+     - "8861:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=aws-prod
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    depends_on:
+      - ascent-discovery
+    networks:
+        - ascentnet
   ascent-config: 
     image: ascent/ascent-config
     ports:
