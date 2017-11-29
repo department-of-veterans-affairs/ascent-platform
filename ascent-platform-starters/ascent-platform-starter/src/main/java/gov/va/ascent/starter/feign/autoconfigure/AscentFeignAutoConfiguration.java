@@ -2,7 +2,6 @@ package gov.va.ascent.starter.feign.autoconfigure;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,9 +27,6 @@ public class AscentFeignAutoConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
 
 	private String groupKey = "defaultGroup";
-
-	@Autowired
-	public TokenFeignRequestInterceptor feignRequestInterceptor;
 
 	public String getGroupKey() {
 		return groupKey;
@@ -58,7 +54,7 @@ public class AscentFeignAutoConfiguration {
 	      .withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
 	      .andCommandKey(HystrixCommandKey.Factory.asKey(commandKey));
 	  };
-	  return HystrixFeign.builder().setterFactory(commandKeyIsRequestLine).requestInterceptor(feignRequestInterceptor);
+	  return HystrixFeign.builder().setterFactory(commandKeyIsRequestLine).requestInterceptor(tokenFeignRequestInterceptor());
 	}
 
 }    
