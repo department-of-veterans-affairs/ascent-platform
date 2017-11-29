@@ -1,18 +1,31 @@
 #!/bin/bash
-export SENTINEL_HOSTNAME=$1
-export REDIS_MASTER_HOSTNAME=$2
-export REDIS_SLAVE_HOSTNAME=$3
+#Create 3 nodes for our swarm. One manager and two workers.
+docker-machine create --driver virtualbox \
+  --virtualbox-memory 2048 \
+  swarm-manager1
+docker-machine create --driver virtualbox swarm-node1
+docker-machine create --driver virtualbox swarm-node2
 
-if [ -z $SENTINEL_HOSTNAME ] || [ -z $REDIS_MASTER_HOSTNAME ] || [ -z $REDIS_SLAVE_HOSTNAME ] ; then
-  echo "Argument missing" >&2
-  exit 1;
-fi
 
-export SENTINEL_IP=192.168.99.106
-export REDIS_MASTER_IP=192.168.99.108
 
-echo "Sentinel: $SENTINEL_HOSTNAME -  $SENTINEL_IP"
-echo "Redis master: $REDIS_MASTER_HOSTNAME - $REDIS_MASTER_IP"
-echo "Redis slave: $REDIS_SLAVE_HOSTNAME"
+#Connect to the manager node and initialize our swarm
+export MANAGER_IP="$(docker-machine ip swarm-manager1)"
+docker-machine ssh swarm-manager1 "docker swarm init --advertise-addr $MANAGER_IP"
 
-docker stack deploy -c docker-compose.cache.swarm.yml rha
+#Save the swarm tokens so we can join our worker nodes
+export WORKER_TOKEN=$(docker-machine ssh swarm-manager1 "docker swarm join-token -q worker")
+export MANAGER_TOKEN=$(docker-machine ssh swarm-manager1 "docker swarm join-token -q manager")
+
+#Join our worker nodes to the swarm
+docker-machine ssh swarm-node1 "docker swarm join --token $WORKER_TOKEN $MANAGER_IP:2377"
+docker-machine ssh swarm-node2 "docker swarm join --token $WORKER_TOKEN $MANAGER_IP:2377"
+
+#Connect to the swarm manager
+eval $(docker-machine env swarm-manager1)
+
+#Set labels on nodes
+docker node update --label-add type=master swarm-node1
+docker node update --label-add type=slave swarm-node2
+
+docker-compose -f docker-compose.cache.swarm.yml -f docker-compose.cache.swarm.override.yml config > docker-stack.yml
+docker stack deploy --compose-file docker-stack.yml redis-ha

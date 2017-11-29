@@ -11,7 +11,8 @@ services:
         mode: global
         placement:
           constraints:
-            - node.hostname == ${REDIS_MASTER_HOSTNAME}
+            - node.role == worker
+            - node.labels.type == master
       networks: 
         - host
         - ascentnet
@@ -21,24 +22,24 @@ services:
       command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes
       links:
         - redis-master
-      environment:
-        - REDIS_MASTER_HOST=${REDIS_MASTER_IP}
+#      environment:
+#        - REDIS_MASTER_HOST=${REDIS_MASTER_IP}
       deploy:
         mode: global
         placement:
           constraints:
-            - node.hostname == ${REDIS_SLAVE_HOSTNAME}
+            - node.role == worker
+            - node.labels.type == slave
       networks: 
         - host
         - ascentnet
     # Sentinel Instance 1
     redis-sentinel:
-      build: 
-        context: ./redis-sentinel
+      image: ascent/redis-sentinel
       links:
         - redis-master
       environment:
-        - REDIS_MASTER_HOST=${REDIS_MASTER_IP}
+#        - REDIS_MASTER_HOST=${REDIS_MASTER_IP}
         - SENTINEL_DOWN_AFTER=5000
         - SENTINEL_FAILOVER=15000
       deploy:
