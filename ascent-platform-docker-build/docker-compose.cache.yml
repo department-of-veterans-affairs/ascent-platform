@@ -27,6 +27,8 @@ services:
     redis-sentinel:
       build: 
         context: ./redis-sentinel
+      ports:
+        - "26379:26379"
       links:
         - redis-master
       networks: 
@@ -37,6 +39,8 @@ services:
     redis-sentinel2:
       build: 
         context: ./redis-sentinel
+      ports:
+        - "26380:26379"
       links:
         - redis-master
       networks: 
@@ -47,6 +51,8 @@ services:
     redis-sentinel3:
       build: 
         context: ./redis-sentinel
+      ports:
+        - "26381:26379"
       links:
         - redis-master
       networks: 
