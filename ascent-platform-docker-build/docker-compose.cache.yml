@@ -29,6 +29,8 @@ services:
         context: ./redis-sentinel
       links:
         - redis-master
+      ports:
+            - 26379:26379
       networks: 
         - logging
         - ascentnet
@@ -39,6 +41,8 @@ services:
         context: ./redis-sentinel
       links:
         - redis-master
+      ports:
+            - 26380:26379    
       networks: 
         - logging
         - ascentnet
@@ -49,6 +53,8 @@ services:
         context: ./redis-sentinel
       links:
         - redis-master
+      ports:
+            - 26381:26379        
       networks: 
         - logging
         - ascentnet
