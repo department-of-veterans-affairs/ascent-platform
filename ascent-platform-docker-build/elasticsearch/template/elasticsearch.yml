@@ -8,3 +8,6 @@ discovery.zen.minimum_master_nodes: 1
 
 # See https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#mlockall
 bootstrap.memory_lock: true
+
+# Sets the number of shard replicas to a variable, $REPL_AMOUNT, eventually
+index.number_of_replicas: 3
