@@ -42,5 +42,5 @@ public class AscentFeignAutoConfigurationTest {
         assertEquals("defaultGroup", ascentFeignAutoConfiguration.getGroupKey());
         ascentFeignAutoConfiguration.setGroupKey("NewGroupKey");
         assertEquals("NewGroupKey", ascentFeignAutoConfiguration.getGroupKey());
-    }
+    } 
 }
