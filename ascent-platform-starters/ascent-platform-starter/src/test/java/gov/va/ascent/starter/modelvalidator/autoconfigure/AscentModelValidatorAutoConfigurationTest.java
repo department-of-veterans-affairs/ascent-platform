@@ -5,11 +5,7 @@
  */
 package gov.va.ascent.starter.modelvalidator.autoconfigure;
 
-import gov.va.ascent.framework.validation.ModelValidator;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
