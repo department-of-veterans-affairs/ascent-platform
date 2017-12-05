@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# Bring the stack down
-docker stack rm redis-ha
-
 # Disconnect shell from VMs
 eval $(docker-machine env -u)
 

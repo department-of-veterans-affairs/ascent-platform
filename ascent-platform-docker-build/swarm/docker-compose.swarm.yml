@@ -1,0 +1,267 @@
+version: '3.3'
+services:
+  vault:
+    image: ascent/ascent-vault
+    hostname: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - SKIP_SETCAP=true
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
+      - VAULT_SECRETS_FILE=/config/secrets.json
+      - tls_disable=1
+      - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
+    volumes:
+      - ../vault/config:/config
+    ports:
+      - "8200:8200"
+    command: server -dev #-config /config/vault.conf
+    networks:
+        - ascentnet
+    deploy:
+      mode: replicated
+      replicas: 1
+  ascent-amqp:
+    image: rabbitmq
+    hostname: ascent-amqp
+    networks:
+    - ascentnet
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+  ascent-discovery:
+    image: localhost:5000/ascent/ascent-discovery
+    hostname: ascent-discovery
+    ports:
+    - 8761:8761
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    - discovery.server.peer.name=ascent-discovery-peer
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+    - ascentnet
+  ascent-discovery-peer:
+    image: localhost:5000/ascent/ascent-discovery
+    hostname: ascent-discovery-peer
+    ports:
+    - 8761
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    - discovery.server.peer.name=ascent-discovery
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+    - ascentnet
+  ascent-config:
+    image: localhost:5000/ascent/ascent-config
+    ports:
+    - 8760:8760
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    - VAULT_HOST=vault
+    - VAULT_SCHEME=http
+    - BASE_DIR=/configrepo/repo
+    - git.access_token=${GIT_ACCESS_TOKEN}
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+    - ascent-discovery
+    networks:
+    - ascentnet
+  ascent-gateway:
+    image: localhost:5000/ascent/ascent-gateway
+    ports:
+    - 8762:8762
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+    - ascent-config
+    - ascent-discovery
+    networks:
+    - ascentnet
+  ascent-dashboard:
+    image: localhost:5000/ascent/ascent-dashboard
+    ports:
+    - 8763:8763
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    depends_on:
+    - ascent-config
+    - ascent-discovery
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+    - ascentnet
+  ascent-zipkin:
+    image: localhost:5000/ascent/ascent-zipkin
+    ports:
+    - 8700:8700
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+    - ascent-discovery
+    - ascent-config
+    networks:
+    - ascentnet
+    - logging
+  elasticsearch:
+    image: localhost:5000/docker.io/ascent/ascent-elasticsearch
+    networks:
+    - logging
+    environment:
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      nproc: 655350
+      nofile: 655350
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == worker
+      resources:
+        reservations:
+          memory: 1536m
+  fluentd:
+    image: localhost:5000/ascent/fluentd
+    ports:
+      - 24224:24224
+    networks:
+    - logging
+    depends_on:
+    - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == worker
+  kibana:
+    image: localhost:5000/docker.io/ascent/ascent-kibana
+    ports:
+    - 5601:5601
+    networks:
+    - logging
+    depends_on:
+    - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == worker
+  redis-master:
+    image: redis:4.0.2-alpine
+    command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "changeme" --masterauth "changeme"
+    ports:
+      - "6379:6379"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.type == master
+    networks:
+      - ascentnet
+  # Slave
+  redis-slave:
+    image: redis:4.0.2-alpine
+    command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes --requirepass "changeme" --masterauth "changeme"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.type == slave
+    networks:
+      - ascentnet
+  # Sentinel Instance 1
+  redis-sentinel:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - SENTINEL_PASSWORD=changeme
+    deploy:
+      mode: global
+    networks:
+      - ascentnet
+networks:
+  ascentnet:
+    driver: overlay
+    attachable: true
+  logging:
+    driver: overlay
+volumes:
+  configrepo:
