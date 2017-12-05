@@ -50,10 +50,6 @@ public class AscentCacheProperties {
         /** Redis port */
         private Integer port;
 
-        public String getHost() {
-            return host;
-        }
-
         public void setHost(String host) {
             this.host = host;
         }

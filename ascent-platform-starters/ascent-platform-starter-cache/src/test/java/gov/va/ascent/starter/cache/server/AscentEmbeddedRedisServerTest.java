@@ -32,7 +32,6 @@ public class AscentEmbeddedRedisServerTest {
 		}
 	}
 
-
 	@Test(timeout = 1500L)
 	public void testSimpleRun() throws Exception {
 		ascentEmbeddedServer.startRedis();
@@ -40,7 +39,6 @@ public class AscentEmbeddedRedisServerTest {
 		ascentEmbeddedServer.stopRedis();
 	}
 
-		
 	@Test
 	public void shouldAllowSubsequentRuns() throws Exception  {
 			ascentEmbeddedServer.startRedis();
@@ -51,7 +49,6 @@ public class AscentEmbeddedRedisServerTest {
 			
 			ascentEmbeddedServer.startRedis();
 			ascentEmbeddedServer.stopRedis();
-
 	}
 	
 	@Test
@@ -75,7 +72,6 @@ public class AscentEmbeddedRedisServerTest {
 		}
 	}
 	
-
 	@Test
     public void shouldIndicateInactiveBeforeStart() throws Exception {
         assertFalse(ascentEmbeddedServer.getRedisServer().isActive());
@@ -102,5 +98,4 @@ public class AscentEmbeddedRedisServerTest {
 			ascentEmbeddedServer.stopRedis();
 		}
 	}
-
 }
