@@ -55,10 +55,11 @@ public class AscentEmbeddedRedisServerTest {
 	public void testSimpleOperationsAfterRun() throws Exception {
 		ascentEmbeddedServer.startRedis();
 		
+		
 		JedisPool pool = null;
 		Jedis jedis = null;
 		try {
-			pool = new JedisPool("localhost", 6379);
+			pool = new JedisPool("localhost", ascentEmbeddedServer.getRedisServer().ports().get(0));
 			jedis = pool.getResource();
 			jedis.mset("abc", "1", "def", "2");
 			
