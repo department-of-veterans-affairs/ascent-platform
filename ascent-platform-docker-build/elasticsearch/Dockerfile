@@ -3,7 +3,6 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
 LABEL gov.va.ascent.component="logging"
 
 ENV REPLICA_AMOUNT=4
-ENV ES_PASSWORD=abc123
 
 # Change ownership and permissions
 USER root
