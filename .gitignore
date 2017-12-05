@@ -31,3 +31,5 @@ nbdist/
 
 ### Eclipse ###
 .metadata
+/ascent-platform-starters/ascent-platform-starter/nbproject/
+/ascent-platform-starters/ascent-platform-starter-cache/nbproject/

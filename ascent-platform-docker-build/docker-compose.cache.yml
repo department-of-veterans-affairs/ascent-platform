@@ -31,8 +31,6 @@ services:
         - "26379:26379"
       links:
         - redis-master
-      ports:
-            - 26379:26379
       networks: 
         - logging
         - ascentnet
@@ -45,8 +43,6 @@ services:
         - "26380:26379"
       links:
         - redis-master
-      ports:
-            - 26380:26379    
       networks: 
         - logging
         - ascentnet
@@ -59,8 +55,6 @@ services:
         - "26381:26379"
       links:
         - redis-master
-      ports:
-            - 26381:26379        
       networks: 
         - logging
         - ascentnet
