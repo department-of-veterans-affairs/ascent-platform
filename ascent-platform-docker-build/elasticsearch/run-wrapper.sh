@@ -6,10 +6,9 @@ BASE_CONFIG="/usr/share/elasticsearch/template/elasticsearch.yml"
 SSL_CONFIG="/usr/share/elasticsearch/template/elasticsearch.ssl.yml"
 CMD="bin/es-docker"
 
-if [[ $VAULT_TOKEN_FILE ]]; then
-    echo "vault token fiile found."
+if [[ -s $VAULT_TOKEN_FILE ]]; then
+    echo "vault token file found and not empty."
     VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
-    echo "vault token is : $VAULT_TOKEN "
 fi
 
 if [[ -z $VAULT_ADDR ]]; then
@@ -25,8 +24,10 @@ if [[ $VAULT_TOKEN ]]; then
     #cat $SSL_CONFIG >> /usr/share/elasticsearch/config/elasticsearch.yml
     #consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
     #envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh bg & envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
+
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh bg & $CMD "$@"
 else
+    export ES_PASSWORD=changeme
     /docker/set-replicas.sh bg & $CMD "$@"
 fi
 
