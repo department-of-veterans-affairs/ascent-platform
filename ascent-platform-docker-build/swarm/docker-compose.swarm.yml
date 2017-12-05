@@ -245,7 +245,6 @@ services:
           - node.labels.type == slave
     networks:
       - ascentnet
-  # Sentinel Instance 1
   redis-sentinel:
     image: localhost:5000/ascent/redis-sentinel
     environment:

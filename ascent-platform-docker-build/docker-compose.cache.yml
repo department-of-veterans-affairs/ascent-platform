@@ -4,7 +4,7 @@ services:
                 
     redis-master:
       image: redis:4.0.2-alpine
-      command: redis-server --appendonly no --save "" --repl-diskless-sync yes
+      command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
       ports:
         - "6379:6379"
       networks: 
@@ -13,7 +13,7 @@ services:
         
     redis-slave:
       image: redis:4.0.2-alpine
-      command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes
+      command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
       links:
         - redis-master
       networks: 
