@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Profile;
 
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.cache.autoconfigure.AscentCacheProperties;
 import redis.embedded.RedisServer;
 
@@ -52,7 +53,7 @@ public class AscentEmbeddedRedisServer {
      */
     @PostConstruct
     public void startRedis() throws IOException {
-        //Defense.notNull(properties.getRedisConfig(), "properties.getRedisConfig() is required to run/use Redis!");
+        Defense.notNull(properties.getRedisConfig(), "properties.getRedisConfig() is required to run/use Redis!");
         
         if (properties.getRedisConfig().getPort() == null) {
             ServerSocket ss = ServerSocketFactory.getDefault().createServerSocket(0);

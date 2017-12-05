@@ -54,7 +54,6 @@ public class AscentEmbeddedRedisServerTest {
 
 	}
 	
-	@SuppressWarnings("resource")
 	@Test
 	public void testSimpleOperationsAfterRun() throws Exception {
 		ascentEmbeddedServer.startRedis();
