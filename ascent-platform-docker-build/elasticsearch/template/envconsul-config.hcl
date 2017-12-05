@@ -17,11 +17,11 @@ vault {
 upcase = true
 
 # ElasticSerch SSL Secrets
-secret {
-    format = "es_{{ key }}"
-    no_prefix = true
-    path = "secret/elasticsearch"
-}
+#secret {
+#    format = "es_{{ key }}"
+#    no_prefix = true
+#    path = "secret/elasticsearch"
+#}
 
 # ElasticSearch User Secrets
 secret {
