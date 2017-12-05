@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
 CONSUL_TEMPLATE_CONFIG="/usr/share/elasticsearch/template/consul-template-config.hcl"
@@ -17,11 +17,17 @@ fi
 # Install our custom config
 cp $BASE_CONFIG /usr/share/elasticsearch/config/elasticsearch.yml
 
+
+# Setup initial bootstrap password with keystore
+#bin/elasticsearch-keystore create
+#echo $ELASTIC_PASSWORD | bin/elasticsearch-keystore add --stdin "bootstrap.password"
+
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
     cat $SSL_CONFIG >> /usr/share/elasticsearch/config/elasticsearch.yml
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" $CMD "$@"
 else
-    $CMD "$@"
+    /docker/set-replicas.sh bg & $CMD "$@"
 fi
+

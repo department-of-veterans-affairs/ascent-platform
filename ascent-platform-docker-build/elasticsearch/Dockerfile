@@ -20,16 +20,18 @@ RUN curl -L -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/en
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
+
 WORKDIR /usr/share/elasticsearch
 
 # Add our envconsul config, consul-template configuration, and templates
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
+COPY set-replicas.sh /docker/set-replicas.sh
 
 # Change file permissions to elasticsearch user
-RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh; \
-    chmod 750 run-wrapper.sh
+RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh /docker/set-replicas.sh; \
+    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh
 
 USER elasticsearch
 
