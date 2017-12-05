@@ -3,6 +3,8 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
 LABEL gov.va.ascent.component="logging"
 
 ENV REPLICA_AMOUNT=4
+ENV VAULT_TOKEN_FILE=/docker/vault-token
+ENV VAULT_ADDR=https://vault.internal.vets-api.gov:8200
 
 # Change ownership and permissions
 USER root
@@ -27,13 +29,14 @@ WORKDIR /usr/share/elasticsearch
 
 # Add our envconsul config, consul-template configuration, and templates
 COPY template/ template/
+COPY vault-token /docker/vault-token
 
 COPY run-wrapper.sh run-wrapper.sh
 COPY set-replicas.sh /docker/set-replicas.sh
 
 # Change file permissions to elasticsearch user
-RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh /docker/set-replicas.sh; \
-    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh
+RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh /docker/vault-token /docker/set-replicas.sh; \
+    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh; chmod 750 /docker/vault-token
 
 USER elasticsearch
 
