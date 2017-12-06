@@ -17,6 +17,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 
+import gov.va.ascent.starter.cache.server.AscentEmbeddedRedisServer;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
@@ -31,14 +33,30 @@ public class AscentCacheAutoConfiguration {
 
     static final Logger LOGGER = LoggerFactory.getLogger(AscentCacheAutoConfiguration.class);
 
+    /**
+     * Cache properties
+     */
     @Autowired
     private AscentCacheProperties ascentCacheProperties;
+    
+    /**
+     * Embedded Redis bean to make sure embedded redis is started before redis cache is created
+     */
+    @SuppressWarnings("unused")
+    @Autowired(required = false)
+    private AscentEmbeddedRedisServer ascentServerRedisEmbedded;
 
     @Bean
     public CacheManagerCustomizers cacheManagerCustomizers(){
         return new CacheManagerCustomizers(Arrays.asList(new RedisCacheManagerCustomizer(ascentCacheProperties)));
     }
 
+    /**
+     * Redis template
+     * 
+     * @param redisConnectionFactory redis connection factory
+     * @return Redis template
+     */
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(
             RedisConnectionFactory redisConnectionFactory)
@@ -54,14 +72,14 @@ public class AscentCacheAutoConfiguration {
         return new KeyGenerator() {
             @Override
             public Object generate(Object o, Method method, Object... objects) {
-                LOGGER.info("Generating cacheKey ");
+                LOGGER.debug("Generating cacheKey ");
                 StringBuilder sb = new StringBuilder();
                 sb.append(o.getClass().getName());
                 sb.append(method.getName());
                 for (Object obj : objects) {
                     sb.append(obj.toString());
                 }
-                LOGGER.info("Generated cacheKey {}", sb.toString());
+                LOGGER.debug("Generated cacheKey {}", sb.toString());
                 return sb.toString();
             }
         };

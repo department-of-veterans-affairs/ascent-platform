@@ -10,6 +10,8 @@ import javax.net.ServerSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 
@@ -24,7 +26,6 @@ import redis.embedded.RedisServer;
  *
  * @author akulkarni
  */
-@EnableConfigurationProperties(AscentCacheProperties.class)
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_REDIS)
 public class AscentEmbeddedRedisServer {
 
