@@ -35,7 +35,6 @@ public class AscentEmbeddedRedisServerTest {
 	@Test(timeout = 1500L)
 	public void testSimpleRun() throws Exception {
 		ascentEmbeddedServer.startRedis();
-		Thread.sleep(1000L);
 		ascentEmbeddedServer.stopRedis();
 	}
 
@@ -88,7 +87,6 @@ public class AscentEmbeddedRedisServerTest {
     @Test
     public void shouldIndicateInactiveAfterStop() throws Exception {
     		ascentEmbeddedServer.startRedis();
-    		Thread.sleep(1000L);
     		ascentEmbeddedServer.stopRedis();
     		assertFalse(ascentEmbeddedServer.getRedisServer().isActive());
     }
