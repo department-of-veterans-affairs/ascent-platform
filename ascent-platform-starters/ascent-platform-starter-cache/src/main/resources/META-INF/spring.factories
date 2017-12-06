@@ -1,3 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-gov.va.ascent.starter.cache.autoconfigure.AscentCacheAutoConfiguration
+gov.va.ascent.starter.cache.autoconfigure.AscentCacheAutoConfiguration,\
+gov.va.ascent.starter.cache.server.AscentEmbeddedRedisServer
