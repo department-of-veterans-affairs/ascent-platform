@@ -53,6 +53,10 @@ public class AscentCacheProperties {
         public void setHost(String host) {
             this.host = host;
         }
+        
+        public String getHost() {
+            return host;
+        }
 
         public Integer getPort() {
             return port;
