@@ -9,31 +9,12 @@ mavenPipeline {
 }
 
 dockerPipeline {
-    directory = 'ascent-platform-docker-build/ascent-base'
-    imageName = 'ascent/ascent-base'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/filebeat'
-    imageName = 'ascent/ascent-filebeat'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/logstash'
-    imageName = 'ascent/ascent-logstash'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/fluentd'
-    imageName = 'ascent/fluentd'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/elasticsearch'
-    imageName = 'ascent/ascent-elasticsearch'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/kibana'
-    imageName = 'ascent/ascent-kibana'
+    dockerBuilds = [
+        "ascent/ascent-base": "ascent-platform-docker-build/ascent-base",
+        "ascent/ascent-filebeat": "ascent-platform-docker-build/filebeat",
+        "ascent/ascent-logstash":"ascent-platform-docker-build/logstash",
+        "ascent/fluentd":"ascent-platform-docker-build/fluentd",
+        "ascent/ascent-elasticsearch":"ascent-platform-docker-build/elasticsearch",
+        "ascent/ascent-kibana":"ascent-platform-docker-build/kibana"
+    ]
 }
