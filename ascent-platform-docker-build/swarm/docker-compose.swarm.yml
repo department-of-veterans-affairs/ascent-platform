@@ -223,8 +223,6 @@ services:
   redis-master:
     image: redis:4.0.2-alpine
     command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "changeme" --masterauth "changeme"
-    ports:
-      - "6379:6379"
     deploy:
       mode: global
       placement:
@@ -253,7 +251,41 @@ services:
       - SENTINEL_FAILOVER=15000
       - SENTINEL_PASSWORD=changeme
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - ascentnet
+  redis-sentinel2:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - SENTINEL_PASSWORD=changeme
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - ascentnet
+  redis-sentinel3:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - SENTINEL_PASSWORD=changeme
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
     networks:
       - ascentnet
 networks:
