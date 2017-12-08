@@ -4,7 +4,7 @@ ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
 CONSUL_TEMPLATE_CONFIG="/usr/share/elasticsearch/template/consul-template-config.hcl"
 BASE_CONFIG="/usr/share/elasticsearch/template/elasticsearch.yml"
 SSL_CONFIG="/usr/share/elasticsearch/template/elasticsearch.ssl.yml"
-CMD="bin/es-docker"
+CMD="bin/elasticsearch"
 
 if [[ -s $VAULT_TOKEN_FILE ]]; then
     echo "vault token file found and not empty."
@@ -18,16 +18,22 @@ fi
 # Install our custom config
 cp $BASE_CONFIG /usr/share/elasticsearch/config/elasticsearch.yml
 
+# Create first password
+echo $ES_PASSWORD | bin/elasticsearch-keystore add --stdin "bootstrap.password"
+
+
 
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
+
+    # TODO: set up vault to accept ssl configs
     #cat $SSL_CONFIG >> /usr/share/elasticsearch/config/elasticsearch.yml
     #consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
     #envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh bg & envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
 
+    # Using this for now until the rest of the secrets are set up in vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh bg & $CMD "$@"
 else
-    export ES_PASSWORD=changeme
     /docker/set-replicas.sh bg & $CMD "$@"
 fi
 
