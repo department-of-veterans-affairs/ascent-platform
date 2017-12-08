@@ -1,4 +1,4 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:6.0.1
 
 LABEL gov.va.ascent.component="logging"
 
@@ -28,11 +28,12 @@ WORKDIR /usr/share/elasticsearch
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
+COPY wait-for-acceptable-status.sh wait-for-acceptable-status.sh
 COPY set-replicas.sh /docker/set-replicas.sh
 
 # Change file permissions to elasticsearch user
 RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh  /docker/set-replicas.sh; \
-    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh;
+    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh; chmod 750 wait-for-acceptable-status.sh;
 
 USER elasticsearch
 
