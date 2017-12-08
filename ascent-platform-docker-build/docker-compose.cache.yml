@@ -1,61 +1,80 @@
 version: '3'
 
 services:
-                
-    redis-master:
-      image: redis:4.0.2-alpine
-      command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
-      ports:
-        - "6379:6379"
-      networks: 
-        - logging
-        - ascentnet
-        
-    redis-slave:
-      image: redis:4.0.2-alpine
-      command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
-        
-    # Instance 1
-    redis-sentinel:
-      build: 
-        context: ./redis-sentinel
-      ports:
-        - "26379:26379"
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
-        
-    # Instance 2
-    redis-sentinel2:
-      build: 
-        context: ./redis-sentinel
-      ports:
-        - "26380:26379"
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
-   
-    # Instance 3
-    redis-sentinel3:
-      build: 
-        context: ./redis-sentinel
-      ports:
-        - "26381:26379"
-      links:
-        - redis-master
-      networks: 
-        - logging
-        - ascentnet
-        
+  redis-master:
+    image: redis:4.0.2-alpine
+    command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.type == master
+    networks:
+      - ascentnet
+  # Slave
+  redis-slave:
+    image: redis:4.0.2-alpine
+    command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.type == slave
+    networks:
+      - ascentnet
+  redis-sentinel:
+    image: ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - ascentnet
+    depends_on:
+      - redis-master
+  redis-sentinel2:
+    image: ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - ascentnet
+    depends_on:
+      - redis-master
+  redis-sentinel3:
+    image: ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - ascentnet
+    depends_on:
+      - redis-master
 networks:
   ascentnet:
     driver: overlay
