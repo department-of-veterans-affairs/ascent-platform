@@ -11,8 +11,6 @@ mavenPipeline {
 dockerPipeline {
     dockerBuilds = [
         "ascent/ascent-base": "ascent-platform-docker-build/ascent-base",
-        "ascent/ascent-filebeat": "ascent-platform-docker-build/filebeat",
-        "ascent/ascent-logstash":"ascent-platform-docker-build/logstash",
         "ascent/fluentd":"ascent-platform-docker-build/fluentd",
         "ascent/ascent-elasticsearch":"ascent-platform-docker-build/elasticsearch",
         "ascent/ascent-kibana":"ascent-platform-docker-build/kibana"
