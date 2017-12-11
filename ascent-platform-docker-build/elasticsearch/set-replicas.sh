@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 generate_replica_data() {
   cat <<EOF
 {
@@ -9,17 +8,6 @@ generate_replica_data() {
 }
 EOF
 }
-
-
-generate_newpass_data() {
-  cat << EOF
-{
-  "password" : "$ES_PASSWORD"
-}
-EOF
-}
-
-
 
 
 echo "--- Polling to wait for config of elasticsearch to complete"
