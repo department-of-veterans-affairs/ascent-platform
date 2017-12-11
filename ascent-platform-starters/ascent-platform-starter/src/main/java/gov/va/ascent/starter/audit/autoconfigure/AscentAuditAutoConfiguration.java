@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class AscentAuditAutoConfiguration {
 	
     @Bean
+    @ConditionalOnMissingBean
     public RequestResponseLogSerializer requestResponseAsyncLogging() {
         return new RequestResponseLogSerializer();
     }
