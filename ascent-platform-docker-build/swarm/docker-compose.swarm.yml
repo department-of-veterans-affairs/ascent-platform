@@ -250,6 +250,8 @@ services:
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
       - SENTINEL_PASSWORD=changeme
+    depends_on:
+      - redis-master
     deploy:
       mode: replicated
       replicas: 1
@@ -265,6 +267,8 @@ services:
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
       - SENTINEL_PASSWORD=changeme
+    depends_on:
+      - redis-master
     deploy:
       mode: replicated
       replicas: 1
@@ -280,6 +284,8 @@ services:
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
       - SENTINEL_PASSWORD=changeme
+    depends_on:
+      - redis-master
     deploy:
       mode: replicated
       replicas: 1
