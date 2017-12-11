@@ -12,6 +12,10 @@
   <description>Starter for using Ascent Platform's caching support</description>
   
   <dependencies>
+  	 <dependency>
+          <groupId>gov.va.ascent</groupId>
+          <artifactId>ascent-framework</artifactId>
+      </dependency>
       <dependency>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -23,6 +27,15 @@
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
+      </dependency>
+      <dependency>
+		  <groupId>com.github.kstyrc</groupId>
+	 	  <artifactId>embedded-redis</artifactId>
+	  </dependency>
+      <dependency>
+      	<groupId>org.springframework.boot</groupId>
+      	<artifactId>spring-boot-configuration-processor</artifactId>
+      	<optional>true</optional>
       </dependency>
   </dependencies>
   
