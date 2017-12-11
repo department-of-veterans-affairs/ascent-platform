@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 generate_replica_data() {
   cat <<EOF
 {
