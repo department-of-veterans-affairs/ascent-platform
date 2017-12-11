@@ -28,12 +28,11 @@ WORKDIR /usr/share/elasticsearch
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
-COPY wait-for-acceptable-status.sh wait-for-acceptable-status.sh
 COPY set-replicas.sh /docker/set-replicas.sh
 
 # Change file permissions to elasticsearch user
 RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh  /docker/set-replicas.sh; \
-    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh; chmod 750 wait-for-acceptable-status.sh;
+    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh;
 
 USER elasticsearch
 

@@ -3,7 +3,7 @@
 generate_replica_data() {
   cat <<EOF
 {
-  "template" : "*",
+  "index_patterns" : "*",
   "settings" : {"number_of_replicas" : "$REPLICA_AMOUNT" }
 }
 EOF
@@ -26,9 +26,9 @@ until $(curl -XGET --output /dev/null --silent --head --fail -u elastic:$ES_PASS
     sleep 5
 done
 
+curl -XGET -u elastic:$ES_PASSWORD 'localhost:9200/_cluster/health?wait_for_status=green'
 
-echo "--- changing default password and setting number of replicas..."
 
-curl -XPUT -u elastic:$ES_PASSWORD 'localhost:9200/_xpack/security/user/elastic/_password' -H "Content-Type: application/json" -d "$(generate_newpass_data)"
 
+echo "--- Setting number of replicas..."
 curl -XPUT -u elastic:$ES_PASSWORD 'localhost:9200/_template/all_index_template' -H 'Content-Type: application/json' -d "$(generate_replica_data)"
