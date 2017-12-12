@@ -1,12 +1,13 @@
 cluster.name: "docker-cluster"
 network.host: 0.0.0.0
+node.name: ${HOSTNAME}
 
 # minimum_master_nodes need to be explicitly set when bound on a public IP
 # set to 1 to allow single node clusters
 # Details: https://github.com/elastic/elasticsearch/pull/17288
-discovery.zen.minimum_master_nodes: 2
+discovery.zen.minimum_master_nodes: ${MIN_MASTER_NODES}
 
 # See https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#mlockall
 bootstrap.memory_lock: true
-xpack.license.self_generated.type: basic
+discovery.zen.ping.multicast.enabled: false
 discovery.zen.ping.unicast.hosts: elasticsearch
