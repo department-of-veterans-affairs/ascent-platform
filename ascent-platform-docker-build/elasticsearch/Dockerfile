@@ -29,10 +29,11 @@ COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
 COPY set-replicas.sh /docker/set-replicas.sh
+COPY changepass.sh /docker/changepass.sh
 
 # Change file permissions to elasticsearch user
-RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh  /docker/set-replicas.sh; \
-    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh;
+RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh  /docker/set-replicas.sh /docker/changepass.sh; \
+    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh; chmod 750 /docker/changepass.sh;
 
 USER elasticsearch
 
