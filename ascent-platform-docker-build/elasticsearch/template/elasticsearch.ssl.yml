@@ -1,6 +1,7 @@
 # X Pack Security
 # See https://www.elastic.co/guide/en/elasticsearch/reference/current/security-settings.html
 xpack.security.enabled: true
+xpack.license.self_generated.type: basic
 xpack.security.authc.accept_default_password: true
 
 xpack.security.http.ssl.enabled: true
