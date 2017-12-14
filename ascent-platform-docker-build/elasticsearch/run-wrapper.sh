@@ -4,7 +4,7 @@ ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
 CONSUL_TEMPLATE_CONFIG="/usr/share/elasticsearch/template/consul-template-config.hcl"
 BASE_CONFIG="/usr/share/elasticsearch/template/elasticsearch.yml"
 SSL_CONFIG="/usr/share/elasticsearch/template/elasticsearch.ssl.yml"
-CMD="bin/elasticsearch"
+CMD="bin/es-docker"
 
 
 if [[ -s $VAULT_TOKEN_FILE ]]; then
@@ -26,7 +26,7 @@ cp $BASE_CONFIG /usr/share/elasticsearch/config/elasticsearch.yml
 if [[ $VAULT_TOKEN ]]; then
 
     # Create first password using vault
-    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/changepass.sh
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/changepass.sh &
 
     # TODO: set up vault to accept ssl configs
     #cat $SSL_CONFIG >> /usr/share/elasticsearch/config/elasticsearch.yml
@@ -36,7 +36,7 @@ if [[ $VAULT_TOKEN ]]; then
     # Using this for now until the rest of the secrets are set up in vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh bg & $CMD "$@"
 else
-    /docker/changepass.sh
+    /docker/changepass.sh &
     /docker/set-replicas.sh bg & $CMD "$@"
 fi
 

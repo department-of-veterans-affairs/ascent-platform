@@ -1,8 +1,11 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.0.1
+FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
 
 LABEL gov.va.ascent.component="logging"
 
 ENV MIN_MASTER_NODES 2
+ENV ES_PASSWORD=changeme
+ENV KIBANA_PASS=kibana123
+
 
 # Change ownership and permissions
 USER root
@@ -31,10 +34,11 @@ COPY template/ template/
 COPY run-wrapper.sh run-wrapper.sh
 COPY set-replicas.sh /docker/set-replicas.sh
 COPY changepass.sh /docker/changepass.sh
+#COPY setkibanapass.sh /docker/setkibanapass.sh
 
 # Change file permissions to elasticsearch user
-RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh  /docker/set-replicas.sh /docker/changepass.sh; \
-    chmod 750 run-wrapper.sh; chmod 750 /docker/set-replicas.sh; chmod 750 /docker/changepass.sh;
+RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh  /docker; \
+    chmod 750 run-wrapper.sh; chmod -R 750 /docker;
 
 USER elasticsearch
 

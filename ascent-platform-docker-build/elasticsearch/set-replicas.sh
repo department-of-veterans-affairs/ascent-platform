@@ -3,13 +3,13 @@
 generate_replica_data() {
   cat <<EOF
 {
-  "index_patterns" : "*",
+  "template" : "*",
   "settings" : {"number_of_replicas" : "$REPLICA_AMOUNT" }
 }
 EOF
 }
 
-
+# poll to wait until elasticsearch is up successfully with the new password
 echo "--- Polling to wait for config of elasticsearch to complete"
 until $(curl -XGET --output /dev/null --silent --head --fail -u elastic:$ES_PASSWORD localhost:9200/_cat/health); do
     sleep 5
