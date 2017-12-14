@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import gov.va.ascent.framework.audit.RequestResponseAspect;
+import gov.va.ascent.framework.audit.RequestResponseLogSerializer;
 
 import static org.junit.Assert.*;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -29,6 +29,6 @@ public class AscentAuditAutoConfigurationTest {
         context.register(JacksonAutoConfiguration.class, AscentAuditAutoConfiguration.class);
         context.refresh();
         assertNotNull(context);
-        assertNotNull(this.context.getBean(RequestResponseAspect.class));
+        assertNotNull(this.context.getBean(RequestResponseLogSerializer.class));
     }
 }
