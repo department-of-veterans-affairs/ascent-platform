@@ -1,11 +1,16 @@
 version: '3'
 
 services:
-
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
     elasticsearch:
         image: docker.io/ascent/ascent-elasticsearch
         container_name: elasticsearch
+        environment:
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - REPLICA_AMOUNT=1
+            - cluster.name=docker-cluster
+            - MIN_MASTER_NODES=2 
         networks: 
             - logging
             - ascentnet
@@ -19,12 +24,6 @@ services:
         #healthcheck:
             #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
             #timeout: 5s
-        environment:
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - REPLICA_AMOUNT=1
-            - cluster.name=docker-cluster
-            - MIN_MASTER_NODES=2 
         deploy:
             placement:
                 constraints: [node.role == worker]
@@ -33,9 +32,15 @@ services:
                     memory: 1536m
 
 
-     elasticsearch_2:
+    elasticsearch2:
         image: docker.io/ascent/ascent-elasticsearch
         container_name: elasticsearch_2
+        environment:
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - REPLICA_AMOUNT=1
+            - cluster.name=docker-cluster
+            - MIN_MASTER_NODES=2
         networks:
             - logging
             - ascentnet
@@ -49,12 +54,6 @@ services:
         #healthcheck:
             #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
             #timeout: 5s
-        environment:
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - REPLICA_AMOUNT=1
-            - cluster.name=docker-cluster
-            - MIN_MASTER_NODES=2
         deploy:
             placement:
                 constraints: [node.role == worker]
@@ -62,9 +61,17 @@ services:
                 reservations:
                     memory: 1536m
 
-    elasticsearch_3:
+
+
+    elasticsearch3:
         image: docker.io/ascent/ascent-elasticsearch
         container_name: elasticsearch_3
+        environment:
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+            - REPLICA_AMOUNT=1
+            - cluster.name=docker-cluster
+            - MIN_MASTER_NODES=2
         networks:
             - logging
             - ascentnet
@@ -78,18 +85,13 @@ services:
         #healthcheck:
             #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
             #timeout: 5s
-        environment:
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - REPLICA_AMOUNT=1
-            - cluster.name=docker-cluster
-            - MIN_MASTER_NODES=2
         deploy:
             placement:
                 constraints: [node.role == worker]
             resources:
                 reservations:
                     memory: 1536m
+
 
 
     fluentd:
