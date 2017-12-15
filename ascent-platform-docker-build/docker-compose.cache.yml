@@ -23,7 +23,7 @@ services:
           - node.role == worker
           - node.labels.type == slave
     environment:
-        - START_COMMAND=sh /redis/redis-wrapper.sh
+        - START_COMMAND=sh /redis/redis-wrapper.sh --slaveof redis-master 6379
     networks:
       - ascentnet
   redis-sentinel:
