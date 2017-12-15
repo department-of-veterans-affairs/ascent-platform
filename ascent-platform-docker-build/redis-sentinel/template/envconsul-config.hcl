@@ -16,7 +16,7 @@ upcase = true
 
 # Sentinell Password Secret
 secret {
-    format = "REDIS-SENTINAL_{{ key }}"
+    format = "REDIS_SENTINAL_{{ key }}"
     no_prefix = true
     path = "secret/redis-sentinel"
 }

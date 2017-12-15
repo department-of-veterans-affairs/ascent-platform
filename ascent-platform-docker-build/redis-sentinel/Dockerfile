@@ -3,7 +3,7 @@ FROM redis:4.0.2-alpine
 ENV SENTINEL_QUORUM 2
 ENV SENTINEL_DOWN_AFTER 1000
 ENV SENTINEL_FAILOVER 1000
-ENV REDIS-SENTINEL_PASSWORD changeme
+ENV REDIS_SENTINEL_PASSWORD changeme
 ENV REDIS_START_COMMAND "redis-server /redis/sentinel.conf --sentinel"
 
 RUN apk add --update openssl
