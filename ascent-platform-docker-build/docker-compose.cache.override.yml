@@ -9,7 +9,6 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
   redis-sentinel2:
     build:
       context: ./redis-sentinel
@@ -17,7 +16,6 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
   redis-sentinel3:
     build:
       context: ./redis-sentinel
@@ -25,7 +23,6 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
 networks:
     ascentnet:
         driver: bridge
