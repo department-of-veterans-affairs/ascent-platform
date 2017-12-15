@@ -2,26 +2,28 @@ version: '3'
 
 services:
   redis-master:
-    image: redis:4.0.2-alpine
-    command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
+    image: ascent/redis-sentinel
     deploy:
       mode: global
       placement:
         constraints:
           - node.role == worker
           - node.labels.type == master
+    environment:
+        - REDIS_START_COMMAND=redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${SENTINEL-REDIS_PASSWORD}" --masterauth "${SENTINEL-REDIS_PASSWORD}"
     networks:
       - ascentnet
   # Slave
   redis-slave:
-    image: redis:4.0.2-alpine
-    command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes --requirepass "${REDIS_PASSWORD}" --masterauth "${REDIS_PASSWORD}"
+    image: ascent/redis-sentinel
     deploy:
       mode: global
       placement:
         constraints:
           - node.role == worker
           - node.labels.type == slave
+    environment:
+        - REDIS_START_COMMAND=redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${SENTINEL-REDIS_PASSWORD}" --masterauth "${SENTINEL-REDIS_PASSWORD}"
     networks:
       - ascentnet
   redis-sentinel:
@@ -30,7 +32,6 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
     deploy:
       mode: replicated
       replicas: 1
@@ -47,7 +48,6 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
     deploy:
       mode: replicated
       replicas: 1
@@ -64,7 +64,6 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=${REDIS_PASSWORD}
     deploy:
       mode: replicated
       replicas: 1
