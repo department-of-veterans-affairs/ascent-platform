@@ -18,9 +18,15 @@ WORKDIR /redis
  
 COPY sentinel.conf .
 COPY sentinel-entrypoint.sh /usr/local/bin/
+COPY configure-sentinal-conf.sh /docker/configure-sentinal-conf.sh
+
+# Add our envconsul config
+COPY template/ template/
  
 RUN chown redis:redis /redis/* && \
-    chmod +x /usr/local/bin/sentinel-entrypoint.sh
+    chmod +x /usr/local/bin/sentinel-entrypoint.sh; \
+    chown -R redis:redis template /docker; \
+    chmod 750 template /docker;
  
 EXPOSE 26379
  
