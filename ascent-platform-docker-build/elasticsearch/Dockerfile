@@ -3,8 +3,8 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
 LABEL gov.va.ascent.component="logging"
 
 ENV MIN_MASTER_NODES 2
-ENV ES_PASSWORD=changeme
-ENV KIBANA_PASS=kibana123
+ENV ES_PASSWORD changeme
+ENV KIBANA_PASSWORD kibana123
 
 
 # Change ownership and permissions
