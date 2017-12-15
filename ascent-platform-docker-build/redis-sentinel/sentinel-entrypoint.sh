@@ -1,8 +1,24 @@
 #!/bin/sh
+
+ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
+SENTINAL_CONF="/redis/sentinel.conf"
+CMD="redis-server /redis/sentinel.conf --sentinel"
+
+if [[ -s $VAULT_TOKEN_FILE ]]; then
+    echo "vault token file found and not empty."
+    VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
+fi
+
+if [[ -z $VAULT_ADDR ]]; then
+    VAULT_ADDR="http://vault:8200"
+fi
+
+
+if [[ $VAULT_TOKEN ]]; then
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/configure-sentinal-conf.sh
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
+else
+    /docker/configure-sentinal-conf.sh
+    $CMD "$@"
+fi 
  
-sed -i "s/\$SENTINEL_QUORUM/$SENTINEL_QUORUM/g" /redis/sentinel.conf
-sed -i "s/\$SENTINEL_DOWN_AFTER/$SENTINEL_DOWN_AFTER/g" /redis/sentinel.conf
-sed -i "s/\$SENTINEL_FAILOVER/$SENTINEL_FAILOVER/g" /redis/sentinel.conf
-sed -i "s/\$SENTINEL_PASSWORD/$SENTINEL_PASSWORD/g" /redis/sentinel.conf
- 
-redis-server /redis/sentinel.conf --sentinel
