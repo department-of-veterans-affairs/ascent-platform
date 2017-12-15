@@ -1,23 +1,12 @@
 #!/bin/sh
 
-
-ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
-CMD=$REDIS_START_COMMAND
-
-if [[ -s $VAULT_TOKEN_FILE ]]; then
-    echo "vault token file found and not empty."
-    VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
-fi
-
-if [[ -z $VAULT_ADDR ]]; then
-    VAULT_ADDR="http://vault:8200"
-fi
+ENVCONSUL_CONFIG="/redis/template/envconsul-config.hcl"
+CMD=$START_COMMAND
 
 if [[ $VAULT_TOKEN ]]; then
-    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" sh /redis/configure-sentinel-conf.sh
+    echo "using vault token"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
 else
-    sh /redis/configure-sentinel-conf.sh
     $CMD "$@"
 fi 
  

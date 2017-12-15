@@ -4,7 +4,7 @@ ENV SENTINEL_QUORUM 2
 ENV SENTINEL_DOWN_AFTER 1000
 ENV SENTINEL_FAILOVER 1000
 ENV REDIS_SENTINEL_PASSWORD changeme
-ENV REDIS_START_COMMAND "redis-server /redis/sentinel.conf --sentinel"
+ENV START_COMMAND "/redis/sentinel-wrapper.sh"
 
 RUN apk add --update openssl
 
@@ -21,6 +21,8 @@ WORKDIR /redis
  
 COPY sentinel.conf .
 COPY redis-sentinel-entrypoint.sh /usr/local/bin/
+COPY redis-wrapper.sh redis-wrapper.sh
+COPY sentinel-wrapper.sh sentinel-wrapper.sh
 COPY configure-sentinel-conf.sh configure-sentinel-conf.sh
 
 # Add our envconsul config
@@ -29,8 +31,9 @@ COPY template/ template/
 RUN chown redis:redis /redis/* && \
     chmod +x /usr/local/bin/redis-sentinel-entrypoint.sh; \
     chmod -R 755 template; \
-    chmod 777 configure-sentinel-conf.sh
+    chmod 777 configure-sentinel-conf.sh; \
+    chmod -R +x /redis/*;
  
 EXPOSE 26379
 
-ENTRYPOINT ["/usr/local/bin/redis-sentinel-entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "/usr/local/bin/redis-sentinel-entrypoint.sh"]

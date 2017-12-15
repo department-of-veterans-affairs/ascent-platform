@@ -10,7 +10,7 @@ services:
           - node.role == worker
           - node.labels.type == master
     environment:
-        - REDIS_START_COMMAND=redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${SENTINEL-REDIS_PASSWORD}" --masterauth "${SENTINEL-REDIS_PASSWORD}"
+        - START_COMMAND=sh /redis/redis-wrapper.sh
     networks:
       - ascentnet
   # Slave
@@ -23,7 +23,7 @@ services:
           - node.role == worker
           - node.labels.type == slave
     environment:
-        - REDIS_START_COMMAND=redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${SENTINEL-REDIS_PASSWORD}" --masterauth "${SENTINEL-REDIS_PASSWORD}"
+        - START_COMMAND=sh /redis/redis-wrapper.sh
     networks:
       - ascentnet
   redis-sentinel:
