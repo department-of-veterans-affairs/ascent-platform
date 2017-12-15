@@ -37,3 +37,4 @@ template {
   destination = "/usr/share/kibana/config/kibana.yml"
   perms = 0600
 }
+

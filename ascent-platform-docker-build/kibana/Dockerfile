@@ -26,11 +26,15 @@ WORKDIR /usr/share/kibana
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
+COPY wait-for-es-health.sh /docker/wait-for-es-health.sh
+
 
 # Change file permissions to elasticsearch user
-RUN chown -R kibana:kibana template config run-wrapper.sh; \
-    chmod 750 run-wrapper.sh
+RUN chown -R kibana:kibana template config run-wrapper.sh /docker; \
+    chmod 750 run-wrapper.sh; chmod -R 750 /docker;
 
 USER kibana
+
+ENV ELASTICSEARCH_PASSWORD kibana123
 
 CMD ["/bin/bash", "run-wrapper.sh"]

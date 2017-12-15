@@ -5,26 +5,38 @@ services:
     elasticsearch:
         build:
             context: ./elasticsearch
-        environment: 
+        environment:  
+            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
             - VAULT_TOKEN=
             - VAULT_ADDR=
-            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
         ports:
             - 9200:9200
-
+    elasticsearch2:
+        build:
+            context: ./elasticsearch
+        environment:  
+            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
+    elasticsearch3:
+        build:
+            context: ./elasticsearch
+        environment:  
+            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
     kibana:
         build:
             context: ./kibana
-        environment: 
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
         logging:
             driver: fluentd
             options:
                 fluentd-async-connect: "true"
                 fluentd-max-retries: "10"
                 fluentd-retry-wait: "30s"    
-
+        environment: 
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
     fluentd:
         build:
             context: ./fluentd
