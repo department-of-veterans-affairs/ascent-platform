@@ -25,6 +25,12 @@ services:
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
             - VAULT_TOKEN=
             - VAULT_ADDR=
+    es-config:
+        build:
+            context: ./es-config
+        environment:
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
     kibana:
         build:
             context: ./kibana
