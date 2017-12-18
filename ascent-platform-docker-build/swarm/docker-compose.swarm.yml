@@ -221,8 +221,11 @@ services:
         constraints:
         - node.role == worker
   redis-master:
-    image: redis:4.0.2-alpine
-    command: redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "changeme" --masterauth "changeme"
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - START_COMMAND=sh /redis/redis-wrapper.sh
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     deploy:
       mode: global
       placement:
@@ -233,8 +236,11 @@ services:
       - ascentnet
   # Slave
   redis-slave:
-    image: redis:4.0.2-alpine
-    command: redis-server --slaveof redis-master 6379 --appendonly no --repl-diskless-sync yes --requirepass "changeme" --masterauth "changeme"
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - START_COMMAND=sh /redis/redis-wrapper.sh --slaveof redis-master 6379
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     deploy:
       mode: global
       placement:
@@ -249,7 +255,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=changeme
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     depends_on:
       - redis-master
     deploy:
@@ -266,7 +273,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=changeme
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     depends_on:
       - redis-master
     deploy:
@@ -283,7 +291,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
-      - SENTINEL_PASSWORD=changeme
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     depends_on:
       - redis-master
     deploy:
