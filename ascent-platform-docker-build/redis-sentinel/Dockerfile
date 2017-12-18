@@ -6,7 +6,9 @@ ENV SENTINEL_FAILOVER 1000
 ENV SPRING_REDIS_PASSWORD changeme
 ENV START_COMMAND "/redis/sentinel-wrapper.sh"
 
-RUN apk add --update openssl
+RUN apk --no-cache add --update openssl
+
+RUN apk --no-cache add curl
 
 # Install envconsul for retreiving secrets into ENV variables available only to the executed process
 RUN wget -q -O envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/envconsul/0.7.1/envconsul_0.7.1_linux_amd64.tgz; \
