@@ -14,9 +14,11 @@ vault {
 
 upcase = true
 
+sanitize = true
+
 # Sentinell Password Secret
 secret {
-    format = "spring_redis_{{ key }}"
+    format = "{{ key }}"
     no_prefix = true
     path = "secret/application"
 }
