@@ -6,7 +6,7 @@ CMD=$START_COMMAND
 if [[ $VAULT_TOKEN ]]; then
     echo "using vault token"
     echo "--- polling to wait for vault"
-    until $(curl -XGET --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/application); do
+    until $(curl -XGET --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/application); do
        echo "--trying again"
        sleep 5
     done

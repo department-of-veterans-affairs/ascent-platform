@@ -16,7 +16,7 @@ upcase = true
 
 # Sentinell Password Secret
 secret {
-    format = "SPRING_REDIS_PASSWORD"
+    format = "spring_redis_{{ key }}"
     no_prefix = true
     path = "secret/application"
 }
