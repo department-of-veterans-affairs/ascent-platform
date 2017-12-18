@@ -2,6 +2,18 @@
 version: '3'
 
 services:
+  redis-master:
+    build:
+      context: ./redis-sentinel
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  redis-slave:
+    build:
+      context: ./redis-sentinel
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
   redis-sentinel:
     build:
       context: ./redis-sentinel
@@ -9,6 +21,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
   redis-sentinel2:
     build:
       context: ./redis-sentinel
@@ -16,6 +30,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
   redis-sentinel3:
     build:
       context: ./redis-sentinel
@@ -23,6 +39,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
 networks:
     ascentnet:
         driver: bridge

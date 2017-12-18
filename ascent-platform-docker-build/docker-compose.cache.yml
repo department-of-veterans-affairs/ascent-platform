@@ -11,6 +11,8 @@ services:
           - node.labels.type == master
     environment:
         - START_COMMAND=sh /redis/redis-wrapper.sh
+        - VAULT_ADDR=${VAULT_ADDR}
+        - VAULT_TOKEN=${VAULT_TOKEN}
     networks:
       - ascentnet
   # Slave
@@ -24,6 +26,8 @@ services:
           - node.labels.type == slave
     environment:
         - START_COMMAND=sh /redis/redis-wrapper.sh --slaveof redis-master 6379
+        - VAULT_ADDR=${VAULT_ADDR}
+        - VAULT_TOKEN=${VAULT_TOKEN}
     networks:
       - ascentnet
   redis-sentinel:
@@ -32,6 +36,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     deploy:
       mode: replicated
       replicas: 1
@@ -48,6 +54,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     deploy:
       mode: replicated
       replicas: 1
@@ -64,6 +72,8 @@ services:
       - SENTINEL_QUORUM=2
       - SENTINEL_DOWN_AFTER=5000
       - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=${VAULT_ADDR}
+      - VAULT_TOKEN=${VAULT_TOKEN}
     deploy:
       mode: replicated
       replicas: 1
