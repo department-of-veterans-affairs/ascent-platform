@@ -16,13 +16,12 @@ vault {
 
 upcase = true
 
-# TODO: needs to be generated in vault
 # ElasticSerch SSL Secrets
-#secret {
-#    format = "es_{{ key }}"
-#    no_prefix = true
-#    path = "secret/elasticsearch"
-#}
+secret {
+    format = "es_{{ key }}"
+    no_prefix = true
+    path = "secret/elasticsearch"
+}
 
 # ElasticSearch User Secrets
 secret {
