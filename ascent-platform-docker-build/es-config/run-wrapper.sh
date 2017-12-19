@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
-CONSUL_TEMPLATE_CONFIG="/usr/share/elasticsearch/template/consul-template-config.hcl"
 default_pass=changeme
 
 if [[ -s $VAULT_TOKEN_FILE ]]; then
