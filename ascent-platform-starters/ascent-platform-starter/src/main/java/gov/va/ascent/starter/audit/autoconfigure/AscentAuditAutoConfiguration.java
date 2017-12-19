@@ -25,6 +25,7 @@ public class AscentAuditAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public RequestResponseLogSerializer requestResponseAsyncLogging() {
         return new RequestResponseLogSerializer();
     }

@@ -40,7 +40,7 @@ public class AscentCacheAutoConfigurationTests {
     @Test
     public void testAscentCacheConfiguration() throws Exception {
         context = new AnnotationConfigApplicationContext();
-        EnvironmentTestUtils.addEnvironment(context, "spring.cache.type=redis", "ascent.cache.enabled=true");
+        EnvironmentTestUtils.addEnvironment(context, "spring.cache.type=redis");
         context.register(RedisAutoConfiguration.class, AscentCacheAutoConfiguration.class, RedisCacheConfiguration.class);
         context.refresh();
         assertNotNull(context);
@@ -51,7 +51,7 @@ public class AscentCacheAutoConfigurationTests {
     @Test
     public void testAscentCacheConfigurationKeyGenerator() throws Exception {
         context = new AnnotationConfigApplicationContext();
-        EnvironmentTestUtils.addEnvironment(context, "spring.cache.type=redis", "ascent.cache.enabled=true");
+        EnvironmentTestUtils.addEnvironment(context, "spring.cache.type=redis");
         context.register(RedisAutoConfiguration.class, AscentCacheAutoConfiguration.class, RedisCacheConfiguration.class);
         context.refresh();
         assertNotNull(context);
