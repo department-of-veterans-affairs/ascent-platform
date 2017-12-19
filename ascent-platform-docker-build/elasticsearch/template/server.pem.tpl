@@ -1,4 +1,1 @@
-{{ with secret "secret/elasticsearch" }}
-{{ .Data.certificate }}{{ end }}
-{{ with secret "secret/ca" }}
-{{ .Data.certificate }}{{ end }}
+{{ with secret "pki/issue/vets-api-dot-gov" "common_name=elastic.internal.vets-api.gov" }}{{ .Data.certificate }}{{ end }}
