@@ -16,7 +16,6 @@ vault {
 
 upcase = true
 
-# TODO: needs to be generated in vault
 # ElasticSerch SSL Secrets
 #secret {
 #    format = "es_{{ key }}"
@@ -30,13 +29,4 @@ secret {
     no_prefix = true
     path = "secret/elasticsearch/admin"   
 }
-
-
-# Kibana User Secrets
-secret {
-    format = "kibana_{{ key }}"
-    no_prefix = true
-    path = "secret/elasticsearch/kibana"
-}
-
 

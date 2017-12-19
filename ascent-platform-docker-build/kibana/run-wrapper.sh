@@ -13,12 +13,12 @@ if [[ -z $VAULT_ADDR ]]; then
     VAULT_ADDR="http://vault:8200"
 fi
 
+cp $BASE_CONFIG /usr/share/kibana/config/kibana.yml
+
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
-    consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
-    cat /usr/share/kibana/config/kibana.yml
+#    consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" $CMD "$@"
 else
-    cp $BASE_CONFIG /usr/share/kibana/config/kibana.yml
     $CMD "$@"
 fi

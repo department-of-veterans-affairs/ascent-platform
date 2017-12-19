@@ -1,11 +1,12 @@
-FROM docker.elastic.co/kibana/kibana:5.5.0
+FROM centos:7
 
 LABEL gov.va.ascent.component="logging"
-
-ENV ELASTICSEARCH_PASSWORD changeme
-
 # Change ownership and permissions
 USER root
+
+ENV KIBANA_PASSWORD changeme
+ENV ES_PASSWORD changeme
+ENV REPLICA_AMOUNT 3
 
 WORKDIR /tmp
 # Install consul-template to populate secret data into files on disk
@@ -22,19 +23,18 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
-WORKDIR /usr/share/kibana
+
+WORKDIR /usr/share/elasticsearch
 
 # Add our envconsul config, consul-template configuration, and templates
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
-COPY wait-for-es-health.sh /docker/wait-for-es-health.sh
-
+COPY set-replicas.sh /docker/set-replicas.sh
+COPY changepass.sh /docker/changepass.sh
 
 # Change file permissions to elasticsearch user
-RUN chown -R kibana:kibana template config run-wrapper.sh /docker; \
+RUN chown -R root:root template run-wrapper.sh  /docker; \
     chmod 750 run-wrapper.sh; chmod -R 750 /docker;
-
-USER kibana
 
 CMD ["/bin/bash", "run-wrapper.sh"]

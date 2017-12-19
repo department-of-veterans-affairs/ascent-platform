@@ -16,9 +16,25 @@ vault {
 
 upcase = true
 
-# ElasticSerch SSL Secrets
+# Kibana SSL Secrets
+#secret {
+#    format = "kb_{{ key }}"
+#    no_prefix = true
+#    path = "secret/kibana"
+#}
+
+
+# ElasticSearch User Secrets
 secret {
-    format = "kb_{{ key }}"
+    format = "es_{{ key }}"
     no_prefix = true
-    path = "secret/kibana"
+    path = "secret/elasticsearch/admin"   
+}
+
+
+# Kibana User Secrets
+secret {
+    format = "elasticsearch_{{ key }}"
+    no_prefix = true
+    path = "secret/elasticsearch/kibana"
 }
