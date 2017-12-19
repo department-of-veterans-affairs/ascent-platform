@@ -24,8 +24,7 @@ if [[ $VAULT_TOKEN ]]; then
     # TODO: set up vault to accept ssl configs
     #cat $SSL_CONFIG >> /usr/share/elasticsearch/config/elasticsearch.yml
     #consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
-    #envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh bg & envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
-
+    
     # Using this for now until the rest of the secrets are set up in vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
 else

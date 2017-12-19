@@ -31,6 +31,17 @@ services:
                 reservations:
                     memory: 1536m
 
+    es-config:
+        image: docker.io/ascent/ascent-es-config
+        container_name: es-config
+        networks:
+            - logging
+        depends_on:
+            - elasticsearch
+        deploy:
+            mode: global
+            placement:
+                constraints: [node.role == worker] 
 
 
     fluentd:
