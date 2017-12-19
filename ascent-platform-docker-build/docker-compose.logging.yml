@@ -1,16 +1,14 @@
-version: '3'
+version: '3.3'
 
 services:
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
     elasticsearch:
-        image: docker.io/ascent/ascent-elasticsearch
+        image: ascent/ascent-elasticsearch
         container_name: elasticsearch
         environment:
-            - bootstrap.memory_lock=true
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - REPLICA_AMOUNT=1
-            - cluster.name=docker-cluster
-            - MIN_MASTER_NODES=2 
+            - MIN_MASTER_NODES=1 
         networks: 
             - logging
             - ascentnet
@@ -25,67 +23,8 @@ services:
             #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
             #timeout: 5s
         deploy:
-            placement:
-                constraints: [node.role == worker]
-            resources:
-                reservations:
-                    memory: 1536m
-
-
-    elasticsearch2:
-        image: docker.io/ascent/ascent-elasticsearch
-        container_name: elasticsearch_2
-        environment:
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - REPLICA_AMOUNT=1
-            - cluster.name=docker-cluster
-            - MIN_MASTER_NODES=2
-        networks:
-            - logging
-            - ascentnet
-        ulimits:
-            nproc: 655350
-            nofile: 655350
-            memlock:
-                soft: -1
-                hard: -1
-        #TODO Add authentication to health check
-        #healthcheck:
-            #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
-            #timeout: 5s
-        deploy:
-            placement:
-                constraints: [node.role == worker]
-            resources:
-                reservations:
-                    memory: 1536m
-
-
-
-    elasticsearch3:
-        image: docker.io/ascent/ascent-elasticsearch
-        container_name: elasticsearch_3
-        environment:
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - REPLICA_AMOUNT=1
-            - cluster.name=docker-cluster
-            - MIN_MASTER_NODES=2
-        networks:
-            - logging
-            - ascentnet
-        ulimits:
-            nproc: 655350
-            nofile: 655350
-            memlock:
-                soft: -1
-                hard: -1
-        #TODO Add authentication to health check
-        #healthcheck:
-            #test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9200/_cat/health"]
-            #timeout: 5s
-        deploy:
+            replicas: 3
+            endpoint_mode: dnsrr
             placement:
                 constraints: [node.role == worker]
             resources:
@@ -127,8 +66,6 @@ services:
             - ascentnet
         depends_on: 
             - elasticsearch
-        labels:
-            gov.va.ascent.component: "logging"
         deploy:
             placement:
                 constraints: [node.role == worker]

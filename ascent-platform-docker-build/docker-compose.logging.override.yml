@@ -1,5 +1,5 @@
 #Overrides for local development.
-version: '3'
+version: '3.3'
 
 services:
     elasticsearch:
@@ -9,37 +9,9 @@ services:
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
             - VAULT_TOKEN=
             - VAULT_ADDR=
-        ports:
-            - 9200:9200
-    elasticsearch2:
-        build:
-            context: ./elasticsearch
-        environment:  
-            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
-    elasticsearch3:
-        build:
-            context: ./elasticsearch
-        environment:  
-            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
-    es-config:
-        build:
-            context: ./es-config
-        environment:
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
     kibana:
         build:
-            context: ./kibana
-        logging:
-            driver: fluentd
-            options:
-                fluentd-async-connect: "true"
-                fluentd-max-retries: "10"
-                fluentd-retry-wait: "30s"    
+            context: ./kibana   
         environment: 
             - VAULT_TOKEN=
             - VAULT_ADDR=
