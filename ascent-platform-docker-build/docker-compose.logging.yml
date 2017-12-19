@@ -39,7 +39,8 @@ services:
         depends_on:
             - elasticsearch
         deploy:
-            mode: global
+            restart_policy:
+                condition: none
             placement:
                 constraints: [node.role == worker] 
 
