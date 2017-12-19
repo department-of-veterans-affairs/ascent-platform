@@ -2,6 +2,8 @@ FROM docker.elastic.co/kibana/kibana:5.5.0
 
 LABEL gov.va.ascent.component="logging"
 
+ENV ELASTICSEARCH_PASSWORD changeme
+
 # Change ownership and permissions
 USER root
 
@@ -34,7 +36,5 @@ RUN chown -R kibana:kibana template config run-wrapper.sh /docker; \
     chmod 750 run-wrapper.sh; chmod -R 750 /docker;
 
 USER kibana
-
-ENV ELASTICSEARCH_PASSWORD kibana123
 
 CMD ["/bin/bash", "run-wrapper.sh"]
