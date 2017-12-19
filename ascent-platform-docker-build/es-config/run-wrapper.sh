@@ -13,12 +13,12 @@ if [[ -z $VAULT_ADDR ]]; then
 fi
 
 echo "--- Polling to wait for elasticsearch to be up"
-until $(curl -XGET --output /dev/null --silent --head --fail -u elastic:$default_pass elasticsearch:9200/_cat/health); do
+until $(curl -XGET -s --output /dev/null --silent --head --fail -u elastic:$default_pass elasticsearch:9200/_cat/health); do
     sleep 5
 done
 
 echo "--- Polling to wait for elasticsearch to be ready to configure"
-curl -XGET -u elastic:$default_pass 'elasticsearch:9200/_cluster/health?wait_for_status=green'
+curl -XGET -s -u elastic:$default_pass 'elasticsearch:9200/_cluster/health?wait_for_status=green'
 
 
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process

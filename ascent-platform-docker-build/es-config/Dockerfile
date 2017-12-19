@@ -6,6 +6,7 @@ USER root
 
 ENV KIBANA_PASSWORD changeme
 ENV ES_PASSWORD changeme
+ENV REPLICA_AMOUNT 3
 
 WORKDIR /tmp
 # Install consul-template to populate secret data into files on disk
@@ -31,5 +32,9 @@ COPY template/ template/
 COPY run-wrapper.sh run-wrapper.sh
 COPY set-replicas.sh /docker/set-replicas.sh
 COPY changepass.sh /docker/changepass.sh
+
+# Change file permissions to elasticsearch user
+RUN chown -R root:root template run-wrapper.sh  /docker; \
+    chmod 750 run-wrapper.sh; chmod -R 750 /docker;
 
 CMD ["/bin/bash", "run-wrapper.sh"]

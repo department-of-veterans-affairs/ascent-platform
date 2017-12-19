@@ -10,7 +10,7 @@ EOF
 
 echo "---- changing password"
 default_pass=changeme
-curl -XPOST -u elastic:$default_pass 'elasticsearch:9200/_xpack/security/user/elastic/_password?pretty' -H 'Content-Type: application/json' -d "$(generate_pass_data $ES_PASSWORD)"
+curl -XPOST -s -u elastic:$default_pass 'elasticsearch:9200/_xpack/security/user/elastic/_password?pretty' -H 'Content-Type: application/json' -d "$(generate_pass_data $ES_PASSWORD)"
 echo "---- changing kibana user pass"
-curl -XPOST -u elastic:$ES_PASSWORD 'elasticsearch:9200/_xpack/security/user/kibana/_password?pretty' -H 'Content-Type: application/json' -d "$(generate_pass_data $KIBANA_PASSWORD)"
+curl -XPOST -s -u elastic:$ES_PASSWORD 'elasticsearch:9200/_xpack/security/user/kibana/_password?pretty' -H 'Content-Type: application/json' -d "$(generate_pass_data $KIBANA_PASSWORD)"
 
