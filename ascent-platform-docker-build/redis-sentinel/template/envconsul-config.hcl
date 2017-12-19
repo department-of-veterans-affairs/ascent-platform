@@ -1,5 +1,3 @@
-# See https://github.com/hashicorp/envconsul for config documentation
-
 vault {
   renew_token   = false
   unwrap_token = false
@@ -16,9 +14,11 @@ vault {
 
 upcase = true
 
-# Filebeat SSL Secrets
+sanitize = true
+
+# Sentinell Password Secret
 secret {
-    format = "fb_{{ key }}"
+    format = "{{ key }}"
     no_prefix = true
-    path = "secret/filebeat"
+    path = "secret/application"
 }
