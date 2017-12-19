@@ -18,6 +18,9 @@ services:
     fluentd:
         build:
             context: ./fluentd
+    es-config:
+        build:
+            context: ./es-config
 
 networks:
   ascentnet:
