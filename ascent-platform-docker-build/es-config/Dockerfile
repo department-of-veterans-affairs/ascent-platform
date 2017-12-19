@@ -4,8 +4,8 @@ LABEL gov.va.ascent.component="logging"
 # Change ownership and permissions
 USER root
 
-ENV KIBANA_PASSWORD kibana123
-ENV ES_PASSWORD elasticsearch
+ENV KIBANA_PASSWORD changeme
+ENV ES_PASSWORD changeme
 
 WORKDIR /tmp
 # Install consul-template to populate secret data into files on disk
