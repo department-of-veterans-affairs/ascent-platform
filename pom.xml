@@ -10,7 +10,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <description>Reactor POM for Ascent Platform</description>
   
   <modules>
-  	<module>ascent-platform-starters</module>
 	<module>ascent-platform-parent</module>
   </modules>
   

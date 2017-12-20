@@ -1,11 +1,7 @@
 @Library('ascent') _
 
 mavenPipeline {
-    directory = 'ascent-platform-starters'
-}
-
-mavenPipeline {
-    directory = 'ascent-platform-parent'
+    
 }
 
 dockerPipeline {
