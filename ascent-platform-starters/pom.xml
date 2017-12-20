@@ -2,16 +2,17 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-	<groupId>gov.va.ascent</groupId>
-	<artifactId>ascent-platform-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<relativePath>../ascent-platform-parent</relativePath>
+    <groupId>gov.va.ascent</groupId>
+    <artifactId>ascent-libraries-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath/>  <!-- lookup parent from repository -->
   </parent>
   
+  <version>0.0.1-SNAPSHOT</version>
   <artifactId>ascent-platform-starters</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
-  <description>Ascent Platform Starters</description>
+  <description>Ascent Platform Starters</description>    
   
   <modules>
   	<module>ascent-platform-starter-security</module>
@@ -21,27 +22,53 @@
 	<module>ascent-platform-starter</module>
   </modules>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>gov.va.ascent</groupId>
-        <artifactId>ascent-security</artifactId>
-        <version>${ascent.security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>gov.va.ascent</groupId>
-        <artifactId>ascent-framework</artifactId>
-        <version>${ascent.framework.version}</version>
-      </dependency>
-    </dependencies>
+ <dependencyManagement>
+	  <dependencies>
+	 		<!-- Ascent Libraries -->
+	  	<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-framework</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-security</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- Ascent starters-->
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>		
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-security</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-swagger</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-logger</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-cache</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	  </dependencies>
   </dependencyManagement>
-
   <dependencies>
-      <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-test</artifactId>
-          <scope>test</scope>
-      </dependency>
+   <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

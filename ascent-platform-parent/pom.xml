@@ -4,83 +4,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   
   <parent>
     <groupId>gov.va.ascent</groupId>
-    <artifactId>ascent-libraries-parent</artifactId>
+    <artifactId>ascent-platform-starters</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <relativePath/>  <!-- lookup parent from repository -->
   </parent>
   
+  <properties>
+	<ascent.test.framework.version>0.0.1-SNAPSHOT</ascent.test.framework.version>
+  </properties>
+  
   <artifactId>ascent-platform-parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Ascent Platform Parent</description>
   
-  <properties>
-  	<!-- ascent starter projects version -->
-	<ascent.starter.version>0.0.1-SNAPSHOT</ascent.starter.version>
-	<!-- ascent test framework version -->
-	<ascent.test.framework.version>0.0.1-SNAPSHOT</ascent.test.framework.version>
-	<!-- ascent framework library version -->
-	<ascent.framework.version>0.0.1-SNAPSHOT</ascent.framework.version>
-	<!-- ascent security library version -->
-	<ascent.security.version>0.0.1-SNAPSHOT</ascent.security.version>
-  </properties>
-    
-  <dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>Dalston.SR3</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
-		<dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-            <version>1.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-            <version>1.5.4.RELEASE</version>
-        </dependency>
-		<!-- Ascent Libraries -->
-	  	<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-framework</artifactId>
-			<version>${ascent.framework.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-security</artifactId>
-			<version>${ascent.security.version}</version>
-		</dependency>
-		<!-- Ascent starters-->
-		<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-platform-starter</artifactId>
-			<version>${ascent.starter.version}</version>
-		</dependency>		
-		<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-platform-starter-security</artifactId>
-			<version>${ascent.starter.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-platform-starter-swagger</artifactId>
-			<version>${ascent.starter.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-platform-starter-logger</artifactId>
-			<version>${ascent.starter.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.va.ascent</groupId>
-			<artifactId>ascent-platform-starter-cache</artifactId>
-			<version>${ascent.starter.version}</version>
-		</dependency>
-	</dependencies>
-  </dependencyManagement> 
 </project>
