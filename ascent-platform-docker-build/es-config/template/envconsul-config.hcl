@@ -42,7 +42,7 @@ secret {
 secret {
     format = "{{ key }}"
     no_prefix = true
-    path = "secret/application"
+    path = "secret/ascent-zipkin"
 }
 
 
