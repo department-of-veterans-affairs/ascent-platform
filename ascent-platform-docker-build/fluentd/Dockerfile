@@ -2,7 +2,7 @@ FROM fluent/fluentd:v0.12-debian
 
 LABEL gov.va.ascent.component="logging"
 
-ENV ES_PASSWORD=elasticsearch
+ENV ES_PASSWORD=changme
 
 
 #Install ElasticSearch plugin
