@@ -7,6 +7,8 @@ USER root
 ENV KIBANA_PASSWORD changeme
 ENV ES_PASSWORD changeme
 ENV REPLICA_AMOUNT 3
+ENV ZIPKIN_STORAGE_ELASTIC_SEARCH_USERNAME zipkin
+ENV ZIPKIN_STORAGE_ELASTIC_SEARCH_PASSWORD changeme
 
 WORKDIR /tmp
 # Install consul-template to populate secret data into files on disk

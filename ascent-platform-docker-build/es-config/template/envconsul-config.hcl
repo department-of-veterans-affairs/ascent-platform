@@ -31,12 +31,18 @@ secret {
     path = "secret/elasticsearch/admin"   
 }
 
-
 # Kibana User Secrets
 secret {
     format = "kibana_{{ key }}"
     no_prefix = true
     path = "secret/elasticsearch/kibana"
+}
+
+# Zipkin User Secrets
+secret {
+    format = "{{ key }}"
+    no_prefix = true
+    path = "secret/application"
 }
 
 
