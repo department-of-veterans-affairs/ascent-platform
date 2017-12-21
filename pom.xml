@@ -5,13 +5,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <parent>
     <groupId>gov.va.ascent</groupId>
     <artifactId>ascent-libraries-parent</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <relativePath/>  <!-- lookup parent from repository -->
   </parent>
   
-  <groupId>gov.va.ascent</groupId>
   <artifactId>ascent-platform</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Reactor POM for Ascent Platform</description>
@@ -19,5 +18,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
   <modules>
 	<module>ascent-platform-parent</module>
   </modules>
+  
   
 </project>

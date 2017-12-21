@@ -4,11 +4,11 @@
   <parent>
     <groupId>gov.va.ascent</groupId>
     <artifactId>ascent-platform</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
-    <relativePath>../</relativePath>  <!-- lookup parent from repository -->
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../</relativePath> <!-- lookup parent from repository -->
   </parent>
   
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <artifactId>ascent-platform-parent</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
@@ -82,16 +82,16 @@
          <scope>test</scope>
     </dependency>
   </dependencies>
-
+  
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-maven-plugin</artifactId>
+	        <configuration>
+	          <skip>false</skip>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+   </build>
 </project>
