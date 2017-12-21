@@ -15,25 +15,9 @@
   <description>Ascent Platform Starters Parent</description>    
   
    <properties>
-	<ascent.test.framework.version>0.0.1-SNAPSHOT</ascent.test.framework.version>
+	<ascent.test.framework.version>0.0.1</ascent.test.framework.version>
 	<ascent.platform.starter.version>${project.version}</ascent.platform.starter.version>
   </properties>
-  
-  <repositories>
-	<repository>
-		<id>vets</id>
-		<name>EVSS Nexus Repository</name>
-		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
-	</repository>
-  </repositories>
-  
-  <pluginRepositories>
-	<pluginRepository>
-		<id>vets</id>
-		<name>EVSS Nexus Repository</name>
-		<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
-	</pluginRepository>
-  </pluginRepositories>
   
   <modules>
   	<module>ascent-platform-starter-security</module>
