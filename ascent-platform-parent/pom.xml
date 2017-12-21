@@ -3,9 +3,9 @@
   
   <parent>
     <groupId>gov.va.ascent</groupId>
-    <artifactId>ascent-libraries-parent</artifactId>
-    <version>0.0.1</version>
-    <relativePath/>  <!-- lookup parent from repository -->
+    <artifactId>ascent-platform</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../</relativePath>  <!-- lookup parent from repository -->
   </parent>
   
   <version>0.0.1-SNAPSHOT</version>
