@@ -46,8 +46,8 @@ services:
           - node.role == manager
     networks:
       - ascentnet
-    depends_on:
-      - redis-master
+    #depends_on:
+    #  - redis-master
   redis-sentinel2:
     image: ascent/redis-sentinel
     environment:
@@ -64,8 +64,8 @@ services:
           - node.role == worker
     networks:
       - ascentnet
-    depends_on:
-      - redis-master
+    #depends_on:
+    #  - redis-master
   redis-sentinel3:
     image: ascent/redis-sentinel
     environment:
@@ -82,8 +82,8 @@ services:
           - node.role == worker
     networks:
       - ascentnet
-    depends_on:
-      - redis-master
+    #depends_on:
+    #  - redis-master
 networks:
   ascentnet:
     driver: overlay

@@ -4,6 +4,6 @@
 rm /redis/sentinel-wrapper.sh
 rm /redis/sentinel.conf
 
-
+sleep 20
 echo "redis pass is: ${SPRING_REDIS_PASSWORD}"
 redis-server --appendonly no --save "" --repl-diskless-sync yes --requirepass "${SPRING_REDIS_PASSWORD}" --masterauth "${SPRING_REDIS_PASSWORD}" "$@"
