@@ -16,7 +16,7 @@ upcase = true
 
 sanitize = true
 
-# Sentinell Password Secret
+# Rabbitmq Password Secret
 secret {
     format = "{{ key }}"
     no_prefix = true
