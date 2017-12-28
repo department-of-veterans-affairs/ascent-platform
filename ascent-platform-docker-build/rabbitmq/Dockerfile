@@ -29,5 +29,5 @@ COPY run-wrapper.sh run-wrapper.sh
 COPY rabbitmq.conf rabbitmq.conf
 RUN chmod 755 run-wrapper.sh
 
-CMD ["/bin/bash", "/etc/rabbitmq/run-wrapper.sh"]
+ENTRYPOINT ["/etc/rabbitmq/run-wrapper.sh"]
 EXPOSE 15672
