@@ -1,4 +1,4 @@
-FROM rabbitmq
+FROM rabbitmq:management
 
 # Change ownership and permissions
 USER root
@@ -26,6 +26,7 @@ WORKDIR /etc/rabbitmq
 
 COPY template/ template/
 COPY run-wrapper.sh run-wrapper.sh
+COPY rabbitmq.conf rabbitmq.conf
 RUN chmod 755 run-wrapper.sh
 
 CMD ["/bin/bash", "/etc/rabbitmq/run-wrapper.sh"]
