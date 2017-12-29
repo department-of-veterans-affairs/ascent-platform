@@ -1,6 +1,7 @@
 #!/bin/bash
 
-ENVCONSUL_CONFIG="/etc/rabbitmq/template/envconsul-config.hcl"
+CONSUL_TEMPLATE_CONFIG="/etc/rabbitmq/template/consul-template-config.hcl"
+
 CMD="/docker-entrypoint.sh rabbitmq-server"
 
 echo "--- polling to wait for vault"
@@ -9,4 +10,6 @@ until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Tok
   sleep 5
 done
 
-envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
+consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
+echo "contents of config:"
+$CMD "$@"
