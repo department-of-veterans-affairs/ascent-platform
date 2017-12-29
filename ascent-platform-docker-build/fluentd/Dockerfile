@@ -2,18 +2,17 @@ FROM fluent/fluentd:v0.12-debian
 
 LABEL gov.va.ascent.component="logging"
 
-ENV ES_PASSWORD=elasticsearch
+ENV ES_PASSWORD elasticsearch
 
-
+USER root
 #Install ElasticSearch plugin
-RUN ["gem", "install", "fluent-plugin-elasticsearch", "--no-rdoc", "--no-ri", "--version", "1.9.2"]
-
-
+RUN ["gem", "install", "fluent-plugin-elasticsearch", "--no-rdoc", "--no-ri", "--version", "1.9.5"]
 
 # Install curl to install envconsul and consul
 RUN apt-get update -y
 RUN apt-get install -y curl
 
+WORKDIR /tmp
 
 # Install consul-template to populate secret data into files on disk
 RUN curl -L -o consul-template_0.19.0_linux_amd64.tgz https://releases.hashicorp.com/consul-template/0.19.0/consul-template_0.19.0_linux_amd64.tgz; \
