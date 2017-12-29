@@ -21,6 +21,7 @@ cp $BASE_CONFIG /usr/share/elasticsearch/config/elasticsearch.yml
 
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
+    # TODO: set up vault to accept ssl configs
     cat $SSL_CONFIG >> /usr/share/elasticsearch/config/elasticsearch.yml
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
     
