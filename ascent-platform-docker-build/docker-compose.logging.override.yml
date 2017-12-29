@@ -2,14 +2,18 @@
 version: '3.3'
 
 services:
-    elasticsearch:
+    elastic.internal.vets-api.gov:
         build:
             context: ./elasticsearch
         environment:  
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
             - VAULT_TOKEN=
             - VAULT_ADDR=
-    kibana:
+
+    es-config:
+        build:
+           context: ./es-config
+    kibana.internal.vets-api.gov:
         build:
             context: ./kibana   
         environment: 
