@@ -16,7 +16,7 @@
   
    <properties>
 	<ascent.test.framework.version>0.0.2-SNAPSHOT</ascent.test.framework.version>
-	<ascent.platform.starter.version>${project.version}</ascent.platform.starter.version>
+	<ascent.platform.starter.version>0.0.2-SNAPSHOT</ascent.platform.starter.version>
   </properties>
   
   <modules>
