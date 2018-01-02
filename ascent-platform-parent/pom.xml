@@ -15,7 +15,7 @@
   <description>Ascent Platform Starters Parent</description>    
   
    <properties>
-	<ascent.test.framework.version>0.0.1</ascent.test.framework.version>
+	<ascent.test.framework.version>0.0.2-SNAPSHOT</ascent.test.framework.version>
 	<ascent.platform.starter.version>${project.version}</ascent.platform.starter.version>
   </properties>
   
