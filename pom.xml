@@ -1,30 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>gov.va.ascent</groupId>
+    <artifactId>ascent-libraries-parent</artifactId>
+    <version>0.0.1</version>
+    <relativePath/>  <!-- lookup parent from repository -->
+  </parent>
   
-  <groupId>gov.va.ascent</groupId>
   <artifactId>ascent-platform</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Reactor POM for Ascent Platform</description>
   
   <modules>
 	<module>ascent-platform-parent</module>
-	<module>ascent-platform-starters</module>
   </modules>
   
-  <build>
-    <plugins>
-	  <plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-		  <configuration>
-		    <skip>true</skip>
-		  </configuration>
-	 </plugin>
-	 </plugins>
-	</build>
   
 </project>

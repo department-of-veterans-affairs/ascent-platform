@@ -32,7 +32,7 @@ services:
                     memory: 1536m
 
     es-config:
-        image: docker.io/ascent/ascent-es-config
+        image: ascent/ascent-es-config
         container_name: es-config
         environment:
             - REPLICA_AMOUNT=1
@@ -41,7 +41,8 @@ services:
         depends_on:
             - elastic.internal.vets-api.gov
         deploy:
-            mode: global
+            restart_policy:
+                condition: none
             placement:
                 constraints: [node.role == worker]
 

@@ -1,86 +1,97 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
     <groupId>gov.va.ascent</groupId>
-    <artifactId>ascent-libraries-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <relativePath/>  <!-- lookup parent from repository -->
+    <artifactId>ascent-platform</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+    <relativePath>../</relativePath> <!-- lookup parent from repository -->
   </parent>
   
+  <version>0.0.2-SNAPSHOT</version>
   <artifactId>ascent-platform-parent</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
-  <description>Ascent Platform Parent</description>
+  <description>Ascent Platform Starters Parent</description>    
   
-  <properties>
-  	<!-- ascent starter projects version -->
-	<ascent.starter.version>0.0.1-SNAPSHOT</ascent.starter.version>
-	<!-- ascent test framework version -->
-	<ascent.test.framework.version>0.0.1-SNAPSHOT</ascent.test.framework.version>
-	<!-- ascent framework library version -->
-	<ascent.framework.version>0.0.1-SNAPSHOT</ascent.framework.version>
-	<!-- ascent security library version -->
-	<ascent.security.version>0.0.1-SNAPSHOT</ascent.security.version>
+   <properties>
+	<ascent.test.framework.version>0.0.2-SNAPSHOT</ascent.test.framework.version>
+	<ascent.platform.starter.version>0.0.2-SNAPSHOT</ascent.platform.starter.version>
   </properties>
-    
-  <dependencyManagement>
-	<dependencies>
-		<dependency>
+  
+  <modules>
+  	<module>ascent-platform-starter-security</module>
+	<module>ascent-platform-starter-swagger</module>
+	<module>ascent-platform-starter-cache</module>
+	<module>ascent-platform-starter-logger</module>
+	<module>ascent-platform-starter</module>
+  </modules>
+
+ <dependencyManagement>
+	  <dependencies>
+	  	<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dependencies</artifactId>
 			<version>Dalston.SR3</version>
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
-		<dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-            <version>1.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-            <version>1.5.4.RELEASE</version>
-        </dependency>
-		<!-- Ascent Libraries -->
+	 		<!-- Ascent Libraries -->
 	  	<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-framework</artifactId>
-			<version>${ascent.framework.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-security</artifactId>
-			<version>${ascent.security.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<!-- Ascent starters-->
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>${ascent.platform.starter.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-security</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>${ascent.platform.starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-swagger</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>${ascent.platform.starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-logger</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>${ascent.platform.starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-cache</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>${ascent.platform.starter.version}</version>
 		</dependency>
-	</dependencies>
-  </dependencyManagement> 
+	  </dependencies>
+  </dependencyManagement>
+  <dependencies>
+   <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <build>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-maven-plugin</artifactId>
+	        <configuration>
+	          <skip>false</skip>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+   </build>
 </project>
