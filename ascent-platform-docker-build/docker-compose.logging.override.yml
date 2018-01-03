@@ -28,7 +28,7 @@ services:
         build:
             context: ./fluentd
         environment:  
-             - SECURE_CONNECT=true
+            - SECURE_CONNECT=true
   ascentnet:
     driver: bridge
   logging:
