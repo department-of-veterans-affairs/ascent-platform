@@ -14,15 +14,19 @@ if [[ -z $VAULT_ADDR ]]; then
     VAULT_ADDR="http://vault:8200"
 fi
 
-if [[ $VAULT_TOKEN ]]; then
+if [[ -z $SECURE_CONNECT ]]; then
+    SECURE_CONNECT=false
+fi
+
+if [ "$SECURE_CONNECT" = true ]; then
     consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
     ES_BASE_URL="--cacert /usr/share/elasticsearch/config/ca.pem  https://elastic.internal.vets-api.gov:9200"
 fi
 
-echo "using url $ES_URL"
+echo "using url $ES_BASE_URL"
 
 echo "--- Polling to wait for elasticsearch to be up"
-until $(curl -XGET --output /dev/null --silent --head --fail -u elastic:changeme ${ES_BASE_URL}/_cat/health); do
+until $(curl -XGET --output /dev/null --silent --head --fail -u elastic:${default_pass} ${ES_BASE_URL}/_cat/health); do
     sleep 10
     echo "trying again"
 done

@@ -13,11 +13,15 @@ if [[ -z $VAULT_ADDR ]]; then
     VAULT_ADDR="http://vault:8200"
 fi
 
-
-
+if [[ -z $SECURE_CONNECT ]]; then
+    SECURE_CONNECT=false
+fi
 
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
+    if [ "$SECURE_CONNECT" = true ]; then
+       sed -i s/http/https/ /fluentd/etc/$FLUENTD_CONF
+    fi
     # Using this for now until the rest of the secrets are set up in vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
 else
