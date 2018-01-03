@@ -27,16 +27,8 @@ services:
     fluentd:
         build:
             context: ./fluentd
-<<<<<<< HEAD
         environment:  
              - SECURE_CONNECT=true
-=======
-    es-config:
-        build:
-            context: ./es-config
-
->>>>>>> development
-networks:
   ascentnet:
     driver: bridge
   logging:
