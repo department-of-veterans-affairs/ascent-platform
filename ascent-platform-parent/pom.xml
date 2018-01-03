@@ -14,9 +14,8 @@
   <name>${project.artifactId}</name>
   <description>Ascent Platform Starters Parent</description>    
   
-   <properties>
-	<ascent.test.framework.version>0.0.2-SNAPSHOT</ascent.test.framework.version>
-	<ascent.platform.starter.version>0.0.2-SNAPSHOT</ascent.platform.starter.version>
+  <properties>
+	<ascent.test.framework.version>0.0.2</ascent.test.framework.version>
   </properties>
   
   <modules>
@@ -51,27 +50,27 @@
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter</artifactId>
-			<version>${ascent.platform.starter.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>		
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-security</artifactId>
-			<version>${ascent.platform.starter.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-swagger</artifactId>
-			<version>${ascent.platform.starter.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-logger</artifactId>
-			<version>${ascent.platform.starter.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-cache</artifactId>
-			<version>${ascent.platform.starter.version}</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 	  </dependencies>
   </dependencyManagement>
