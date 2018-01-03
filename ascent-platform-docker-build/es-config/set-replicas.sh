@@ -20,4 +20,4 @@ fi
 
 echo "password is $ES_PASSWORD"
 echo "--- Setting number of replicas..."
-curl -XPOST -u elastic:$ES_PASSWORD  $ES_URL/_template/all_index_template -H 'Content-Type: application/json' -d "$(generate_replica_data)"
+curl -XPOST -s -u elastic:$ES_PASSWORD  $ES_URL/_template/all_index_template -H 'Content-Type: application/json' -d "$(generate_replica_data)"
