@@ -7,7 +7,7 @@ ENV ES_PASSWORD=changeme
 USER root
 
 #Install ElasticSearch plugin
-RUN ["gem", "install", "--silent", "fluent-plugin-elasticsearch", "--no-rdoc", "--no-ri", "--version", "1.9.5"]
+RUN ["gem", "install", "fluent-plugin-elasticsearch", "--no-rdoc", "--no-ri", "--version", "1.9.5"]
 
 # Install curl to install envconsul and consul
 RUN apt-get -q update -y
