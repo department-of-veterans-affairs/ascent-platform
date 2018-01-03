@@ -9,19 +9,26 @@ services:
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
             - VAULT_TOKEN=
             - VAULT_ADDR=
+            - SECURE_CONNECT=true
     es-config:
         build:
            context: ./es-config
+        environment:  
+            - VAULT_TOKEN=
+            - VAULT_ADDR=
+            - SECURE_CONNECT=true
     kibana.internal.vets-api.gov:
         build:
             context: ./kibana   
-        environment: 
+        environment:  
             - VAULT_TOKEN=
             - VAULT_ADDR=
+            - SECURE_CONNECT=true
     fluentd:
         build:
             context: ./fluentd
-
+        environment:  
+             - SECURE_CONNECT=true
 networks:
   ascentnet:
     driver: bridge
