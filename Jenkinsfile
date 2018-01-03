@@ -7,6 +7,9 @@ mavenPipeline {
 }
 
 dockerPipeline {
+    //Specify string of comma separated upstream projects that will
+    //trigger this build if successful
+    upstreamProjects = '../ascent-security/development'
     dockerBuilds = [
         "ascent/ascent-base": "ascent-platform-docker-build/ascent-base",
         "ascent/fluentd":"ascent-platform-docker-build/fluentd",
