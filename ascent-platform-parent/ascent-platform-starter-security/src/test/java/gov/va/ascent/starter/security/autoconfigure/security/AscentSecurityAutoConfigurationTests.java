@@ -30,7 +30,7 @@ public class AscentSecurityAutoConfigurationTests {
         context.register(SecurityAutoConfiguration.class, ServerPropertiesAutoConfiguration.class, AscentSecurityAutoConfiguration.class);
         context.refresh();
         assertNotNull(context);
-        assertEquals(12, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
+        assertEquals(13, this.context.getBean(FilterChainProxy.class).getFilterChains().size());
 
     }
 }
