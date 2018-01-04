@@ -14,7 +14,7 @@ vault {
 
 template {
   source = "/etc/rabbitmq/template/rabbitmq.conf.tpl"
-  destination = "/etc/rabbitmq/rabbitmq.conf"
+  destination = "/usr/lib/rabbitmq/etc/rabbitmq/rabbitmq.config"
   perms = 0644
 }
 
