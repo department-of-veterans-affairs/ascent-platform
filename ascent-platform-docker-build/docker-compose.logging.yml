@@ -3,7 +3,7 @@ version: '3.3'
 services:
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
     elastic.internal.vets-api.gov:
-        image: docker.io/ascent/ascent-elasticsearch
+        image: ascent/ascent-elasticsearch
         container_name: elastic.internal.vets-api.gov
         environment:
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
