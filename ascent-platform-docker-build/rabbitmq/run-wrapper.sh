@@ -11,5 +11,7 @@ until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Tok
 done
 
 consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
-echo "contents of config:"
+
+exec /etc/rabbitmq/mirror-queues.sh & 
+
 $CMD "$@"
