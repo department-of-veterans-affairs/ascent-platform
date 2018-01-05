@@ -33,6 +33,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
+      # TESTING ONLY: remember to shut off because this connection should be in internal docker network
+      - 8080:80
       - 15672:15672
       - 5672:5672
     networks:
