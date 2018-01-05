@@ -23,19 +23,4 @@ secret {
     path = "secret/elasticsearch"
 }
 
-# ElasticSearch User Secrets
-secret {
-    format = "es_{{ key }}"
-    no_prefix = true
-    path = "secret/elasticsearch/admin"   
-}
-
-
-# Kibana User Secrets
-secret {
-    format = "kibana_{{ key }}"
-    no_prefix = true
-    path = "secret/elasticsearch/kibana"
-}
-
 
