@@ -2,16 +2,19 @@ version: '3.3'
 
 services:
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
-    elastic.internal.vets-api.gov:
+    elasticsearch:
         image: ascent/ascent-elasticsearch
-        container_name: elastic.internal.vets-api.gov
         environment:
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - REPLICA_AMOUNT=1
             - MIN_MASTER_NODES=1 
         networks: 
-            - logging
-            - ascentnet
+            logging:
+                aliases:
+                    - elastic.internal.vets-api.gov
+            ascentnet:
+                aliases:
+                    - elastic.internal.vets-api.gov
         ulimits:
             nproc: 655350
             nofile: 655350
@@ -39,7 +42,7 @@ services:
         networks:
             - logging
         depends_on:
-            - elastic.internal.vets-api.gov
+            - elasticsearch
         deploy:
             restart_policy:
                 condition: none
@@ -54,22 +57,25 @@ services:
         networks:
             - logging
         depends_on:
-            - elastic.internal.vets-api.gov
+            - elasticsearch
         deploy:
             mode: global
             placement:
                 constraints: [node.role == worker]
 
-    kibana.internal.vets-api.gov:
-        image: docker.io/ascent/ascent-kibana
-        container_name: kibana.internal.vets-api.gov
+    kibana:
+        image: ascent/ascent-kibana
         ports: 
             - 5601:5601
         networks: 
-            - logging
-            - ascentnet
+            logging:
+                aliases:
+                    - kibana.internal.vets-api.gov
+            ascentnet:
+                aliases:
+                    - kibana.internal.vets-api.gov
         depends_on: 
-            - elastic.internal.vets-api.gov
+            - elasticsearch
         deploy:
             placement:
                 constraints: [node.role == worker]
