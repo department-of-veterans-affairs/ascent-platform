@@ -69,5 +69,5 @@ curl -XPOST -s -u elastic:$ES_PASSWORD $ES_URL/_xpack/security/role/developer -H
 
 # ZIPKIN_STORAGE_ELASTIC_SEARCH_* environment variables are populated by envconsul from secrets in Vault
 echo "---- Create Zipkin user account"
-curl -XPOST -s -u elastic:$ES_PASSWORD $ES_URL/_xpack/security/user/$ZIPKIN_STORAGE_ELASTIC_SEARCH_USERNAME -H 'Content-Type: application/json' -d "$(generate_user_data $ZIPKIN_STORAGE_ELASTIC_SEARCH_PASSWORD)"
+curl -XPOST -sk -u elastic:$ES_PASSWORD $ES_URL/_xpack/security/user/$ZIPKIN_STORAGE_ELASTICSEARCH_USERNAME -H 'Content-Type: application/json' -d "$(generate_user_data $ZIPKIN_STORAGE_ELASTICSEARCH_PASSWORD)"
 

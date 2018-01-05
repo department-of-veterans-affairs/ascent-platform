@@ -6,6 +6,8 @@ ENV MIN_MASTER_NODES 1
 ENV ES_PASSWORD changeme
 ENV KIBANA_PASSWORD changeme
 
+HEALTHCHECK CMD curl -XGET 'http://localhost:9200/_cat/health?v&pretty'
+
 # Change ownership and permissions
 USER root
 
