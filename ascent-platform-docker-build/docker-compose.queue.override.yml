@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-   ascent-amqp:
+   rabbit:
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
@@ -23,15 +23,15 @@ services:
       - 5671
       - 15671
     tty: true
-    command:  sh -c "sleep 20; rabbitmq-server;" 
+#    command:  sh -c "sleep 20; rabbitmq-server;" 
    lb:
     image: dockercloud/haproxy
     environment:
       - MODE=tcp
     links:
-      - ascent-amqp
-    #volumes:
-    #  - /var/run/docker.sock:/var/run/docker.sock
+      - rabbit
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 15672:15672
       - 5672:5672
