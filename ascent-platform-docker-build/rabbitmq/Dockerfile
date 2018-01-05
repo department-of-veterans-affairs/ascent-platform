@@ -31,7 +31,8 @@ WORKDIR /etc/rabbitmq
 
 COPY template/ template/
 COPY run-wrapper.sh run-wrapper.sh
-RUN chmod 755 run-wrapper.sh
+COPY mirror-queues.sh mirror-queues.sh
+RUN chmod 755 run-wrapper.sh mirror-queues.sh
 
 ENTRYPOINT ["/etc/rabbitmq/run-wrapper.sh"]
 EXPOSE 15672
