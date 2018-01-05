@@ -14,15 +14,9 @@ if [[ -z $VAULT_ADDR ]]; then
     VAULT_ADDR="http://vault:8200"
 fi
 
-if [[ -z $SECURE_CONNECT ]]; then
-    SECURE_CONNECT=false
-fi
-
-if [ "$SECURE_CONNECT" = true ]; then
-    consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
-    ES_BASE_URL="--cacert /usr/share/elasticsearch/config/ca.pem  https://elastic.internal.vets-api.gov:9200"
-fi
-
+# call set-url.sh that will make a file to hold url value
+/docker/set-url.sh
+ES_BASE_URL=`cat es-url`
 echo "using url $ES_BASE_URL"
 
 echo "--- Polling to wait for elasticsearch to be up"

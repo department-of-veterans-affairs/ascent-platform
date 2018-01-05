@@ -47,13 +47,9 @@ EOF
 
 
 echo "password is $ES_PASSWORD"
-ES_URL=elastic.internal.vets-api.gov:9200
-if [[  $VAULT_TOKEN ]]; then
-    if [ "$SECURE_CONNECT" = true ]; then
-        consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
-        ES_URL="--cacert /usr/share/elasticsearch/config/ca.pem  https://elastic.internal.vets-api.gov:9200"
-    fi
-fi
+ES_URL=`cat es-url`
+echo "using url $ES_URL"
+
 echo "---- changing password"
 default_pass=changeme
 curl -XPOST -s -u elastic:$default_pass  $ES_URL/_xpack/security/user/elastic/_password?pretty -H 'Content-Type: application/json' -d "$(generate_pass_data $ES_PASSWORD)"
