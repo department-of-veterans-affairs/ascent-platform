@@ -1,4 +1,5 @@
 #!/bin/bash
+CONSUL_TEMPLATE_CONFIG="/usr/share/elasticsearch/template/consul-template-config.hcl"
 if [[ -z $SECURE_CONNECT ]]; then
     SECURE_CONNECT=false
     echo "elastic.internal.vets-api.gov:9200" >> es-url
