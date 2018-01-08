@@ -1,5 +1,5 @@
 ---
-server.name: ${HOSTNAME}
+server.name: kibana.internal.vets-api.gov
 server.host: "0.0.0.0"
 
 {{ with secret "secret/elasticsearch/kibana" }}
@@ -22,4 +22,7 @@ server.ssl.enabled: true
 server.ssl.key: /usr/share/kibana/config/server.key
 server.ssl.keyPassphrase: {{ .Data.privatekey_password }}
 server.ssl.certificate: /usr/share/kibana/config/server.pem
+{{ end }}
+{{ with secret "pki/cert/ca" }}
+elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/ca.pem"]
 {{ end }}
