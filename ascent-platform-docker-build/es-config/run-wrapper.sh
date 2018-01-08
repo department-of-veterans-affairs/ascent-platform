@@ -2,8 +2,6 @@
 
 CONSUL_TEMPLATE_CONFIG="/usr/share/elasticsearch/template/consul-template-config.hcl"
 ENVCONSUL_CONFIG="/usr/share/elasticsearch/template/envconsul-config.hcl"
-ES_BASE_URL=elastic.internal.vets-api.gov:9200
-default_pass=changeme
 
 if [[ -s $VAULT_TOKEN_FILE ]]; then
     echo "vault token file found and not empty."
@@ -20,13 +18,13 @@ ES_BASE_URL=`cat es-url`
 echo "using url $ES_BASE_URL"
 
 echo "--- Polling to wait for elasticsearch to be up"
-until $(curl -XGET -s --output /dev/null --silent --head --fail -u elastic:${default_pass} ${ES_BASE_URL}/_cat/health); do
+until curl -XGET -s --output /dev/null --silent --head --fail -u elastic:changeme $ES_BASE_URL/_cat/health; do
     sleep 10
     echo "trying again"
 done
 
 echo "--- Polling to wait for elasticsearch to be ready to configure"
-curl -XGET -s -u elastic:$default_pass $ES_BASE_URL/_cluster/health?wait_for_status=green
+curl -XGET -s -u elastic:changeme $ES_BASE_URL/_cluster/health?wait_for_status=green
 
 
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
