@@ -1,8 +1,6 @@
 #!/bin/bash
-
 ENVCONSUL_CONFIG="/fluentd/etc/template/envconsul-config.hcl"
 CMD="fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT"
-
 
 if [[ -s $VAULT_TOKEN_FILE ]]; then
     echo "vault token file found and not empty."
@@ -20,7 +18,9 @@ fi
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
     if [ "$SECURE_CONNECT" = true ]; then
+       /fluentd/etc/set-trusted-ca.sh
        sed -i s/http/https/ /fluentd/etc/$FLUENTD_CONF
+       sed -i 's/ssl_verify.*/ssl_verify true/g' /fluentd/etc/$FLUENTD_CONF
     fi
     # Using this for now until the rest of the secrets are set up in vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"

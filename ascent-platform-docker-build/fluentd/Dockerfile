@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v0.12-debian
+FROM fluent/fluentd:v1.0-debian
 
 LABEL gov.va.ascent.component="logging"
 
@@ -29,13 +29,17 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
+WORKDIR /fluentd/etc
+
 #Add our custom configurations
 ADD conf /fluentd/etc
 
-WORKDIR /fluentd/etc
 COPY template/ template/
 COPY run-wrapper.sh run-wrapper.sh
+COPY set-trusted-ca.sh set-trusted-ca.sh
 
-RUN chmod 750 run-wrapper.sh
+RUN chmod 750 run-wrapper.sh set-trusted-ca.sh
+RUN chmod -R 777 /usr/local/share/ca-certificates
+
 
 CMD ["/bin/bash", "run-wrapper.sh"]
