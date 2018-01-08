@@ -2,33 +2,35 @@
 version: '3.3'
 
 services:
-    elastic.internal.vets-api.gov:
+    elasticsearch:
         build:
             context: ./elasticsearch
         environment:  
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
-            - SECURE_CONNECT=true
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
     es-config:
         build:
            context: ./es-config
         environment:  
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
-            - SECURE_CONNECT=true
-    kibana.internal.vets-api.gov:
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
+    kibana:
         build:
             context: ./kibana   
         environment:  
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
-            - SECURE_CONNECT=true
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
     fluentd:
         build:
             context: ./fluentd
         environment:  
-            - SECURE_CONNECT=true
+            - SECURE_CONNECT=false
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
 networks:
     ascentnet:
         driver: bridge
