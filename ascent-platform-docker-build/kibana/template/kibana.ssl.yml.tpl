@@ -16,15 +16,6 @@ elasticsearch.password: {{ .Data.password }}
 elasticsearch.password: changeme
 {{ end }}
 {{ end }}
-{{ with secret "secret/elasticsearch "}}
-xpack.monitoring.ui.container.elasticsearch.enabled: true
-elasticsearch.ssl.certificateAuthorities: [ "/usr/share/kibana/config/ca.pem" ]
-elasticsearch.ssl.certificate: /usr/share/kibana/config/es-server.pem
-elasticsearch.ssl.key: /usr/share/kibana/config/es-server.key
-elasticsearch.ssl.keyPassphrase: {{ .Data.privatekey_password }}
-elasticsearch.ssl.verificationMode: full
-{{ end }}
-
 {{ with secret "secret/kibana" }}
 #SSL Settings
 server.ssl.enabled: true
