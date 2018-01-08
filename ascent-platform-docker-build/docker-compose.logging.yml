@@ -41,6 +41,7 @@ services:
             - REPLICA_AMOUNT=1
         networks:
             - logging
+            - ascentnet
         depends_on:
             - elasticsearch
         deploy:
