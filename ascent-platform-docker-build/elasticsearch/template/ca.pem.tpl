@@ -1,2 +1,1 @@
-{{ with secret "secret/ca" }}
-{{ .Data.certificate }}{{ end }}
+{{ with secret "pki/cert/ca" }}{{ with .Data.certificate }}{{ trimSpace . }}{{ end }}{{ end }}

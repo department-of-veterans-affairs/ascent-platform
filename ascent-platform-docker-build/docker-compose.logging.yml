@@ -4,14 +4,17 @@ services:
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
     elasticsearch:
         image: ascent/ascent-elasticsearch
-        container_name: elasticsearch
         environment:
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - REPLICA_AMOUNT=1
             - MIN_MASTER_NODES=1 
         networks: 
-            - logging
-            - ascentnet
+            logging:
+                aliases:
+                    - elastic.internal.vets-api.gov
+            ascentnet:
+                aliases:
+                    - elastic.internal.vets-api.gov
         ulimits:
             nproc: 655350
             nofile: 655350
@@ -34,6 +37,8 @@ services:
     es-config:
         image: ascent/ascent-es-config
         container_name: es-config
+        environment:
+            - REPLICA_AMOUNT=1
         networks:
             - logging
         depends_on:
@@ -42,11 +47,11 @@ services:
             restart_policy:
                 condition: none
             placement:
-                constraints: [node.role == worker] 
-
+                constraints: [node.role == worker]
 
     fluentd:
         image: ascent/fluentd
+        container_name: fluentd
         ports:
             - 24224:24224
         networks:
@@ -59,19 +64,27 @@ services:
                 constraints: [node.role == worker]
 
     kibana:
-        image: docker.io/ascent/ascent-kibana
+        image: ascent/ascent-kibana
         ports: 
             - 5601:5601
         networks: 
-            - logging
-            - ascentnet
+            logging:
+                aliases:
+                    - kibana.internal.vets-api.gov
+            ascentnet:
+                aliases:
+                    - kibana.internal.vets-api.gov
         depends_on: 
             - elasticsearch
         deploy:
             placement:
                 constraints: [node.role == worker]
-            
-        
+        logging:
+            driver: fluentd
+            options:
+                fluentd-async-connect: "true"
+                fluentd-max-retries: "10"
+                fluentd-retry-wait: "30s"
 networks:
   logging:
     driver: overlay

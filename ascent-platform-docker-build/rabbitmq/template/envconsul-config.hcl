@@ -1,5 +1,3 @@
-# See https://github.com/hashicorp/envconsul for config documentation
-
 vault {
   renew_token   = false
   unwrap_token = false
@@ -16,11 +14,12 @@ vault {
 
 upcase = true
 
-# ElasticSerch SSL Secrets
-secret {
-    format = "es_{{ key }}"
-    no_prefix = true
-    path = "secret/elasticsearch"
-}
+sanitize = true
 
+# Rabbitmq Password Secret
+secret {
+    format = "{{ key }}"
+    no_prefix = true
+    path = "secret/application"
+}
 

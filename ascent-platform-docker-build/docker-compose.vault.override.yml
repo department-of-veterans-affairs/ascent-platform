@@ -8,4 +8,5 @@ services:
 networks:
   ascentnet:
     driver: bridge
-
+  logging:
+    driver: bridge

@@ -2,9 +2,7 @@ FROM docker.elastic.co/elasticsearch/elasticsearch:5.5.0
 
 LABEL gov.va.ascent.component="logging"
 
-ENV MIN_MASTER_NODES 2
-
-HEALTHCHECK CMD curl -XGET 'http://localhost:9200/_cat/health?v&pretty'
+ENV MIN_MASTER_NODES 1
 
 # Change ownership and permissions
 USER root
