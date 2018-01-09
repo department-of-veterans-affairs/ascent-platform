@@ -28,7 +28,7 @@ WORKDIR /usr/share/kibana
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
-COPY wait-for-es-health.sh /docker/wait-for-es-health.sh
+COPY wait-es-container-shutdown.sh /docker/wait-es-container-shutdown.sh
 
 
 # Change file permissions to elasticsearch user
