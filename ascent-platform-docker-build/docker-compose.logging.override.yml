@@ -10,6 +10,8 @@ services:
             - VAULT_TOKEN=vaultroot
             - VAULT_ADDR=http://vault:8200
             - SECURE_CONNECT=true
+        ports:
+            - 9200:9200
     es-config:
         build:
            context: ./es-config
