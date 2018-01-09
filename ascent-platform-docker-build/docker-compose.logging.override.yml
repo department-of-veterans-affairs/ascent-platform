@@ -2,7 +2,7 @@
 version: '3.3'
 
 services:
-    elastic.internal.vets-api.gov:
+   elasticsearch:
         build:
             context: ./elasticsearch
         environment:  
@@ -17,7 +17,7 @@ services:
             - VAULT_TOKEN=
             - VAULT_ADDR=
             - SECURE_CONNECT=true
-    kibana.internal.vets-api.gov:
+    kibana:
         build:
             context: ./kibana   
         environment:  
