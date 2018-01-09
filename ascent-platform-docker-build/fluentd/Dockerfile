@@ -41,5 +41,4 @@ COPY set-trusted-ca.sh set-trusted-ca.sh
 RUN chmod 750 run-wrapper.sh set-trusted-ca.sh
 RUN chmod -R 777 /usr/local/share/ca-certificates
 
-
-CMD ["/bin/bash", "run-wrapper.sh"]
+ENTRYPOINT ["/bin/bash", "run-wrapper.sh"]

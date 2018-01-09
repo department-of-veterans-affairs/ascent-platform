@@ -41,7 +41,6 @@ services:
             - REPLICA_AMOUNT=1
         networks:
             - logging
-            - ascentnet
         depends_on:
             - elasticsearch
         deploy:
@@ -51,7 +50,7 @@ services:
                 constraints: [node.role == worker]
 
     fluentd:
-        image: docker.io/ascent/fluentd
+        image: ascent/fluentd
         container_name: fluentd
         ports:
             - 24224:24224
