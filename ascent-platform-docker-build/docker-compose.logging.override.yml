@@ -9,7 +9,7 @@ services:
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
             - VAULT_TOKEN=vaultroot
             - VAULT_ADDR=http://vault:8200
-            - SECURE_CONNECT=true
+            - SECURE_CONNECT=false
         ports:
             - 9200:9200
     es-config:
@@ -18,19 +18,19 @@ services:
         environment:  
             - VAULT_TOKEN=vaultroot
             - VAULT_ADDR=http://vault:8200
-            - SECURE_CONNECT=true
+            - SECURE_CONNECT=false
     kibana:
         build:
             context: ./kibana   
         environment:  
             - VAULT_TOKEN=vaultroot
             - VAULT_ADDR=http://vault:8200
-            - SECURE_CONNECT=true
+            - SECURE_CONNECT=false
     fluentd:
         build:
             context: ./fluentd
         environment:  
-            - SECURE_CONNECT=true
+            - SECURE_CONNECT=false
             - VAULT_TOKEN=vaultroot
             - VAULT_ADDR=http://vault:8200
 networks:

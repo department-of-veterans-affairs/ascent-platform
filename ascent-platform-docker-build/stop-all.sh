@@ -7,4 +7,5 @@ docker-compose -f docker-compose.yml \
 	-f docker-compose.cache.yml \
 	-f docker-compose.vault.yml \
 	-f docker-compose.vault.override.yml \
+	-f docker-compose.queue.override.yml \
 	down -v
