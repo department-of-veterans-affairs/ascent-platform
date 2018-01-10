@@ -9,5 +9,7 @@ generate_replica_data() {
 EOF
 }
 
+ES_URL=`cat es-url`
+echo "using url $ES_URL"
 echo "--- Setting number of replicas..."
-curl -XPUT -s -u elastic:$ES_PASSWORD 'elasticsearch:9200/_template/all_index_template' -H 'Content-Type: application/json' -d "$(generate_replica_data)"
+curl -XPOST -s -u elastic:$ES_PASSWORD  $ES_URL/_template/all_index_template -H 'Content-Type: application/json' -d "$(generate_replica_data)"

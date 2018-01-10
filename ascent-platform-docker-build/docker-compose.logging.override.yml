@@ -7,23 +7,34 @@ services:
             context: ./elasticsearch
         environment:  
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
+        ports:
+            - 9200:9200
+    es-config:
+        build:
+           context: ./es-config
+        environment:  
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
     kibana:
         build:
             context: ./kibana   
-        environment: 
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
+        environment:  
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
     fluentd:
         build:
             context: ./fluentd
-    es-config:
-        build:
-            context: ./es-config
-
+        environment:  
+            - SECURE_CONNECT=false
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
 networks:
-  ascentnet:
-    driver: bridge
-  logging:
-    driver: bridge
+    ascentnet:
+        driver: bridge
+    logging:
+        driver: bridge

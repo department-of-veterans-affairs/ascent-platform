@@ -15,6 +15,7 @@ vault {
 }
 
 upcase = true
+sanitize = true
 
 # TODO: needs to be generated in vault
 # ElasticSerch SSL Secrets
