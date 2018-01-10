@@ -15,10 +15,10 @@ if [[ -z $VAULT_ADDR ]]; then
 fi
 
 echo "--- polling to wait for vault"
-    until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/sys/health); do
-       echo "--trying again"
-       sleep 5
-    done
+until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/sys/health); do
+    echo "--trying again"
+    sleep 5
+done
 
 if [[ -z $SECURE_CONNECT ]]; then
     SECURE_CONNECT=false
