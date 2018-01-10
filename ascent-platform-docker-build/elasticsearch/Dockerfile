@@ -4,8 +4,6 @@ LABEL gov.va.ascent.component="logging"
 
 ENV MIN_MASTER_NODES 1
 
-HEALTHCHECK CMD curl -XGET 'http://localhost:9200/_cat/health?v&pretty'
-
 # Change ownership and permissions
 USER root
 

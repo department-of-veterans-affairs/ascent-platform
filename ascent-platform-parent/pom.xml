@@ -15,7 +15,7 @@
   <description>Ascent Platform Starters Parent</description>    
   
   <properties>
-	<ascent.test.framework.version>0.0.2</ascent.test.framework.version>
+	<ascent.test.framework.version>0.0.3-SNAPSHOT</ascent.test.framework.version>
   </properties>
   
   <modules>
@@ -39,7 +39,7 @@
 	  	<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-framework</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
