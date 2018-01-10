@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 import pika
 
+# ------
+# Tests insertion of a queue into rabbit
+# https://www.rabbitmq.com/tutorials/tutorial-one-python.html
+
+
 credentials = pika.PlainCredentials('guest', 'default')
 
-
-connectionParameters = pika.connection.ConnectionParameters('localhost', 8080, '/', credentials)
+connectionParameters = pika.connection.ConnectionParameters('localhost','15672', '/', credentials)
 connection = pika.BlockingConnection(connectionParameters)
 channel = connection.channel()
 
