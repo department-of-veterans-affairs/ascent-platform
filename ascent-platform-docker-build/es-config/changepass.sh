@@ -8,10 +8,13 @@ generate_pass_data() {
 EOF
 }
 
+# "cluster" privilege as "manage". Required for zipkin user, else get connect exception
+# Builds on monitor and adds cluster operations that change values in the cluster. 
+# This includes snapshotting, updating settings, and rerouting.
 generate_zipkin_role_data() {
   cat <<EOF
 {
-  "cluster": [],
+  "cluster": [ "manage"],
   "indices": [
     {
       "names": [ "zipkin*" ],
