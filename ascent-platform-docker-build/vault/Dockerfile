@@ -1,4 +1,4 @@
-FROM vault:latest
+FROM vault:0.9.0
 
 ADD . /tmp/
 
