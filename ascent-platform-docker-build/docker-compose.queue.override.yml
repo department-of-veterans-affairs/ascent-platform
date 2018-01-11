@@ -42,6 +42,7 @@ services:
     networks:
       - back
       - ascentnet
+   #Clustering plugins: https://www.rabbitmq.com/clustering.html
    #Suppported discovery services: https://github.com/aweber/rabbitmq-autocluster/wiki
    consul1:
     image: "consul"
