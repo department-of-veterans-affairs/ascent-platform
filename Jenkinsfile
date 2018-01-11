@@ -17,6 +17,7 @@ dockerPipeline {
         "ascent/ascent-es-config":"ascent-platform-docker-build/es-config",
         "ascent/ascent-kibana":"ascent-platform-docker-build/kibana",
         "ascent/redis-sentinel":"ascent-platform-docker-build/redis-sentinel",
-        "ascent/rabbitmq":"ascent-platform-docker-build/rabbitmq"
+        "ascent/rabbitmq":"ascent-platform-docker-build/rabbitmq",
+        "ascent/ascent-vault":"ascent-platform-docker-build/vault"
     ]
 }
