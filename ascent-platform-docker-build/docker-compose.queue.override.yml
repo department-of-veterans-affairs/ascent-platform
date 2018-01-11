@@ -1,7 +1,4 @@
 version: "3.3"
-# original docker-compose file from 
-# https://github.com/rabbitmq/rabbitmq-autocluster/tree/v3.6.x/examples/compose_consul_haproxy
-# with some tweaks
 services:
    rabbit:
     environment:
