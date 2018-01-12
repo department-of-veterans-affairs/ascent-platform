@@ -1,4 +1,4 @@
-FROM pivotalrabbitmq/rabbitmq-autocluster
+FROM pivotalrabbitmq/rabbitmq-autocluster:3.6.14
 
 
 ENV TCP_PORTS "15672, 5672"
