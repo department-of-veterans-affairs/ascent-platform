@@ -26,7 +26,6 @@ services:
    consul:
     image: consul:1.0.2
     hostname: consul
-    #container_name: consul
     ports:
       - "8400:8400"
       - "8500:8500"
