@@ -4,14 +4,6 @@ services:
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
-      - TCP_PORTS=15672, 5672
-      - AUTOCLUSTER_TYPE=consul
-      - AUTOCLUSTER_DELAY=60
-      - CONSUL_HOST=consul
-      - CONSUL_SVC_ADDR_AUTO=true
-      - AUTOCLUSTER_CLEANUP=true
-      - CLEANUP_WARN_ONLY=false
-      - CONSUL_DEREGISTER_AFTER=60 
     networks:
       back:
         aliases:
