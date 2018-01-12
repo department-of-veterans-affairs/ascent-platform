@@ -19,26 +19,10 @@ services:
       - 5671
       - 15671
     tty: true
-#    command:  sh -c "sleep 20; rabbitmq-server;" 
+    command:  sh -c "sleep 20; rabbitmq-server;" 
    #https://github.com/docker/dockercloud-haproxy
-   lb:
-    image: dockercloud/haproxy
-    environment:
-      - MODE=tcp
-    links:
-      - ascent-amqp
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      # TESTING ONLY: remember to shut off because this connection should be in internal docker network
-      - 8080:80
-      - 15672:15672
-      - 5672:5672
-    networks:
-      - back
-      - ascentnet
    consul1:
-    image: "consul"
+    image: consul:1.0.2
     container_name: "consul"
     hostname: "consul"
     ports:
