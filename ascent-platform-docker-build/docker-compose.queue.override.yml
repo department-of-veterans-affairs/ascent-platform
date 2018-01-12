@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-   rabbit:
+   ascent-amqp:
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
@@ -13,8 +13,12 @@ services:
       - CLEANUP_WARN_ONLY=false
       - CONSUL_DEREGISTER_AFTER=60 
     networks:
-      - back
-      - ascentnet
+      back:
+        aliases:
+          - rabbit
+      ascentnet:
+        aliases:
+          - rabbit
     build:
       context: ./rabbitmq
     expose:
@@ -30,7 +34,7 @@ services:
     environment:
       - MODE=tcp
     links:
-      - rabbit
+      - ascent-amqp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
