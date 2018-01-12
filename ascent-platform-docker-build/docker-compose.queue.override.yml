@@ -19,8 +19,8 @@ services:
       - 5671
       - 15671
     # publish 15672 for seeing rabbitmq management console
-    #ports:
-    #  - 15672:15672
+    ports:
+      - 15672:15672
     tty: true
    #https://github.com/docker/dockercloud-haproxy
    consul:
