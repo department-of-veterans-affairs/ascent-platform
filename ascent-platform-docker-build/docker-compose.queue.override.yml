@@ -18,13 +18,15 @@ services:
       - 5672
       - 5671
       - 15671
+    # publish 15672 for seeing rabbitmq management console
+    #ports:
+    #  - 15672:15672
     tty: true
-    command:  sh -c "sleep 20; rabbitmq-server;" 
    #https://github.com/docker/dockercloud-haproxy
-   consul1:
+   consul:
     image: consul:1.0.2
-    container_name: "consul"
-    hostname: "consul"
+    hostname: consul
+    #container_name: consul
     ports:
       - "8400:8400"
       - "8500:8500"
