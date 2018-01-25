@@ -7,9 +7,9 @@ services:
         environment:
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - REPLICA_AMOUNT=1
-            - MIN_MASTER_NODES=1 
+            - MIN_MASTER_NODES=1
             - SECURE_CONNECT=true
-        networks: 
+        networks:
             logging:
                 aliases:
                     - elastic.internal.vets-api.gov
@@ -53,7 +53,6 @@ services:
 
     fluentd:
         image: ascent/fluentd
-        container_name: fluentd
         environment:
             - SECURE_CONNECT=true
         ports:
@@ -71,16 +70,16 @@ services:
         image: ascent/ascent-kibana
         environment:
             - SECURE_CONNECT=true
-        ports: 
+        ports:
             - 5601:5601
-        networks: 
+        networks:
             logging:
                 aliases:
                     - kibana.internal.vets-api.gov
             ascentnet:
                 aliases:
                     - kibana.internal.vets-api.gov
-        depends_on: 
+        depends_on:
             - elasticsearch
         deploy:
             placement:
@@ -96,4 +95,3 @@ networks:
     driver: overlay
   ascentnet:
     driver: overlay
-
