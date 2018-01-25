@@ -55,18 +55,31 @@ do
 done
 
 cd ./ascent-platform-docker-build/elasticsearch
-docker build -t docker.io/ascent/ascent-elasticsearch .
-docker tag docker.io/ascent/ascent-elasticsearch:latest localhost:5000/docker.io/ascent/ascent-elasticsearch:latest
-docker push localhost:5000/docker.io/ascent/ascent-elasticsearch:latest
+docker build -t ascent/ascent-elasticsearch .
+docker tag ascent/ascent-elasticsearch:latest localhost:5000/ascent/ascent-elasticsearch:latest
+docker push localhost:5000/ascent/ascent-elasticsearch:latest
 cd ../fluentd
 docker build -t ascent/fluentd .
 docker tag ascent/fluentd:latest localhost:5000/ascent/fluentd:latest
 docker push localhost:5000/ascent/fluentd:latest
 cd ../kibana
-docker build -t docker.io/ascent/ascent-kibana .
-docker tag docker.io/ascent/ascent-kibana:latest localhost:5000/docker.io/ascent/ascent-kibana:latest
-docker push localhost:5000/docker.io/ascent/ascent-kibana:latest
+docker build -t ascent/ascent-kibana .
+docker tag ascent/ascent-kibana:latest localhost:5000/ascent/ascent-kibana:latest
+docker push localhost:5000/ascent/ascent-kibana:latest
 cd ../redis-sentinel
 docker build -t ascent/redis-sentinel .
 docker tag ascent/redis-sentinel:latest localhost:5000/ascent/redis-sentinel:latest
 docker push localhost:5000/ascent/redis-sentinel:latest
+cd ../rabbitmq
+docker build -t ascent/ascent-amqp .
+docker tag ascent/ascent-amqp:latest localhost:5000/ascent/ascent-amqp:latest
+docker push localhost:5000/ascent/ascent-amqp:latest
+cd ../es-config
+docker build -t ascent/es-config .
+docker tag ascent/es-config:latest localhost:5000/ascent/es-config:latest
+docker push localhost:5000/ascent/es-config:latest
+
+cd ../vault
+docker build -t ascent/ascent-vault .
+docker tag ascent/ascent-vault:latest localhost:5000/ascent/ascent-vault:latest
+docker push localhost:5000/ascent/ascent-vault:latest
