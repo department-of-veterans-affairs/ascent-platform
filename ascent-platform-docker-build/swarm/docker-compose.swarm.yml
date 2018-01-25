@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   vault:
-    image: ascent/ascent-vault
+    image: localhost:5000/ascent/ascent-vault
     hostname: vault
     cap_add:
       - IPC_LOCK
@@ -19,23 +19,40 @@ services:
     command: server -dev #-config /config/vault.conf
     networks:
         - ascentnet
+        - logging
     deploy:
       mode: replicated
       replicas: 1
   ascent-amqp:
-    image: rabbitmq
-    hostname: ascent-amqp
+    image: localhost:5000/ascent/ascent-amqp:latest
+    environment:
+      - VAULT_TOKEN=vaultroot
+      - VAULT_ADDR=http://vault:8200
     networks:
-    - ascentnet
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async-connect: "true"
-        fluentd-max-retries: "10"
-        fluentd-retry-wait: "30s"
-    deploy:
-      mode: replicated
-      replicas: 1
+      back:
+        aliases:
+          - rabbit
+      ascentnet:
+        aliases:
+          - rabbit
+    expose:
+      - 15672
+      - 5672
+      - 5671
+      - 15671
+    # publish 15672 for seeing rabbitmq management console
+    ports:
+      - 15672:15672
+    tty: true
+  consul:
+    image: consul:1.0.2
+    hostname: consul
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53"
+    networks:
+      - back
   ascent-discovery:
     image: localhost:5000/ascent/ascent-discovery
     hostname: ascent-discovery
@@ -170,13 +187,35 @@ services:
     networks:
     - ascentnet
     - logging
-  elasticsearch:
-    image: localhost:5000/docker.io/ascent/ascent-elasticsearch
+  es-config:
+    image: localhost:5000/ascent/es-config
     networks:
-    - logging
+      - logging
+    environment:
+      - SECURE_CONNECT=false
+      - REPLICA_AMOUNT=1
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    deploy:
+      restart_policy:
+        condition: none
+      placement:
+        constraints: [node.role == worker]
+  elasticsearch:
+    image: localhost:5000/ascent/ascent-elasticsearch
+    networks:
+      logging:
+        aliases:
+          - elastic.internal.vets-api.gov
+      ascentnet:
+        aliases:
+          - elastic.internal.vets-api.gov
     environment:
       - bootstrap.memory_lock=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - SECURE_CONNECT=false
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     ulimits:
       nproc: 655350
       nofile: 655350
@@ -206,12 +245,21 @@ services:
       placement:
         constraints:
         - node.role == worker
+    environment:
+      - SECURE_CONNECT=false
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
   kibana:
-    image: localhost:5000/docker.io/ascent/ascent-kibana
+    image: localhost:5000/ascent/ascent-kibana
     ports:
     - 5601:5601
     networks:
-    - logging
+      logging:
+        aliases:
+          - kibana.internal.vets-api.gov
+      ascentnet:
+        aliases:
+          - kibana.internal.vets-api.gov
     depends_on:
     - elasticsearch
     deploy:
@@ -220,6 +268,10 @@ services:
       placement:
         constraints:
         - node.role == worker
+    environment:
+      - SECURE_CONNECT=false
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
   redis-master:
     image: localhost:5000/ascent/redis-sentinel
     environment:
@@ -308,6 +360,8 @@ networks:
     driver: overlay
     attachable: true
   logging:
+    driver: overlay
+  back:
     driver: overlay
 volumes:
   configrepo:
