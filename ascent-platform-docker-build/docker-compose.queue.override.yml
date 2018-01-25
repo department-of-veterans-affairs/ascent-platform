@@ -22,7 +22,6 @@ services:
     ports:
       - 15672:15672
     tty: true
-   #https://github.com/docker/dockercloud-haproxy
    consul:
     image: consul:1.0.2
     hostname: consul
@@ -32,7 +31,7 @@ services:
       - "8600:53"
     networks:
       - back
-      
+
 networks:
   back:
     driver: bridge
