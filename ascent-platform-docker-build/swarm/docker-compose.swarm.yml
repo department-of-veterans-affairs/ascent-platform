@@ -28,6 +28,13 @@ services:
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
+    # WARNING: these settings will not work in the way you hope. Instead of adding 2
+    # rabbitmq nodes, will add two replicas of the first rabbitmq node, or 'service'.
+    # use the docker service scale command after service is up to scale
+    # the actual rabbitmq nodes.
+    deploy:
+      mode: replicated
+      replicas: 2
     networks:
       back:
         aliases:
