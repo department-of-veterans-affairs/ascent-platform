@@ -50,6 +50,7 @@ services:
     # publish 15672 for seeing rabbitmq management console
     ports:
       - 15672:15672
+      - 5672:5672
     tty: true
   consul:
     image: consul:1.0.2
