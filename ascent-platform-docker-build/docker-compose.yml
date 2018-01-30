@@ -2,7 +2,7 @@ version: '3.3'
 services:
   ascent-amqp:
     image: rabbitmq
-    hostname: ascent-amqp
+    #hostname: ascent-amqp
     networks:
         - ascentnet
     logging:
