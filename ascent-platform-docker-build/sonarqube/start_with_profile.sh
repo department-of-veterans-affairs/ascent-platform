@@ -1,6 +1,10 @@
 #!/bin/bash
 #
 
+# Install Github plugin
+
+./install_github_plugin.sh
+
 # Start Sonar
 
 ./bin/run.sh &
