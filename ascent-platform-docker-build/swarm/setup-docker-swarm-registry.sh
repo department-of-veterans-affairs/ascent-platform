@@ -78,7 +78,6 @@ cd ../es-config
 docker build -t ascent/es-config .
 docker tag ascent/es-config:latest localhost:5000/ascent/es-config:latest
 docker push localhost:5000/ascent/es-config:latest
-
 cd ../vault
 docker build -t ascent/ascent-vault .
 docker tag ascent/ascent-vault:latest localhost:5000/ascent/ascent-vault:latest
