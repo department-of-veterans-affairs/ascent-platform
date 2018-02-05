@@ -11,12 +11,12 @@
 #    region: ${AMAZON_SQS_REGION:us-east-1}
 #    endpoint: ${AMAZON_SQS_ENDPOINT:https://sqs.us-east-1.amazonaws.com/612337245538/avkulkarni}
 #    accessKey: ${AMAZON_SQS_ACCESS_KEY:AKIAIP6OYZ7NICKOQSLQ}
-#    secretKey: ${AMAZON_SQS_SECRET_KEY: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}
+#    secretKey: ${AMAZON_SQS_SECRET_KEY:(change_key)}
 #    numberOfMessagesToPrefetch: ${AMAZON_SQS_NUMBER_OF_MESSAGES_TO_PREFETCH:5}
 #    extended:
 #      s3BucketName: ${AMAZON_SQS_EXT_S3_BUCKET_NAME:avkulkarni}
 #      s3AccessKey: ${AMAZON_SQS_EXT_S3_ACCESS_KEY:AKIAIP6OYZ7NICKOQSLQ}
-#      s3SecretKey: ${AMAZON_SQS_EXT_S3_SECRET_KEY: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}
+#      s3SecretKey: ${AMAZON_SQS_EXT_S3_SECRET_KEY:(change_key)}
 
 #cloud.aws.stack.auto: false
 #cloud.aws.region.static: us-east-1
