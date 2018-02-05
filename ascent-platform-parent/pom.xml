@@ -24,6 +24,7 @@
 	<module>ascent-platform-starter-cache</module>
 	<module>ascent-platform-starter-logger</module>
 	<module>ascent-platform-starter</module>
+	<module>ascent-platform-starter-aws</module>
   </modules>
 
  <dependencyManagement>
@@ -70,6 +71,11 @@
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-cache</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-platform-starter-aws</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	  </dependencies>
