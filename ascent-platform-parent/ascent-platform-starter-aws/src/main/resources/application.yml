@@ -1,22 +1,19 @@
+## S3 and SQS Configurations for Ascent   
 #ascent:
 #  aws:
-#    access_key_id: AKIAIP6OYZ7NICKOQSLQ
-#    secret_access_key: (change_key)
+#    access_key_id: ${AWS_ACCESS_KEY}
+#    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
 #  s3:
-#    bucket: avkulkarni
-#    region: us-east-1
+#    bucket: ${AWS_S3_BUCKET_NAME}
+#    region: ${AWS_REGION:us-east-1}
 #    uploadfile: classpath:ascent-s3-upload-file.txt
 #    key: ascent-s3-upload-file.txt
 #  sqs:
-#    region: ${AMAZON_SQS_REGION:us-east-1}
-#    endpoint: ${AMAZON_SQS_ENDPOINT:https://sqs.us-east-1.amazonaws.com/612337245538/avkulkarni}
-#    accessKey: ${AMAZON_SQS_ACCESS_KEY:AKIAIP6OYZ7NICKOQSLQ}
-#    secretKey: ${AMAZON_SQS_SECRET_KEY:(change_key)}
+#    region: ${AWS_SQS_REGION:us-east-1}
+#    endpoint: ${AWS_SQS_ENDPOINT}
 #    numberOfMessagesToPrefetch: ${AMAZON_SQS_NUMBER_OF_MESSAGES_TO_PREFETCH:5}
 #    extended:
-#      s3BucketName: ${AMAZON_SQS_EXT_S3_BUCKET_NAME:avkulkarni}
-#      s3AccessKey: ${AMAZON_SQS_EXT_S3_ACCESS_KEY:AKIAIP6OYZ7NICKOQSLQ}
-#      s3SecretKey: ${AMAZON_SQS_EXT_S3_SECRET_KEY:(change_key)}
+#      s3BucketName: ${AWS_SQS_EXT_S3_BUCKET_NAME}
 
 #cloud.aws.stack.auto: false
 #cloud.aws.region.static: us-east-1

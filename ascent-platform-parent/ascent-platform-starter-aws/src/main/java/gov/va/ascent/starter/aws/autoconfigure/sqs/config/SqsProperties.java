@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 
@@ -16,7 +17,11 @@ public class SqsProperties {
 
 	private String region;
 	private String endpoint;
+	
+	@Value("${ascent.aws.access_key_id}")
 	private String accessKey;
+
+	@Value("${ascent.aws.secret_access_key}")
 	private String secretKey;
 
 	private Integer numberOfMessagesToPrefetch;
@@ -108,8 +113,7 @@ public class SqsProperties {
 
 		private String s3Region;
 		private String s3BucketName;
-		private String s3AccessKey;
-		private String s3SecretKey;
+
 		/**
 		 * @return the s3Region
 		 */
@@ -133,30 +137,6 @@ public class SqsProperties {
 		 */
 		public void setS3BucketName(String s3BucketName) {
 			this.s3BucketName = s3BucketName;
-		}
-		/**
-		 * @return the s3AccessKey
-		 */
-		public String getS3AccessKey() {
-			return s3AccessKey;
-		}
-		/**
-		 * @param s3AccessKey the s3AccessKey to set
-		 */
-		public void setS3AccessKey(String s3AccessKey) {
-			this.s3AccessKey = s3AccessKey;
-		}
-		/**
-		 * @return the s3SecretKey
-		 */
-		public String getS3SecretKey() {
-			return s3SecretKey;
-		}
-		/**
-		 * @param s3SecretKey the s3SecretKey to set
-		 */
-		public void setS3SecretKey(String s3SecretKey) {
-			this.s3SecretKey = s3SecretKey;
 		}
 
 	}
