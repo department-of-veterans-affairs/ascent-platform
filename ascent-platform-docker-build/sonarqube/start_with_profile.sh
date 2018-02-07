@@ -3,7 +3,7 @@
 
 # Install Github plugin
 
-./install_github_plugin.sh
+./provision/install_github_plugin.sh
 
 # Start Sonar
 
@@ -31,5 +31,11 @@ if [ "$LANGUAGE" ] && [ "$PROFILE_NAME" ]; then
     curlAdmin -X POST "$BASE_URL/api/qualityprofiles/set_default?language=$LANGUAGE&profileName=$PROFILE_NAME"
     curlAdmin -X POST "$BASE_URL/api/settings/set?key=sonar.coverage.exclusions&values=**/api/v*/transfer/**/*,**/*Application.java"
 fi
+
+# Create a token for admin user to authenticate to jenkins
+./provision/create_admin_token.sh
+
+# Set the token in jenkins
+./provision/set_sonar_token_in_jenkins.sh
 
 wait
