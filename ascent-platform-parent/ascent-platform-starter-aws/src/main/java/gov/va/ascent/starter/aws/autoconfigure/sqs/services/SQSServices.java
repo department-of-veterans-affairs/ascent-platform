@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 public interface SQSServices {
 	/**
      * Send a message to SQS
-     * @param multipartFile multipart file
-     * @return ResponseEntity<UploadResult> returned from Amazon sdk
+     * @param request String message
+     * @return ResponseEntity<String> JMS Message ID
      */
     public ResponseEntity<String> sendMessage(final String request);
 }

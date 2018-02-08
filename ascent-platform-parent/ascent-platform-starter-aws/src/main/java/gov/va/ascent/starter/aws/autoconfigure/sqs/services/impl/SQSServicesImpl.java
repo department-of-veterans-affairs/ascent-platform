@@ -10,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.ProducerCallback;
 import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import gov.va.ascent.starter.aws.autoconfigure.sqs.services.SQSServices;
@@ -44,4 +46,10 @@ public class SQSServicesImpl implements SQSServices {
 		    
 		    return new ResponseEntity<>(messageId, HttpStatus.OK);
 	}
+	
+    /* @JmsListener(destination = "")
+    public void receiveMessage(@Payload String message) {
+      logger.info("Received message {}.", message);
+      //jmsOperations
+    } */
 }
