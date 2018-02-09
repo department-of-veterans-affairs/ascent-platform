@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -79,6 +82,7 @@ public class S3ServicesImpl implements S3Services {
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
 	}
 	
+	
 	/**
      * Upload a list of multipart files to S3
      * @param multipartFiles list of multipart files
@@ -92,7 +96,8 @@ public class S3ServicesImpl implements S3Services {
 				.filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
 				.forEach(multipartFile -> {
 					try {
-						putObjectResults.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream()));
+						//Passing null temporaily. When this method is used, null needs to be replaced with document metadata.
+						putObjectResults.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -107,11 +112,11 @@ public class S3ServicesImpl implements S3Services {
      * @return PutObjectResult returned from Amazon sdk
      */
 	@Override
-	public ResponseEntity<UploadResult> uploadMultiPartSingle(MultipartFile multipartFile) {
+	public ResponseEntity<UploadResult> uploadMultiPartSingle(MultipartFile multipartFile, Map<String, String> propertyMap) {
 		UploadResult putObjectResult = new UploadResult();
 
         try {
-            putObjectResult = upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
+            putObjectResult = upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,8 +130,11 @@ public class S3ServicesImpl implements S3Services {
      * @param inputStream 
      * @return PutObjectResult returned from Amazon sdk
      */
-	private UploadResult upload(String uploadKey, InputStream inputStream) {
-		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadKey, inputStream, new ObjectMetadata());
+	private UploadResult upload(String uploadKey, InputStream inputStream, Map<String, String> propertyMap) {
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setUserMetadata(propertyMap);
+		
+		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadKey, inputStream, objectMetadata);
 
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 		
@@ -169,8 +177,10 @@ public class S3ServicesImpl implements S3Services {
 	public ResponseEntity<UploadResult> uploadFile(String keyName, String uploadFilePath) {
 		UploadResult putObjectResult = new UploadResult();
 		
+		 Map<String, String> propertyMap = new HashMap();
+		
 		try {
-			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream());
+			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
 	        logger.info("===================== Upload File - Done! =====================");
 	        
 		} catch (AmazonServiceException ase) {
@@ -190,4 +200,36 @@ public class S3ServicesImpl implements S3Services {
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 
+	/**
+	 * Copy a file from one bucket to another bucket.
+     * @param key
+	 */
+	@Override
+	public void copyFileFromSourceToTargetBucket(String key) {
+        try {
+            // Copying object
+            CopyObjectRequest copyObjRequest = new CopyObjectRequest(
+            		bucketName, key, "evsstargetbucket", key);
+            System.out.println("Copying object.");
+            s3client.copyObject(copyObjRequest);
+
+        } catch (AmazonServiceException ase) {
+            System.out.println("Caught an AmazonServiceException, " +
+            		"which means your request made it " + 
+            		"to Amazon S3, but was rejected with an error " +
+                    "response for some reason.");
+            System.out.println("Error Message:    " + ase.getMessage());
+            System.out.println("HTTP Status Code: " + ase.getStatusCode());
+            System.out.println("AWS Error Code:   " + ase.getErrorCode());
+            System.out.println("Error Type:       " + ase.getErrorType());
+            System.out.println("Request ID:       " + ase.getRequestId());
+        } catch (AmazonClientException ace) {
+            System.out.println("Caught an AmazonClientException, " +
+            		"which means the client encountered " +
+                    "an internal error while trying to " +
+                    " communicate with S3, " +
+                    "such as not being able to access the network.");
+            System.out.println("Error Message: " + ace.getMessage());
+        }
+	}
 }
