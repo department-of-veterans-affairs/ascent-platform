@@ -1,10 +1,11 @@
 FROM jenkins/jenkins:lts-alpine
 
+ENV VAULT_ADDR http://vault:8200
+ENV VAULT_TOKEN vaultroot
+
 USER root
 RUN apk update --no-cache ssl-certs
-
 RUN apk add --no-cache curl
-
 
 USER jenkins
 COPY config/config.xml /usr/share/jenkins/ref/config.xml.override
