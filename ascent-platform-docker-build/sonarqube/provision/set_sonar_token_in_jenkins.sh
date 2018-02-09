@@ -3,7 +3,7 @@
 # TODO: set from vault instead with a switch if $VAULT_TOKEN exists or not
 export JENKINS_USERNAME=jenkins
 export JENKINS_PASSWORD=jenkins
-export JENKINS_URL=http://localhost:8080
+export JENKINS_URL=http://jenkins:8080
 
 
 printf "Checking availability of Jenkins "
@@ -25,13 +25,21 @@ if [ "$COUNT" == 5 ]; then
     exit -1
 fi
 
+
 # Download the jenkins CLI client
-curl -f $JENKINS_USERNAME:$JENKINS_PASSWORD -L -o jenkins-cli.jar $JENKINS_URL/jnlpJars/jenkins-cli.jar
+echo "----------------------------------------------------------------------------"
+echo "----------------------------------------------------------------------------"
+echo "----------------------------------------------------------------------------"
+echo "------- DOWNLOADING JENKINS CLI"
+echo "----------------------------------------------------------------------------"
+echo "----------------------------------------------------------------------------"
+echo "----------------------------------------------------------------------------"
+curl -u $JENKINS_USERNAME:$JENKINS_PASSWORD -L -O $JENKINS_URL/jnlpJars/jenkins-cli.jar
 
 # Get the API token for CLI authentication
-API_TOKEN=$(curl -u admin:$ADMIN_PASSWORD $JENKINS_URL/me/configure | sed -rn 's/.*id="apiToken"[^>]*value="([a-z0-9]+)".*/\1/p')
+API_TOKEN=$(curl -u $JENKINS_USERNAME:$JENKINS_PASSWORD $JENKINS_URL/me/configure | sed -rn 's/.*id="apiToken"[^>]*value="([a-z0-9]+)".*/\1/p')
 
-JENKINS_CLI="java -jar jenkins-cli.jar -s $JENKINS_URL -auth admin:$API_TOKEN"
+JENKINS_CLI="java -jar jenkins-cli.jar -s $JENKINS_URL -auth $JENKINS_USERNAME:$API_TOKEN"
 
 # Set global config sonar server in jenkins
-java -jar jenkins-cli.jar groovy sonar_global_config.groovy
+$JENKINS_CLI groovy sonar_global_config.groovy
