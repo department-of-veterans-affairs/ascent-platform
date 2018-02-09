@@ -35,7 +35,12 @@ fi
 # Create a token for admin user to authenticate to jenkins
 ./provision/create_admin_token.sh
 
+# Create keypair for jenkins cli to authenticate and upload to vault
+./provision/create_private_key.sh
+
+
 # Set the token in jenkins
-./provision/set_sonar_token_in_jenkins.sh
+# TODO: uncomment once script works :)
+#./provision/set_sonar_token_in_jenkins.sh
 
 wait
