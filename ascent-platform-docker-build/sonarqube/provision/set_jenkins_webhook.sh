@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JENKINS_URL=http://localhost:8080
+JENKINS_URL=http://jenkins:8080
 
 curl -X POST \
   'http://localhost:9000/api/settings/set?key=sonar.webhooks.global' \
