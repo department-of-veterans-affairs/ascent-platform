@@ -2,6 +2,7 @@ package gov.va.ascent.starter.aws.autoconfigure.s3.services;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,5 +36,11 @@ public interface S3Services {
      * @param multipartFile multipart file
      * @return ResponseEntity<UploadResult> returned from Amazon sdk
      */
-    public ResponseEntity<UploadResult> uploadMultiPartSingle(MultipartFile multipartFile);
+    public ResponseEntity<UploadResult> uploadMultiPartSingle(MultipartFile multipartFile, Map<String, String> propertyMap);
+    
+    /**
+     * Copy a file from one bucket to another bucket.
+     * @param key
+     */
+    public void copyFileFromSourceToTargetBucket(String key);
 }
