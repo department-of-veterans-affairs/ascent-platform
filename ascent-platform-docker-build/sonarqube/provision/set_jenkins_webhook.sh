@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: Let the jenkins URL be more flexible by 
+#       an environment variable to be overridden 
+#       through the docker-compose file
 JENKINS_URL=http://jenkins:8080
 
 curl -X POST \
