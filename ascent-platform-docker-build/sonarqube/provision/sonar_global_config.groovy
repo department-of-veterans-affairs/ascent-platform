@@ -8,7 +8,7 @@ def desc = inst.getDescriptor("hudson.plugins.sonar.SonarGlobalConfiguration")
 
 def sinst = new SonarInstallation(
   "TEST2",
-  "http://localhost:9000",
+  "http://sonarqube:9000",
   "5.3",
   "34d4fffd37b6bf4d6e7b9dc27fcac9af1a469c4a",
   "",   // databaseUrl
