@@ -1,8 +1,14 @@
 #!/bin/bash
 
-# TODO: set from vault instead with a switch if $VAULT_TOKEN exists or not
+# Sets the sonar token that was generated in jenkins config.
+# Script isn't finished yet, still needs some more fixing
+#    for authenticating the jenkins cli
+
+# TODO: set username and password from vault instead with a switch if $VAULT_TOKEN exists or not
 export JENKINS_USERNAME=jenkins
 export JENKINS_PASSWORD=jenkins
+
+# TODO: Make this an environment variable to be overridden by docker-compose
 export JENKINS_URL=http://jenkins:8080
 
 
