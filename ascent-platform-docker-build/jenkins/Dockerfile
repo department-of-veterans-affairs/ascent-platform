@@ -1,5 +1,6 @@
 FROM jenkins/jenkins:lts-alpine
 
+# TODO: take these out and set in docker-compose
 ENV VAULT_ADDR http://vault:8200
 ENV VAULT_TOKEN vaultroot
 
