@@ -9,4 +9,5 @@ public interface SQSServices {
      * @return ResponseEntity<String> JMS Message ID
      */
     public ResponseEntity<String> sendMessage(final String request);
+    public void startJmsConnection();
 }
