@@ -1,6 +1,8 @@
 FROM sonarqube:6.5
 
 ENV JENKINS_URL http://localhost:8080/  
+ENV VAULT_ADDR http://vault:8200
+ENV VAULT_TOKEN vaultroot
 
 # Install unzip for unzipping the vault package
 RUN apt-get install unzip
@@ -11,8 +13,6 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
     mv envconsul /usr/local/bin/envconsul; \
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
-
-
 
 ADD qualityprofile/java-ascent-32413.xml /qualityprofile/
 
