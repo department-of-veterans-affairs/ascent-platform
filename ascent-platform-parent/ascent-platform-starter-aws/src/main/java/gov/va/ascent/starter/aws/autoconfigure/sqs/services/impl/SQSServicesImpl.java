@@ -59,7 +59,7 @@ public class SQSServicesImpl implements SQSServices {
 	@PreDestroy
 	public void cleanUp() throws Exception {
 		connection.close();
-		System.out.println("Spring Container is destroy! Customer clean up");
+		System.out.println("Connection closed");
 	}
 	
 	@Override
@@ -100,17 +100,6 @@ public class SQSServicesImpl implements SQSServices {
 			// No messages are processed until this is called
 			connection.start();
 
-			try {
-				callback.waitForOneMinuteOfSilence();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("Returning after one minute of silence");
-
-			// Close the connection. This closes the session automatically
-			// connection.close();
-			System.out.println("Connection closed");
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,19 +107,6 @@ public class SQSServicesImpl implements SQSServices {
 	}
 
 	private static class ReceiverCallback implements MessageListener {
-		// Used to listen for message silence
-		private volatile long timeOfLastMessage = System.nanoTime();
-
-		public void waitForOneMinuteOfSilence() throws InterruptedException {
-			for (;;) {
-				long timeSinceLastMessage = System.nanoTime() - timeOfLastMessage;
-				long remainingTillOneMinuteOfSilence = TimeUnit.MINUTES.toNanos(1) - timeSinceLastMessage;
-				if (remainingTillOneMinuteOfSilence < 0) {
-					break;
-				}
-				TimeUnit.NANOSECONDS.sleep(remainingTillOneMinuteOfSilence);
-			}
-		}
 
 		@Override
 		public void onMessage(Message arg0) {
@@ -138,7 +114,6 @@ public class SQSServicesImpl implements SQSServices {
 				// ExampleCommon.handleMessage(arg0);
 				arg0.acknowledge();
 				System.out.println("Acknowledged message " + arg0.getJMSMessageID());
-				timeOfLastMessage = System.nanoTime();
 
 			} catch (JMSException e) {
 				System.err.println("Error processing message: " + e.getMessage());
