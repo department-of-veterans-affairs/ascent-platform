@@ -1,4 +1,4 @@
-package gov.va.ascent.starter.aws.autoconfigure.sqs.services;
+package gov.va.ascent.starter.aws.autoconfigure.sqs.examples;
 
 import java.util.concurrent.TimeUnit;
 

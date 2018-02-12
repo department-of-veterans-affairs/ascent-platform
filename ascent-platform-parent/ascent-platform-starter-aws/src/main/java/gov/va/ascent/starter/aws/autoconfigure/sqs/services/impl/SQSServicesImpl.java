@@ -98,7 +98,7 @@ public class SQSServicesImpl implements SQSServices {
 			consumer.setMessageListener(callback);
 
 			// No messages are processed until this is called
-			connection.start();
+			connection.start(); 
 
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
