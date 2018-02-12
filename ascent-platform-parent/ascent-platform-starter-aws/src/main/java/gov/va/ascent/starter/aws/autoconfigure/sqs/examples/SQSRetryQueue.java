@@ -1,4 +1,4 @@
-package gov.va.ascent.starter.aws.autoconfigure.sqs.sqsretryqueue;
+package gov.va.ascent.starter.aws.autoconfigure.sqs.examples;
 
 import java.util.ArrayList;
 import java.util.List;
