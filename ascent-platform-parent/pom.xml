@@ -4,18 +4,18 @@
   <parent>
     <groupId>gov.va.ascent</groupId>
     <artifactId>ascent-platform</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <relativePath>../</relativePath> <!-- lookup parent from repository -->
   </parent>
   
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <artifactId>ascent-platform-parent</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Ascent Platform Starters Parent</description>    
   
   <properties>
-	<ascent.test.framework.version>0.0.3-SNAPSHOT</ascent.test.framework.version>
+	<ascent.test.framework.version>0.0.4-SNAPSHOT</ascent.test.framework.version>
   </properties>
   
   <modules>
@@ -40,38 +40,38 @@
 	  	<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-framework</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-security</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<!-- Ascent starters-->
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>		
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-security</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-swagger</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-logger</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-cache</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
