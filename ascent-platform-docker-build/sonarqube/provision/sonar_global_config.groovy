@@ -11,10 +11,10 @@ def inst = Jenkins.getInstance()
 def desc = inst.getDescriptor("hudson.plugins.sonar.SonarGlobalConfiguration")
 
 def sinst = new SonarInstallation(
-  "TEST2",
+  "CI",
   "http://sonarqube:9000",
   "5.3",
-  "34d4fffd37b6bf4d6e7b9dc27fcac9af1a469c4a",
+  "**********",         // Overwritten by sed in set_token with real token once generated
   "",   // databaseUrl
   "",   // databaseLogin
   "",   // databasePassword
