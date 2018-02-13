@@ -57,6 +57,9 @@ public class S3ServicesImpl implements S3Services {
 	@Value("${ascent.s3.bucket}")
 	private String bucketName;
 
+	@Value("${ascent.s3.target.bucket}")
+	private String targetBucketName;
+	
 	/**
      * Retrieves a file from S3
      * @param key key to the file i.e. /myfolder/myfile
@@ -161,7 +164,6 @@ public class S3ServicesImpl implements S3Services {
 		finally {
 			IOUtils.closeQuietly(inputStream);
 		}
-		//PutObjectResult putObjectResult = s3client.putObject(putObjectRequest);
 		
 		return uploadResult;
 	}
@@ -209,7 +211,7 @@ public class S3ServicesImpl implements S3Services {
         try {
             // Copying object
             CopyObjectRequest copyObjRequest = new CopyObjectRequest(
-            		bucketName, key, "evsstargetbucket", key);
+            		bucketName, key, targetBucketName, key);
             System.out.println("Copying object.");
             s3client.copyObject(copyObjRequest);
 
