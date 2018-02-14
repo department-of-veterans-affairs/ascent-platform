@@ -17,5 +17,5 @@ curl -X POST   http://localhost:9000/api/users/change_password \
      -u admin:admin \
      -H 'cache-control: no-cache' \
      -F login=admin \
-     -F password={SONAR_PASSWORD} \
+     -F password=$SONAR_PASSWORD \
      -F previousPassword=admin
