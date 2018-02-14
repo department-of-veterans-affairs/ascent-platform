@@ -17,7 +17,9 @@ public class SqsProperties {
 
 	private String region;
 	private String endpoint;
+	private String dlqendpoint;
 	
+
 	@Value("${ascent.aws.access_key_id}")
 	private String accessKey;
 
@@ -33,6 +35,14 @@ public class SqsProperties {
 	}
 
 	public String getQueueName() {
+		return parseQueueName(endpoint);
+	}
+	
+	public String getDLQQueueName() {
+		return parseQueueName(dlqendpoint);
+	}
+	
+	private String parseQueueName(String endpoint) {
 		URI endpointUri = URI.create(endpoint);
 		String path = endpointUri.getPath();
 		int pos = path.lastIndexOf('/');
@@ -109,6 +119,23 @@ public class SqsProperties {
 		this.endpoint = endpoint;
 	}
 
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDlqendpoint() {
+		return dlqendpoint;
+	}
+
+	/**
+	 * 
+	 * @param dlqendpoint
+	 */
+	public void setDlqendpoint(String dlqendpoint) {
+		this.dlqendpoint = dlqendpoint;
+	}
+	
 	public static class Extended {
 
 		private String s3Region;
