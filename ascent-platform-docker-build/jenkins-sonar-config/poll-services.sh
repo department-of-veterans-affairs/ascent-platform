@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo "--- polling to wait for vault"
 echo "VAULT_URL=$VAULT_URL"
 until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/sys/health); do
@@ -9,7 +8,7 @@ done
 
 echo "--- polling to wait for jenkins"
 echo "JENKINS_URL=$JENKINS_URL"
-until $(); do
+until $(curl -XGET --fail --output /dev/null --silent -u admin:admin $JENKINS_URL/login); do
     echo "--trying again"
     sleep 5
 done
