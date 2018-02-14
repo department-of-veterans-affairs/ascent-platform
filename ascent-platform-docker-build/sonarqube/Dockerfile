@@ -1,9 +1,5 @@
 FROM sonarqube:6.5
 
-ENV JENKINS_URL http://localhost:8080/  
-ENV VAULT_ADDR http://vault:8200
-ENV VAULT_TOKEN vaultroot
-
 # Install unzip for unzipping the vault package
 RUN apt-get install unzip
 
@@ -25,4 +21,4 @@ RUN chmod 755 /opt/sonarqube/provision/*
 
 VOLUME /qualityprofile
 
-ENTRYPOINT ["/opt/sonarqube/start_with_profile.sh"]
+ENTRYPOINT ["/opt/sonarqube/run-wrapper.sh"]
