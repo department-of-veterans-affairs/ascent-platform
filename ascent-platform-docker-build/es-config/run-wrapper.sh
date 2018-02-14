@@ -32,8 +32,11 @@ if [[ $VAULT_TOKEN ]]; then
     # Create first password using vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/changepass.sh
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/configure-snapshots.sh
 else
     /docker/changepass.sh
     /docker/set-replicas.sh
+    /docker/configure-snapshots.sh
 fi
+
 
