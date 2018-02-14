@@ -5,7 +5,7 @@ def instance = Jenkins.getInstance()
 
 // Create Jenkins user and add Administer privilege
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-hudsonRealm.createAccount("jenkins", "jenkins")
+hudsonRealm.createAccount("{{ with secret "secret/jenkins" }}{{ .Data.username }}", "{{ .Data.password }} {{ end }}")
 instance.setSecurityRealm(hudsonRealm)
 def strategy = new GlobalMatrixAuthorizationStrategy()
 strategy.add(Jenkins.ADMINISTER, "jenkins")
