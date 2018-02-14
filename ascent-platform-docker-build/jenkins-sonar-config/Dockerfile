@@ -19,6 +19,7 @@ COPY poll-services.sh /usr/share/configure/poll-services.sh
 COPY run-wrapper.sh /usr/share/configure/run-wrapper.sh
 COPY sonar /usr/share/configure/sonar
 COPY jenkins /usr/share/configure/jenkins
+COPY template /usr/share/configure/template
 
 RUN chmod -R 755 /usr/share/configure
 CMD ["/usr/share/configure/run-wrapper.sh"]
