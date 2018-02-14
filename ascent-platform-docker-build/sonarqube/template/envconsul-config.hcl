@@ -16,10 +16,10 @@ vault {
 
 upcase = true
 
-# ElasticSerch SSL Secrets
+# Sonar Secret
 secret {
-    format = "jenkins_{{ key }}"
+    format = "sonar_{{ key }}"
     no_prefix = true
-    path = "secret/jenkins/admin"
+    path = "secret/sonar/admin"
 }
 
