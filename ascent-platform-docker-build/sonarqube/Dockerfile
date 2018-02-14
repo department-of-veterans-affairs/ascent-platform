@@ -10,15 +10,11 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
-ADD qualityprofile/java-ascent-32413.xml /qualityprofile/
-
-ADD start_with_profile.sh /opt/sonarqube/start_with_profile.sh
+ADD run-wrapper.sh /opt/sonarqube/run-wrapper.sh
 
 ADD template /opt/sonarqube/template
 
 ADD provision /opt/sonarqube/provision
 RUN chmod 755 /opt/sonarqube/provision/*
-
-VOLUME /qualityprofile
 
 ENTRYPOINT ["/opt/sonarqube/run-wrapper.sh"]
