@@ -9,6 +9,9 @@
 
 ./bin/run.sh &
 
+# Change admin password
+./provision/set_new_password.sh
+
 #function curlAdmin {
 #    curl -v -u admin:admin $@
 #}
