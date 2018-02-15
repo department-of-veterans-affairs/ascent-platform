@@ -8,7 +8,7 @@ done
 
 echo "--- polling to wait for jenkins"
 echo "JENKINS_URL=$JENKINS_URL"
-until $(curl -XGET --fail --output /dev/null --silent -u admin:admin $JENKINS_URL/login); do
+until $(curl -XGET --fail --output /dev/null --silent -u $JENKINS_USERNAME:$JENKINS_PASSWORD $JENKINS_URL/login); do
     echo "--trying again"
     sleep 5
 done
