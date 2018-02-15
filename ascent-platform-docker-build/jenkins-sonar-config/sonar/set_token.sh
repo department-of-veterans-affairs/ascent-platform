@@ -1,7 +1,7 @@
-#/bin/bash
+#!/bin/bash
 
 # Generate Sonar token
-export SONAR_TOKEN=`curl -XPOST -u admin:$SONAR_PASSWORD $SONAR_URL/api/user_tokens/generate?name=jenkinsToken5 | python -c 'import sys, json; print json.load(sys.stdin)["token"]'`
+export SONAR_TOKEN=`curl -XPOST -u admin:$SONAR_PASSWORD $SONAR_URL/api/user_tokens/generate?name=JenkinsToken | python -c 'import sys, json; print json.load(sys.stdin)["token"]'`
 echo ""
 echo "SONAR_TOKEN=$SONAR_TOKEN"
 
