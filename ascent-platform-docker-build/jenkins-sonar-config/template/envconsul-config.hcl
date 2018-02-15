@@ -23,3 +23,9 @@ secret {
     path = "secret/sonar/admin"
 }
 
+# Jenkins Secret
+secret {
+    format = "jenkins_{{ key }}"
+    no_prefix = true
+    path = "secret/jenkins"
+}
