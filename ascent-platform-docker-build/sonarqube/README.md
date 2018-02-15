@@ -16,3 +16,8 @@ For testing against the jenkins ec2 instance and sonarqube, set the $JENKINS_URL
 To test configuring/building of the Sonarqube-Jenkins stack locally, run test-start-sonar-jenkins.sh or test-stop-sonar-jenkins.sh to bring up/down the containers. The goal of the Jenkins container is to pretty much just simulate the Jenkins instance in the CI environmnet so that config changes through the api can be tested locally.
 ###### A caveat or two...
 One caveat of testing against a local jenkins container is the links of the Jenkins plugins work intermittently because the plugins get updated or their locations change. If that happens, the build of the Jenkins container errors out with "Some plugins could not be downloaded". Usually, after waiting 5-10 minutes it works again, though.
+
+### Configuring Jenkins/SonarQube automation
+A separate container, config-jenkins-sonarqube, comes up which configures Jenkins and SonarQube then comes back down.
+Follow through the link below for details on configuration:
+
