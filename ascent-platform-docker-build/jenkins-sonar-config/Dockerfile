@@ -4,6 +4,9 @@ USER root
 RUN apk update --no-cache ssl-certs
 RUN apk add --no-cache curl
 RUN apk add --update bash && rm -r /var/cache/apk/*
+RUN apk add --update \
+    python \
+    && rm -rf /var/cache/apk/*
 
 # Install unzip for unzipping the vault package
 RUN apk add --no-cache  unzip
