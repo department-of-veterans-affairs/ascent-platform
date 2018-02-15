@@ -16,7 +16,7 @@ vault {
 
 template {
   source = "/usr/share/jenkins/template/create-user.groovy.tpl"
-  destination = "/usr/share/jenkins/ref/init.groovy.d"
+  destination = "/usr/share/jenkins/ref/init.groovy.d/create-user.groovy"
   perms = 0644
 }
  
