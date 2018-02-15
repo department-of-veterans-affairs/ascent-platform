@@ -15,6 +15,7 @@ vault {
 }
 
 upcase = true
+sanitize = true
 
 # Sonar Secret
 secret {
@@ -29,3 +30,22 @@ secret {
     no_prefix = true
     path = "secret/jenkins"
 }
+
+# Nexus Secret
+secret {
+    format = "nexus_{{ key }}"
+    no_prefix = true
+    path = "secret/nexus"
+}
+
+# Github token Secret
+secret {
+    format = "github_{{ key }}"
+    no_prefix = true
+    path = "secret/github"
+}
+
+
+
+
+
