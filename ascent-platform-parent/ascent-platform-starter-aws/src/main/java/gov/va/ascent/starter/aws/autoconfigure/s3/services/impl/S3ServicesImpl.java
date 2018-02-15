@@ -60,6 +60,8 @@ public class S3ServicesImpl implements S3Services {
 	@Value("${ascent.s3.target.bucket}")
 	private String targetBucketName;
 	
+	@Value("${ascent.s3.dlq.bucket}")
+	private String dlqBucketName;
 	/**
      * Retrieves a file from S3
      * @param key key to the file i.e. /myfolder/myfile
@@ -233,5 +235,12 @@ public class S3ServicesImpl implements S3Services {
                     "such as not being able to access the network.");
             System.out.println("Error Message: " + ace.getMessage());
         }
+	}
+	
+	/**
+	 * Copy the DLQ Message to S3 DLQ Bucket.
+	 */
+	public void moveMessageToS3(String key, String message) {
+		s3client.putObject(dlqBucketName, key, message);
 	}
 }

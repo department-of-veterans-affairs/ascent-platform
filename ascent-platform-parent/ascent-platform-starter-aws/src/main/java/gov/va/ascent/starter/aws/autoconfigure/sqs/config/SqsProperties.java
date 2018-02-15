@@ -18,7 +18,7 @@ public class SqsProperties {
 	private String region;
 	private String endpoint;
 	private String dlqendpoint;
-	
+	private int dlqRetriesCount;
 
 	@Value("${ascent.aws.access_key_id}")
 	private String accessKey;
@@ -135,7 +135,23 @@ public class SqsProperties {
 	public void setDlqendpoint(String dlqendpoint) {
 		this.dlqendpoint = dlqendpoint;
 	}
-	
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getDlqRetriesCount() {
+		return dlqRetriesCount;
+	}
+
+	/**
+	 * 
+	 * @param dlqRetriesCount
+	 */
+	public void setDlqRetriesCount(int dlqRetriesCount) {
+		this.dlqRetriesCount = dlqRetriesCount;
+	}
+
 	public static class Extended {
 
 		private String s3Region;
@@ -165,7 +181,6 @@ public class SqsProperties {
 		public void setS3BucketName(String s3BucketName) {
 			this.s3BucketName = s3BucketName;
 		}
-
 	}
 
 }

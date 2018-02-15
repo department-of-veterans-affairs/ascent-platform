@@ -43,4 +43,11 @@ public interface S3Services {
      * @param key
      */
     public void copyFileFromSourceToTargetBucket(String key);
+    
+    /**
+     * Copy the DLQ Message to S3 DLQ Bucket.
+     * @param key
+     * @param message
+     */
+    public void moveMessageToS3(String key, String message);
 }
