@@ -23,6 +23,15 @@ fi
 
 if [ "$CONFIGURE_JENKINS" = "true" ]; then
    echo "## CONFIGURING JENKINS"
+   echo "---- JENKINS: SET SONAR TOKEN"
+   $ENVCONSUL_CMD /usr/share/configure/jenkins/set_sonar_global_config.sh
+   
+   echo "---- JENKINS: SETTING NEXUS CREDENTIALS"
+   $ENVCONSUL_CMD /usr/share/configure/jenkins/nexus_credentials.sh   
+   
+   echo "---- JENKINS: SETTING VAULT CREDENTIALS"
+   $ENVCONSUL_CMD /usr/share/configure/jenkins/vault_credentials.sh
+ 
 else 
    echo "## Jenkins set to NOT be configured."
    echo "   If you want to change this, set the env variable"
