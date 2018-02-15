@@ -6,12 +6,14 @@ until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Tok
     sleep 5
 done
 
-echo "--- polling to wait for jenkins"
-echo "JENKINS_URL=$JENKINS_URL"
-until $(curl -XGET --fail --output /dev/null --silent -u $JENKINS_USERNAME:$JENKINS_PASSWORD $JENKINS_URL/login); do
-    echo "--trying again"
-    sleep 5
-done
+if [ "$CONFIGURE_JENKINS" = true ]; then
+  echo "--- polling to wait for jenkins"
+  echo "JENKINS_URL=$JENKINS_URL"
+  until $(curl -XGET --fail --output /dev/null --silent -u $JENKINS_USERNAME:$JENKINS_PASSWORD $JENKINS_URL/login); do
+      echo "--trying again"
+      sleep 5
+  done
+fi
 
 echo "--- polling to wait for sonar"
 echo "SONAR_URL=$SONAR_URL"
