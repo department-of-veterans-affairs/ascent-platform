@@ -29,6 +29,7 @@ WORKDIR /usr/share/elasticsearch
 COPY template/ template/
 
 COPY run-wrapper.sh run-wrapper.sh
+COPY s3-auth.sh s3-auth.sh
 
 # Change file permissions to elasticsearch user
 RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh; \

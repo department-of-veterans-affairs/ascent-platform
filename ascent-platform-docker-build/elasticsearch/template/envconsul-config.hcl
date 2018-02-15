@@ -23,4 +23,10 @@ secret {
     path = "secret/elasticsearch"
 }
 
+secret {
+    format = "aws_{{ key }}"
+    no_prefix = true
+    path = "secret/aws"
+}
+
 
