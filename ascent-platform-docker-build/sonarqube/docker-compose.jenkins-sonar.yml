@@ -32,7 +32,10 @@ services:
   jenkins:
     build: ../jenkins
     ports:
-      - "8080:8080"
+      - "8080:8080" 
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
     networks:
       - ascentnet
   jenkins-sonar-config:
