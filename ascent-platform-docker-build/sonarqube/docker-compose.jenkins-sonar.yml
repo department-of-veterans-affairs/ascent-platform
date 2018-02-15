@@ -17,7 +17,6 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
-
   db:
     image: postgres:9.6.5-alpine
     networks:
@@ -50,6 +49,7 @@ services:
       - VAULT_ADDR=http://vault:8200
       - JENKINS_URL=http://jenkins:8080
       - SONAR_URL=http://sonarqube:9000
+      - CONFIGURE_JENKINS=false
 
 networks:
   sonarnet:
