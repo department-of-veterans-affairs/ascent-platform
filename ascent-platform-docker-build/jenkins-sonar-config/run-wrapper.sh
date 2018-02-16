@@ -38,4 +38,6 @@ else
    echo "   CONFIGURE_JENKINS to true in your docker-compose file"
 fi
 echo "done!"
+
+# TODO: Remove this when finished with all config changes
 tail -f /dev/null
