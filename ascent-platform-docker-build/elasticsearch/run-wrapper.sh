@@ -34,7 +34,6 @@ if [[ $VAULT_TOKEN ]]; then
         consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
     fi
     # Using this for now until the rest of the secrets are set up in vault
-    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /usr/share/elasticsearch/s3-auth.sh
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
 else
     $CMD "$@"
