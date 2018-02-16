@@ -17,10 +17,14 @@ Start vault first `docker-compose -f docker-compose.vault.yml -f docker-compose 
 ### Configure Jenkins and SonarQube already up
 `docker-compose up --build -d` in the jenkins-sonar-config directory
 
-### Configure SonarQube only
+### Configuring SonarQube only (set to false for local devs)
 Set **CONFIGURE_JENKINS** environment variable to false, then run `docker-compose up --build -d` in the jenkins-sonar-config directory
 
-### Build Jenkins and SonarQube, then Configure
+### Build and Configure Jenkins and SonarQube at once
 `cd ascent-platform-docker-build/sonarqube`
 `./test-start-sonar-jenkins.sh`
 
+# Behavior
+### Jenkins Credentials
+**Create** - Detects if making a jenkins credential for the first time. 
+**Edit**   - Detects if a jenkins credential with an id already exists. If it does, it will edit the credential already in existence
