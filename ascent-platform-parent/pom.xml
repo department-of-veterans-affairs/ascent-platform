@@ -15,7 +15,7 @@
   <description>Ascent Platform Starters Parent</description>    
   
   <properties>
-	<ascent.test.framework.version>0.0.4-SNAPSHOT</ascent.test.framework.version>
+	<ascent.test.framework.version>0.0.3</ascent.test.framework.version>
   </properties>
   
   <modules>
@@ -32,7 +32,7 @@
 	  	<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>Dalston.SR3</version>
+			<version>Dalston.SR5</version>
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
