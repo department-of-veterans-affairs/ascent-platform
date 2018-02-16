@@ -7,6 +7,7 @@ $ENVCONSUL_CMD /usr/share/configure/poll-services.sh
 
 profileExists=`$ENVCONSUL_CMD /usr/share/configure/sonar/test-if-ascent-profile-exists.sh`
 
+# TODO: make a base path for the scripts
 if [ "$profileExists" = "FALSE" ]; then 
   echo "---- SONAR: SETTING MAIN PROFILE"
   $ENVCONSUL_CMD /usr/share/configure/sonar/set_main_profile.sh
@@ -32,6 +33,8 @@ if [ "$CONFIGURE_JENKINS" = "true" ]; then
    echo "---- JENKINS: SETTING VAULT CREDENTIALS"
    $ENVCONSUL_CMD /usr/share/configure/jenkins/vault_credentials.sh
  
+   echo "---- JENKINS: SETTING GITHUB CREDENTIALS"
+   $ENVCONSUL_CMD /usr/share/configure/jenkins/github_credentials.sh
 else 
    echo "## Jenkins set to NOT be configured."
    echo "   If you want to change this, set the env variable"
