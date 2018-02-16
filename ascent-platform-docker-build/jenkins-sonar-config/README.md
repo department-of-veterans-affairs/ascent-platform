@@ -11,3 +11,16 @@
 
 **CONFIGURE_JENKINS** - A flag for whether or not jenkins should be configured. Set it to 'true' or 'false'
 
+# To Run
+Start vault first `docker-compose -f docker-compose.vault.yml -f docker-compose -f docker-compose.vault.override.yml up --build -d` from ascent-platform-docker-build directory.
+
+### Configure Jenkins and SonarQube already up
+`docker-compose up --build -d` in the jenkins-sonar-config directory
+
+### Configure SonarQube only
+Set **CONFIGURE_JENKINS** environment variable to false, then run `docker-compose up --build -d` in the jenkins-sonar-config directory
+
+### Build Jenkins and SonarQube, then Configure
+`cd ascent-platform-docker-build/sonarqube`
+`./test-start-sonar-jenkins.sh`
+
