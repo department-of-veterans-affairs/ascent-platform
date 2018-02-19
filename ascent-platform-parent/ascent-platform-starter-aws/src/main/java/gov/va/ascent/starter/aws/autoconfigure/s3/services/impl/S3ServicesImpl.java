@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,7 +182,7 @@ public class S3ServicesImpl implements S3Services {
 	public ResponseEntity<UploadResult> uploadFile(String keyName, String uploadFilePath) {
 		UploadResult putObjectResult = new UploadResult();
 		
-		 Map<String, String> propertyMap = new HashMap();
+		 Map<String, String> propertyMap = new HashMap<String, String>();
 		
 		try {
 			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
@@ -214,26 +215,28 @@ public class S3ServicesImpl implements S3Services {
             // Copying object
             CopyObjectRequest copyObjRequest = new CopyObjectRequest(
             		bucketName, key, targetBucketName, key);
-            System.out.println("Copying object.");
+            logger.info("Copying object. {}", ReflectionToStringBuilder.toString(copyObjRequest));
             s3client.copyObject(copyObjRequest);
-
+            // Deleting object from original source bucket
+            s3client.deleteObject(bucketName, key);
+            logger.info("Deleting object. Bucket Name: {} Key : {}", bucketName, key);
         } catch (AmazonServiceException ase) {
-            System.out.println("Caught an AmazonServiceException, " +
+        	logger.error("Caught an AmazonServiceException, " +
             		"which means your request made it " + 
             		"to Amazon S3, but was rejected with an error " +
                     "response for some reason.");
-            System.out.println("Error Message:    " + ase.getMessage());
-            System.out.println("HTTP Status Code: " + ase.getStatusCode());
-            System.out.println("AWS Error Code:   " + ase.getErrorCode());
-            System.out.println("Error Type:       " + ase.getErrorType());
-            System.out.println("Request ID:       " + ase.getRequestId());
+        	logger.error("Error Message:    " + ase.getMessage());
+        	logger.error("HTTP Status Code: " + ase.getStatusCode());
+        	logger.error("AWS Error Code:   " + ase.getErrorCode());
+        	logger.error("Error Type:       " + ase.getErrorType());
+        	logger.error("Request ID:       " + ase.getRequestId());
         } catch (AmazonClientException ace) {
-            System.out.println("Caught an AmazonClientException, " +
+        	logger.error("Caught an AmazonClientException, " +
             		"which means the client encountered " +
                     "an internal error while trying to " +
                     " communicate with S3, " +
                     "such as not being able to access the network.");
-            System.out.println("Error Message: " + ace.getMessage());
+        	logger.error("Error Message: " + ace.getMessage());
         }
 	}
 	
@@ -241,6 +244,7 @@ public class S3ServicesImpl implements S3Services {
 	 * Copy the DLQ Message to S3 DLQ Bucket.
 	 */
 	public void moveMessageToS3(String key, String message) {
+		logger.info("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
 		s3client.putObject(dlqBucketName, key, message);
 	}
 }
