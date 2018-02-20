@@ -41,6 +41,11 @@ services:
     build: ../jenkins-sonar-config
     networks:
       - ascentnet
+    deploy:
+      restart_policy:
+        condition: none
+      placement:
+        constraints: [node.role == worker]
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
       - LANGUAGE=java
