@@ -11,7 +11,7 @@ services:
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
       - BASE_URL=http://127.0.0.1:9000
-      #- VAULT_TOKEN=vaultroot
+      - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
@@ -22,7 +22,7 @@ services:
   db:
     image: localhost:5000/ascent/db:latest
     environment:
-      #- VAULT_TOKEN=vaultroot
+      - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
     networks:
       - sonarnet
