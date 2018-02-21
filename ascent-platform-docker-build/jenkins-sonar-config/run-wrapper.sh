@@ -8,22 +8,12 @@ JENKINS_DIR=$BASE_DIR/jenkins
 echo "---- POLLING ALL SERVICES UNTIL THEY'RE UP"
 $ENVCONSUL_CMD /usr/share/configure/poll-services.sh
 
-profileExists=`$ENVCONSUL_CMD /usr/share/configure/sonar/test-if-ascent-profile-exists.sh`
 
-# TODO: make a base path for the scripts
-if [ "$profileExists" = "FALSE" ]; then 
-  echo "---- SONAR: SETTING MAIN PROFILE"
-  $ENVCONSUL_CMD $SONAR_DIR/set_main_profile.sh
-  
-  echo ""
-  echo "---- SONAR: CONFIGURING JENKINS WEBHOOK"
-  $ENVCONSUL_CMD $SONAR_DIR/set_jenkins_webhook.sh
+echo "---- SONAR: CONFIGURING JENKINS WEBHOOK"
+$ENVCONSUL_CMD $SONAR_DIR/set_jenkins_webhook.sh
 
-  echo "---- SONAR: GENERATING AN admin USER TOKEN"
-  $ENVCONSUL_CMD $SONAR_DIR/set_token.sh
-else
-  echo "---- SONAR: profile already configured. WILL NOT configure anything"
-fi
+echo "---- SONAR: GENERATING AN admin USER TOKEN"
+$ENVCONSUL_CMD $SONAR_DIR/set_token.sh
 
 if [ "$CONFIGURE_JENKINS" = "true" ]; then
    echo "## CONFIGURING JENKINS"
@@ -45,5 +35,3 @@ else
 fi
 echo "done!"
 
-# TODO: Remove this when finished with all config changes
-tail -f /dev/null
