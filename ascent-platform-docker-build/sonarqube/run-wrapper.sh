@@ -11,6 +11,8 @@ ENV_CONSUL_CMD="envconsul -config $ENV_CONSUL_CONFIG -vault-addr=$VAULT_ADDR -va
 # Wait for sonar to be up
 ./provision/wait_for_sonar.sh
 
+# TODO: add polling for vault availability
+echo "Changing admin password..."
 if [[ $VAULT_TOKEN ]]; then
    echo "Changing admin password..."
    $ENV_CONSUL_CMD ./provision/set_new_password.sh
