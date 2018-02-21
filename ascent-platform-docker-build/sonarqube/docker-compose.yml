@@ -21,12 +21,12 @@ services:
 
   db:
     build: ./database
-    networks:
-      - sonarnet
-      - ascentnet
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
+    networks:
+      - sonarnet
+      - ascentnet
     volumes:
       - postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52

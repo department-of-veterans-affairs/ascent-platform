@@ -18,7 +18,7 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
   db:
-    image: postgres:9.6.5-alpine
+    build: ./database
     networks:
       - sonarnet
     environment:
