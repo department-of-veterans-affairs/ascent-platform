@@ -11,7 +11,7 @@ CMD=./provision/set_new_password.sh
 if [[ $VAULT_TOKEN ]]; then
    echo "Changing admin password..."
    envconsul -config="$ENV_CONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" $CMD "$@"
+   echo "Done!"
 fi
-echo "Done!"
 
 wait
