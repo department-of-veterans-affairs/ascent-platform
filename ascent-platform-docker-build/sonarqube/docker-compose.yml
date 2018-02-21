@@ -30,18 +30,6 @@ services:
       - postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
       - postgresql_data:/var/lib/postgresql/data
-  jenkins-sonar-config:
-    build: ../jenkins-sonar-config
-    networks:
-      - ascentnet
-    environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
-      - LANGUAGE=java
-      - PROFILE_NAME=ASCENT
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
-      - SONAR_URL=http://sonarqube:9000
-      - CONFIGURE_JENKINS=false
 
 networks:
   sonarnet:
