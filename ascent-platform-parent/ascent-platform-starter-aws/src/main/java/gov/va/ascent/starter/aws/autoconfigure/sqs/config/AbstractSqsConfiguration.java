@@ -1,5 +1,17 @@
 package gov.va.ascent.starter.aws.autoconfigure.sqs.config;
 
+import javax.jms.ConnectionFactory;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.annotation.EnableJms;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.util.StringUtils;
+
 import com.amazon.sqs.javamessaging.AmazonSQSExtendedClient;
 import com.amazon.sqs.javamessaging.ExtendedClientConfiguration;
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
@@ -17,19 +29,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
-import javax.jms.ConnectionFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.annotation.EnableJms;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.config.JmsListenerContainerFactory;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.destination.DestinationResolver;
-import org.springframework.util.StringUtils;
 
 
 @Configuration

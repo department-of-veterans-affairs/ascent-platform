@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-aws</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 	  </dependencies>
   </dependencyManagement>
