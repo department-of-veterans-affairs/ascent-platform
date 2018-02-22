@@ -41,6 +41,7 @@ COPY changepass.sh /docker/changepass.sh
 COPY set-url.sh /docker/set-url.sh
 COPY configure-snapshots.sh /docker/configure-snapshots.sh
 COPY scheduled-snapshots.sh /docker/scheduled-snapshots.sh
+COPY restore-snapshot.sh /docker/restore-snapshot.sh
 
 # Change file permissions to elasticsearch user
 RUN chmod 755 /docker/*;
