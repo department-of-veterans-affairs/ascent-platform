@@ -32,8 +32,18 @@ if [[ $VAULT_TOKEN ]]; then
     # Create first password using vault
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/changepass.sh
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh
+    envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/configure-snapshots.sh
+    # Run backups of Elasticsearch every 24 hours
+    if [[ $SNAPSHOT_BUCKET_NAME ]]; then 
+        while true; do
+            envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/scheduled-snapshots.sh
+            sleep 24h
+        done
+    fi
 else
     /docker/changepass.sh
     /docker/set-replicas.sh
+    /docker/configure-snapshots.sh
 fi
+
 

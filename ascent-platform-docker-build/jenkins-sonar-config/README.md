@@ -1,7 +1,4 @@
 # Configuration
-**LANGUAGE** - The language to set the sonar profile to. Usually set to 'java'
-
-**PROFILE_NAME** - The name of the default profile to set. Set it to 'ASCENT'
 
 **VAULT_TOKEN, VAULT_ADDR** - The vault token and vault address. Sonar and Jenkins **will not** authenticate if these are not set
 

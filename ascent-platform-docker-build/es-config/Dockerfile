@@ -25,6 +25,10 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
+# jq command line JSON parser
+RUN curl -sL -o /usr/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64; \
+    chmod 755 /usr/bin/jq
+
 
 WORKDIR /usr/share/elasticsearch
 
@@ -35,6 +39,9 @@ COPY run-wrapper.sh run-wrapper.sh
 COPY set-replicas.sh /docker/set-replicas.sh
 COPY changepass.sh /docker/changepass.sh
 COPY set-url.sh /docker/set-url.sh
+COPY configure-snapshots.sh /docker/configure-snapshots.sh
+COPY scheduled-snapshots.sh /docker/scheduled-snapshots.sh
+COPY restore-snapshot.sh /docker/restore-snapshot.sh
 
 # Change file permissions to elasticsearch user
 RUN chmod 755 /docker/*;
