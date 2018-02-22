@@ -1,4 +1,6 @@
 version: "3"
+# Compose file set to retrieve secrets from vault
+# Assumption is made that vault is running already
 services:
   sonarqube:
     build: .
