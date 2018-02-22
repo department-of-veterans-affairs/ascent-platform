@@ -34,6 +34,9 @@ COPY run-wrapper.sh run-wrapper.sh
 RUN chown -R elasticsearch:elasticsearch template run-wrapper.sh; \
     chmod 750 run-wrapper.sh;
 
+# Install S3 plugin for Snapshot storage
+RUN bin/elasticsearch-plugin install repository-s3
+
 USER elasticsearch
 
 CMD ["/bin/bash", "run-wrapper.sh"]
