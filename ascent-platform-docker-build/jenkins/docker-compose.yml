@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  jenkins:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - ascentnet
+networks:
+  ascentnet:
+    external:
+      name: ascentplatformdockerbuild_ascentnet
