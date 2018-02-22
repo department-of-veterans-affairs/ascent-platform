@@ -1,6 +1,6 @@
 #!/bin/bash
 function curlAdmin {
-    curl -v -u admin:$SONAR_PASSWORD $@
+    curl -v -u admin:admin $@
 }
 
 # Restore qualityprofile and exclude Spring Boot Main Application.java class
