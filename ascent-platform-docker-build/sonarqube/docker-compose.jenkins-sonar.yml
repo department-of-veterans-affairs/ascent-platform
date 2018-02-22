@@ -56,7 +56,6 @@ services:
       - VAULT_ADDR=http://vault:8200
       - JENKINS_URL=http://jenkins:8080
       - SONAR_URL=http://sonarqube:9000
-      - CONFIGURE_JENKINS=true
 
 networks:
   sonarnet:
