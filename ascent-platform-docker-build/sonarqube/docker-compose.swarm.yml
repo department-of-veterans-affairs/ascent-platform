@@ -31,6 +31,25 @@ services:
       - postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
       - postgresql_data:/var/lib/postgresql/data
+  vault:
+    image: localhost:5000/ascent/vault:latest
+    hostname: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - SKIP_SETCAP=$SKIP_SETCAP
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
+      - VAULT_SECRETS_FILE=/config/secrets.json
+      - tls_disable=1
+      - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
+    volumes:
+      - ../vault/config:/config
+    ports:
+      - "8200:8200"
+    command: server -dev #-config /config/vault.conf
+    networks:
+        - ascentnet
 
 networks:
   sonarnet:
