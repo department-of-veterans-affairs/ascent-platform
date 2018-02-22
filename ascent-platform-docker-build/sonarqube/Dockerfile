@@ -1,5 +1,8 @@
 FROM sonarqube:6.5
 
+ENV LANGUAGE java
+ENV PROFILE_NAME ASCENT
+
 # Install unzip for unzipping the vault package
 RUN apt-get install unzip
 
