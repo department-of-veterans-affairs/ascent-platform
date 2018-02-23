@@ -2,6 +2,7 @@ version: "3"
 # Make sure to start vault container before running
 services:
   sonarqube:
+    image: ascent/ascent-sonarqube
     build: .
     ports:
       - "9000:9000"
@@ -20,6 +21,7 @@ services:
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
   db:
+    image: ascent/ascent-sonar-db
     build: ./database
     environment:
       - VAULT_TOKEN=vaultroot
