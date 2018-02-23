@@ -11,7 +11,7 @@ services:
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
       - BASE_URL=http://127.0.0.1:9000
-      - VAULT_TOKEN=vaultroot
+      #- VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
@@ -22,8 +22,17 @@ services:
   db:
     build: ./database
     environment:
-      - VAULT_TOKEN=vaultroot
+      #- VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
+      - PG_HOST=/tmp
+      - PG_USER=sonar
+      - PG_MODE=master
+      - PG_MASTER_USER=master
+      - PG_ROOT_PASSWORD=password
+      - PG_PASSWORD=sonar
+      - PG_DATABASE=sonar
+      - PG_MASTER_PORT=5432
+      - PG_MASTER_PASSWORD=password
     networks:
       - sonarnet
       - ascentnet
@@ -31,6 +40,9 @@ services:
       - postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
       - postgresql_data:/var/lib/postgresql/data
+    deploy:
+      placement:
+        constraints: [node.role == worker]
 
 networks:
   sonarnet:
