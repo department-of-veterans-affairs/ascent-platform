@@ -19,7 +19,7 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
-  db:
+  db_master:
     image: localhost:5000/ascent/db:latest
     environment:
       - VAULT_TOKEN=vaultroot
