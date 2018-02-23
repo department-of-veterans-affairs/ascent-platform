@@ -3,6 +3,7 @@ version: "3"
 # Assumption is made that vault is running already
 services:
   sonarqube:
+    image: ascent/ascent-sonarqube
     build: .
     ports:
       - "9000:9000"
@@ -20,17 +21,20 @@ services:
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
   db:
+    image: ascent/ascent-sonar-db
     build: ./database
     networks:
       - sonarnet
+      - ascentnet
     environment:
-      - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
+      - VAULT_TOKEN=vaultroot
+      - VAULT_ADDR=http://vault:8200
     volumes:
       - postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
       - postgresql_data:/var/lib/postgresql/data
   jenkins:
+    image: ascent/ascent-jenkins
     build: ../jenkins
     ports:
       - "8080:8080" 
@@ -40,6 +44,7 @@ services:
     networks:
       - ascentnet
   jenkins-sonar-config:
+    image: ascent/ascent-jenkins-sonar-config
     build: ../jenkins-sonar-config
     networks:
       - ascentnet
