@@ -2,6 +2,7 @@ version: "3"
 
 services:
   sonarqube:
+    build: .
     image: localhost:5000/ascent/sonarqube:latest
     ports:
       - "9000:9000"
@@ -20,6 +21,7 @@ services:
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
   db:
+    build: ./database
     image: localhost:5000/ascent/db:latest
     environment:
       - VAULT_TOKEN=vaultroot
@@ -32,6 +34,7 @@ services:
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
       - postgresql_data:/var/lib/postgresql/data
   vault:
+    build: ../vault
     image: localhost:5000/ascent/vault:latest
     hostname: vault
     cap_add:
