@@ -1,4 +1,4 @@
-FROM postgres:9.6.5-alpine
+FROM crunchydata/crunchy-postgres:centos7-9.6.5-1.6.0
 
 USER root
 WORKDIR /
@@ -6,10 +6,10 @@ WORKDIR /
 ENV POSTGRES_DB sonar
 
 # Install unzip for unzipping the vault package
-RUN apk add --no-cache unzip
-RUN apk update --no-cache ssl-certs
-RUN apk add --no-cache curl
-RUN apk add --no-cache bash
+#RUN yum install -y unzip
+#RUN apk update --no-cache ssl-certs
+#RUN apk add --no-cache curl
+#RUN apk add --no-cache bash
 
 # Install envconsul for retreiving secrets into ENV variables available only to the executed process
 RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/envconsul/0.7.1/envconsul_0.7.1_linux_amd64.tgz; \
@@ -27,3 +27,4 @@ RUN chmod -R 755 /template
 
 USER postgres
 ENTRYPOINT ["/bin/bash", "/run-wrapper.sh"]
+EXPOSE 5432
