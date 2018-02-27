@@ -1,0 +1,7 @@
+version: "3.3"
+
+services:
+  jenkins:
+    build: .
+    ports:
+      - "9080:8080"
