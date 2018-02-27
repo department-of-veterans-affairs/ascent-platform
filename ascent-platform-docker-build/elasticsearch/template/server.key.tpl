@@ -1,2 +1,1 @@
-{{ with secret "secret/elasticsearch" }}
-{{ .Data.privatekey }}{{ end }}
+{{ with secret "secret/elasticsearch" }}{{ with .Data.privatekey }}{{ trimSpace . }}{{ end }}{{ end }}

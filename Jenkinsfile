@@ -1,34 +1,26 @@
 @Library('ascent') _
 
 mavenPipeline {
-    directory = 'ascent-platform-parent'
-}
-
-mavenPipeline {
-    directory = 'ascent-platform-starters'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/ascent-base'
-    imageName = 'ascent/ascent-base'
+    //Specify string of comma separated upstream projects that will
+    //trigger this build if successful
+    upstreamProjects = '../ascent-security/development'
 }
 
 dockerPipeline {
-    directory = 'ascent-platform-docker-build/filebeat'
-    imageName = 'ascent/ascent-filebeat'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/logstash'
-    imageName = 'ascent/ascent-logstash'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/elasticsearch'
-    imageName = 'ascent/ascent-elasticsearch'
-}
-
-dockerPipeline {
-    directory = 'ascent-platform-docker-build/kibana'
-    imageName = 'ascent/ascent-kibana'
+    //Specify string of comma separated upstream projects that will
+    //trigger this build if successful
+    upstreamProjects = '../ascent-security/development'
+    dockerBuilds = [
+        "ascent/ascent-base": "ascent-platform-docker-build/ascent-base",
+        "ascent/fluentd":"ascent-platform-docker-build/fluentd",
+        "ascent/ascent-elasticsearch":"ascent-platform-docker-build/elasticsearch",
+        "ascent/ascent-es-config":"ascent-platform-docker-build/es-config",
+        "ascent/ascent-kibana":"ascent-platform-docker-build/kibana",
+        "ascent/redis-sentinel":"ascent-platform-docker-build/redis-sentinel",
+        "ascent/rabbitmq":"ascent-platform-docker-build/rabbitmq",
+        "ascent/ascent-vault":"ascent-platform-docker-build/vault",
+        "ascent/sonar":"ascent-platform-docker-build/sonarqube",
+        "ascent/jenkins":"ascent-platform-docker-build/jenkins",
+        "ascent/jenkins-sonar-config":"ascent-platform-docker-build/jenkins-sonar-config",
+    ]
 }

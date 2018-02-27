@@ -8,4 +8,5 @@ docker-compose -f docker-compose.vault.yml \
 	-f docker-compose.logging.override.yml \
 	-f docker-compose.cache.yml \
 	-f docker-compose.cache.override.yml \
+	-f docker-compose.queue.override.yml \
 	up --build -d

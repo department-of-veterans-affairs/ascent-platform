@@ -1,54 +1,40 @@
 #Overrides for local development.
-version: '3'
+version: '3.3'
 
 services:
-    filebeat:
-        build:
-            context: ./filebeat
-        # Enable to turn on filebeat debugging
-        #command: ["filebeat", "-e", "-d", "publish"]
-        environment: 
-           - VAULT_TOKEN=
-           - VAULT_ADDR=
-        volumes:
-            - "/var/lib/docker/containers:/dockerlogs:ro"
-    logstash:
-        build:
-            context: ./logstash
-        environment: 
-           - VAULT_TOKEN=
-           - VAULT_ADDR=
-    
     elasticsearch:
         build:
             context: ./elasticsearch
-        environment: 
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
+        environment:  
             - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
         ports:
             - 9200:9200
-
+    es-config:
+        build:
+           context: ./es-config
+        environment:  
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
     kibana:
         build:
-            context: ./kibana
-        environment: 
-            - VAULT_TOKEN=
-            - VAULT_ADDR=
-    
-    # vault:
-    #     image: vault
-    #     networks: 
-    #         - logging
-    #     ports: 
-    #         - 8200:8200
-    #     environment:
-    #         - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
-    #     cap_add:
-    #         - IPC_LOCK
-
+            context: ./kibana   
+        environment:  
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
+    fluentd:
+        build:
+            context: ./fluentd
+        environment:  
+            - SECURE_CONNECT=false
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
 networks:
-  ascentnet:
-    driver: bridge
-  logging:
-    driver: bridge
+    ascentnet:
+        driver: bridge
+    logging:
+        driver: bridge

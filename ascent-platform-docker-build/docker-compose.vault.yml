@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 services:
   vault:
     image: ascent/ascent-vault
@@ -19,7 +19,10 @@ services:
     command: server -dev #-config /config/vault.conf
     networks:
         - ascentnet
+        - logging
 networks:
   ascentnet:
+    driver: overlay
+  logging:
     driver: overlay
 

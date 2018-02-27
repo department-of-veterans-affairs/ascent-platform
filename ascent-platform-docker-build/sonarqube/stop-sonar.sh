@@ -2,4 +2,4 @@
 
 #Stops sonar cube
 docker-compose -f docker-compose.yml \
-    down
+    down --rmi=all

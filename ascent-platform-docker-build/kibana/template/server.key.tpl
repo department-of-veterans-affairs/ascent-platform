@@ -1,2 +1,1 @@
-{{ with secret "secret/kibana" }}
-{{ .Data.privatekey }}{{ end }}
+{{ with secret "secret/kibana" }}{{ .Data.privatekey }}{{ end }}

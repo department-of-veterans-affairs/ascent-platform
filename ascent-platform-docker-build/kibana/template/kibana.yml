@@ -1,9 +1,9 @@
 ---
 # Default Kibana configuration from kibana-docker.
 
-server.name: kibana
+server.name: kibana.internal.vets-api.gov
 server.host: "0.0.0.0"
-elasticsearch.url: http://elasticsearch:9200
-elasticsearch.username: elastic
-elasticsearch.password: changeme
+elasticsearch.url: http://elastic.internal.vets-api.gov:9200
+elasticsearch.username: kibana
+xpack.security.enabled: true
 xpack.monitoring.ui.container.elasticsearch.enabled: true

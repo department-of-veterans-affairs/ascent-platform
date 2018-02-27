@@ -1,30 +1,28 @@
 ---
-server.name: kibana
-server.host: "kibana"
+server.name: kibana.internal.vets-api.gov
+server.host: "0.0.0.0"
 
-{{ with secret "secret/kibana" }}
+{{ with secret "secret/elasticsearch/kibana" }}
 # Elastic Search Client
-elasticsearch.url: https://elasticsearch:9200
-{{ if .Data.es_user }}
-elasticsearch.username: {{ .Data.es_user }}
+elasticsearch.url: https://elastic.internal.vets-api.gov:9200
+{{ if .Data.username }}
+elasticsearch.username: {{ .Data.username }}
 {{ else }}
-elasticsearch.username: elastic
+elasticsearch.username: kibana
 {{ end }}
-{{ if .Data.es_password }}
-elasticsearch.password: {{ .Data.es_password }}
+{{ if .Data.password }}
+elasticsearch.password: {{ .Data.password }}
 {{ else }}
 elasticsearch.password: changeme
 {{ end }}
-xpack.monitoring.ui.container.elasticsearch.enabled: true
-elasticsearch.ssl.certificateAuthorities: [ "/usr/share/kibana/config/ca.pem" ]
-elasticsearch.ssl.certificate: /usr/share/kibana/config/server.pem
-elasticsearch.ssl.key: /usr/share/kibana/config/server.key
-elasticsearch.ssl.keyPassphrase: {{ .Data.privatekey_password }}
-elasticsearch.ssl.verificationMode: full
-
+{{ end }}
+{{ with secret "secret/kibana" }}
 #SSL Settings
 server.ssl.enabled: true
 server.ssl.key: /usr/share/kibana/config/server.key
 server.ssl.keyPassphrase: {{ .Data.privatekey_password }}
 server.ssl.certificate: /usr/share/kibana/config/server.pem
+{{ end }}
+{{ with secret "pki/cert/ca" }}
+elasticsearch.ssl.certificateAuthorities: ["/usr/share/kibana/config/ca.pem"]
 {{ end }}

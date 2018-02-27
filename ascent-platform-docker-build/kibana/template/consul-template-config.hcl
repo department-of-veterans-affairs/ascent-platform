@@ -20,12 +20,12 @@ template {
   perms = 0644
 }
 
+# - Kibana server certs
 template {
   source = "/usr/share/kibana/template/server.pem.tpl"
   destination = "/usr/share/kibana/config/server.pem"
   perms = 0644
 }
-
 template {
   source = "/usr/share/kibana/template/server.key.tpl"
   destination = "/usr/share/kibana/config/server.key"
@@ -37,3 +37,4 @@ template {
   destination = "/usr/share/kibana/config/kibana.yml"
   perms = 0600
 }
+

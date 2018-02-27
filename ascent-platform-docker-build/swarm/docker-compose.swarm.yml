@@ -1,0 +1,375 @@
+version: '3.3'
+services:
+  vault:
+    image: localhost:5000/ascent/ascent-vault
+    hostname: vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - SKIP_SETCAP=true
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
+      - VAULT_SECRETS_FILE=/config/secrets.json
+      - tls_disable=1
+      - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
+    volumes:
+      - ../vault/config:/config
+    ports:
+      - "8200:8200"
+    command: server -dev #-config /config/vault.conf
+    networks:
+        - ascentnet
+        - logging
+    deploy:
+      mode: replicated
+      replicas: 1
+  ascent-amqp:
+    image: localhost:5000/ascent/ascent-amqp:latest
+    environment:
+      - VAULT_TOKEN=vaultroot
+      - VAULT_ADDR=http://vault:8200
+    # WARNING: these settings will not work in the way you hope. Instead of adding 2
+    # rabbitmq nodes, will add two replicas of the first rabbitmq node, or 'service'.
+    # use the docker service scale command after service is up to scale
+    # the actual rabbitmq nodes.
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      back:
+        aliases:
+          - rabbit
+      ascentnet:
+        aliases:
+          - rabbit
+    expose:
+      - 15672
+      - 5672
+      - 5671
+      - 15671
+    # publish 15672 for seeing rabbitmq management console
+    ports:
+      - 15672:15672
+      - 5672:5672
+    tty: true
+  consul:
+    image: consul:1.0.2
+    hostname: consul
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53"
+    networks:
+      - back
+  ascent-discovery:
+    image: localhost:5000/ascent/ascent-discovery
+    hostname: ascent-discovery
+    ports:
+    - 8761:8761
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    - discovery.server.peer.name=ascent-discovery-peer
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+    - ascentnet
+  ascent-discovery-peer:
+    image: localhost:5000/ascent/ascent-discovery
+    hostname: ascent-discovery-peer
+    ports:
+    - 8761
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    - discovery.server.peer.name=ascent-discovery
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+    - ascentnet
+  ascent-config:
+    image: localhost:5000/ascent/ascent-config
+    ports:
+    - 8760:8760
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    - VAULT_HOST=vault
+    - VAULT_SCHEME=http
+    - BASE_DIR=/configrepo/repo
+    - git.access_token=${GIT_ACCESS_TOKEN}
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+    - ascent-discovery
+    networks:
+    - ascentnet
+  ascent-gateway:
+    image: localhost:5000/ascent/ascent-gateway
+    ports:
+    - 8762:8762
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+    - ascent-config
+    - ascent-discovery
+    networks:
+    - ascentnet
+  ascent-dashboard:
+    image: localhost:5000/ascent/ascent-dashboard
+    ports:
+    - 8763:8763
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    depends_on:
+    - ascent-config
+    - ascent-discovery
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+    - ascentnet
+  ascent-zipkin:
+    image: localhost:5000/ascent/ascent-zipkin
+    ports:
+    - 8700:8700
+    environment:
+    - SPRING_PROFILES_ACTIVE=aws-prod
+    - VAULT_ADDR=http://vault:8200
+    - VAULT_TOKEN=vaultroot
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async-connect: "true"
+        fluentd-max-retries: "10"
+        fluentd-retry-wait: "30s"
+    deploy:
+      mode: replicated
+      replicas: 1
+    depends_on:
+    - ascent-discovery
+    - ascent-config
+    networks:
+    - ascentnet
+    - logging
+  es-config:
+    image: localhost:5000/ascent/es-config
+    networks:
+      - logging
+    environment:
+      - SECURE_CONNECT=false
+      - REPLICA_AMOUNT=1
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    deploy:
+      restart_policy:
+        condition: none
+      placement:
+        constraints: [node.role == worker]
+  elasticsearch:
+    image: localhost:5000/ascent/ascent-elasticsearch
+    networks:
+      logging:
+        aliases:
+          - elastic.internal.vets-api.gov
+      ascentnet:
+        aliases:
+          - elastic.internal.vets-api.gov
+    environment:
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - SECURE_CONNECT=false
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    ulimits:
+      nproc: 655350
+      nofile: 655350
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == worker
+      resources:
+        reservations:
+          memory: 1536m
+  fluentd:
+    image: localhost:5000/ascent/fluentd
+    ports:
+      - 24224:24224
+    networks:
+    - logging
+    depends_on:
+    - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == worker
+    environment:
+      - SECURE_CONNECT=false
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  kibana:
+    image: localhost:5000/ascent/ascent-kibana
+    ports:
+    - 5601:5601
+    networks:
+      logging:
+        aliases:
+          - kibana.internal.vets-api.gov
+      ascentnet:
+        aliases:
+          - kibana.internal.vets-api.gov
+    depends_on:
+    - elasticsearch
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == worker
+    environment:
+      - SECURE_CONNECT=false
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  redis-master:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - START_COMMAND=sh /redis/redis-wrapper.sh
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.type == master
+    networks:
+      - ascentnet
+  # Slave
+  redis-slave:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - START_COMMAND=sh /redis/redis-wrapper.sh --slaveof redis-master 6379
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.type == slave
+    networks:
+      - ascentnet
+  redis-sentinel:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    depends_on:
+      - redis-master
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+    networks:
+      - ascentnet
+  redis-sentinel2:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    depends_on:
+      - redis-master
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - ascentnet
+  redis-sentinel3:
+    image: localhost:5000/ascent/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+    depends_on:
+      - redis-master
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    networks:
+      - ascentnet
+networks:
+  ascentnet:
+    driver: overlay
+    attachable: true
+  logging:
+    driver: overlay
+  back:
+    driver: overlay
+volumes:
+  configrepo:

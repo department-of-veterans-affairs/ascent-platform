@@ -4,8 +4,8 @@ xpack.security.enabled: true
 xpack.security.authc.accept_default_password: true
 
 xpack.security.http.ssl.enabled: true
-xpack.ssl.client_authentication: required
-xpack.ssl.verification_mode: full
+xpack.ssl.client_authentication: none
+xpack.ssl.verification_mode: certificate
 # SSL file paths must be relative to the /usr/share/elasticsearch/config directory.
 xpack.ssl.key: "server.key"
 xpack.ssl.key_passphrase: "${ES_PRIVATEKEY_PASSWORD}"

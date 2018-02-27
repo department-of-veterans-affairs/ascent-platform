@@ -1,418 +1,96 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.7.RELEASE</version>
-    <relativePath/>  <!-- lookup parent from repository -->
+    <groupId>gov.va.ascent</groupId>
+    <artifactId>ascent-platform</artifactId>
+    <version>0.0.4-SNAPSHOT</version>
+    <relativePath>../</relativePath> <!-- lookup parent from repository -->
   </parent>
   
-  <groupId>gov.va.ascent</groupId>
+  <version>0.0.4-SNAPSHOT</version>
   <artifactId>ascent-platform-parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
-  <description>Ascent Platform Parent</description>
-
-	<repositories>
-		<repository>
-			<id>vets</id>
-			<name>Vets.gov Nexus Repository</name>
-			<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>vets</id>
-			<name>Vets.gov Nexus Repository</name>
-			<url>http://csraciapp1.evss.srarad.com:8081/nexus/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
-  <distributionManagement>
-	<repository>
-		<id>vets.release</id>
-		<url>${repo.release}</url>
-	</repository>
-	<snapshotRepository>
-		<id>vets.snapshot</id>
-		<url>${repo.snapshot}</url>
-	</snapshotRepository>
-  </distributionManagement>
-
+  <description>Ascent Platform Starters Parent</description>    
+  
   <properties>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	<java.version>1.8</java.version>
-	<repo.baseurl>http://csraciapp1.evss.srarad.com:8081/nexus/content</repo.baseurl>
-	<repo.release>${repo.baseurl}/repositories/releases</repo.release>
-	<repo.snapshot>${repo.baseurl}/repositories/snapshots</repo.snapshot>
-	<!-- Docker properties to add min and max memory for spring boot jar start up -->
-	<docker.java.opts.ms>-Xms32m</docker.java.opts.ms>
-	<docker.java.opts.mx>-Xmx256m</docker.java.opts.mx>
-	  <ascent.starter.version>0.0.1-SNAPSHOT</ascent.starter.version>
-	  <springfox.version>2.7.0</springfox.version>
-	  <cucumber.version>1.2.5</cucumber.version>
-	  <restassured.version>2.9.0</restassured.version>
-	  <jacoco.outputRootDir>${project.basedir}/target/jacoco</jacoco.outputRootDir>
-	  <jacoco.dataFile>${jacoco.outputRootDir}/jacoco.exec</jacoco.dataFile>
-	  <jacoco.reportDir>${jacoco.outputRootDir}/jacoco</jacoco.reportDir>
-	  <sonar.host.url>http://localhost:9000</sonar.host.url>
-	  <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-	  <sonar.jacoco.reportPaths>${jacoco.dataFile}</sonar.jacoco.reportPaths>
-	  <sonar.profile.java>ASCENT</sonar.profile.java>
-	  <sonar.maven.plugin.version>3.3.0.603</sonar.maven.plugin.version>
-	  <include.int.tests.pattern>**/*IT.java,**/*Runner.java</include.int.tests.pattern>
-	  <jgitflow.keepBranch>false</jgitflow.keepBranch>
-
-	  <!-- fortify properties for easy override -->
-	  <!-- fortify scan properties -->
-	  <fortify.scanEnabled>true</fortify.scanEnabled>
-	  <fortify.jre64>true</fortify.jre64>
-	  <fortify.debug>false</fortify.debug>
-	  <fortify.maxHeap>1024m</fortify.maxHeap>
-	  <fortify.maxPermGen>512m</fortify.maxPermGen>
-	  <!-- fortify upload properties -->
-	  <fortify.upload>false</fortify.upload> <!-- pass as -D from build server where upload is desired -->
-	  <fortify.token>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.token>
-	  <fortify.url>REPLACE WITH REAL VALUE IN SETTINGS.XML OR -D PARAM</fortify.url>
+	<ascent.test.framework.version>0.0.4-SNAPSHOT</ascent.test.framework.version>
   </properties>
   
-  <dependencyManagement>
-	<dependencies>
-		<dependency>
+  <modules>
+  	<module>ascent-platform-starter-security</module>
+	<module>ascent-platform-starter-swagger</module>
+	<module>ascent-platform-starter-cache</module>
+	<module>ascent-platform-starter-logger</module>
+	<module>ascent-platform-starter</module>
+  </modules>
+
+ <dependencyManagement>
+	  <dependencies>
+	  	<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-dependencies</artifactId>
-			<version>Dalston.SR3</version>
+			<version>Dalston.SR5</version>
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>
-		<dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-            <version>1.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-            <version>1.5.4.RELEASE</version>
-        </dependency>
-        <!-- LogStash LogBack Encoder -->
-		<dependency>
-			<groupId>net.logstash.logback</groupId>
-			<artifactId>logstash-logback-encoder</artifactId>
-			<version>4.7</version>
+	 		<!-- Ascent Libraries -->
+	  	<dependency>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-framework</artifactId>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
-		<!-- Apache Common IO dependency -->
 		<dependency>
-		    <groupId>commons-io</groupId>
-		    <artifactId>commons-io</artifactId>
-		     <version>2.5</version>
+			<groupId>gov.va.ascent</groupId>
+			<artifactId>ascent-security</artifactId>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
-		<!-- Apache Commons project dependencies -->
-    	<dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.5</version>
-    	</dependency>
 		<!-- Ascent starters-->
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>		
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-security</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-swagger</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-logger</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
 			<artifactId>ascent-platform-starter-cache</artifactId>
-			<version>${ascent.starter.version}</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
-	</dependencies>
+	  </dependencies>
   </dependencyManagement>
+  <dependencies>
+   <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+    </dependency>
+  </dependencies>
   
   <build>
-	  <finalName>${project.artifactId}</finalName>
-		<resources>
-    		<resource>
-		        <directory>src/main/resources</directory>
-		        <filtering>true</filtering>
-		        <includes>
-                    <include>**/*</include>
-                </includes>
-				<excludes>
-					<exclude>**/cert/*</exclude>
-				</excludes>
-		    </resource>
-			<resource>
-				<directory>src/main/resources/cert</directory>
-			</resource>
-    	</resources>
-		<plugins>
-			<!-- repackages jar and war plugins so they can be executed with command line -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<failOnError>false</failOnError>
-					<additionalparam>-Xdoclint:none</additionalparam>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Build-Time>${maven.build.timestamp}</Build-Time>
-							<Implementation-Version>${project.version}</Implementation-Version>
-							<Implementation-GIT-Revision>${GIT_COMMIT}</Implementation-GIT-Revision>
-							<Implementation-Build-Number>${BUILD_NUMBER}</Implementation-Build-Number>
-						</manifestEntries>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>${skipTests}</skipTests>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-						<configuration>
-							<skipTests>${skipITs}</skipTests>
-							<includes>
-								<include>${include.int.tests.pattern}</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<!-- Add a new inttest source directory to our build -->
-					<execution>
-						<id>add-integration-test-sources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-test-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src/inttest/java</source>
-							</sources>
-						</configuration>
-					</execution>
-					<!-- Add a new inttest resource directory to our build -->
-					<execution>
-						<id>add-integration-test-resources</id>
-						<phase>generate-test-resources</phase>
-						<goals>
-							<goal>add-test-resource</goal>
-						</goals>
-						<configuration>
-							<resources>
-								<resource>
-									<filtering>true</filtering>
-									<directory>src/inttest/resources</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<!-- add the parsed version properties into the build environment for usage as needed -->
-					<execution>
-						<phase>initialize</phase>
-						<id>parse-version</id>
-						<goals>
-							<goal>parse-version</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar</goal>
-							<goal>test-jar</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/sources</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonarsource.scanner.maven</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>${sonar.maven.plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.9</version>
-				<configuration>
-					<destFile>${jacoco.dataFile}</destFile>
-					<append>true</append>
-					<excludes>
-						<exclude>**/static/features/**/*</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-						<id>prepare-agent</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-						<configuration>
-							<dataFile>${jacoco.dataFile}</dataFile>
-							<outputDirectory>${jacoco.reportDir}</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.hpe.security.fortify.maven.plugin</groupId>
-				<artifactId>sca-maven-plugin</artifactId>
-				<version>17.10</version>
-				<configuration>
-					<scanEnabled>${fortify.scanEnabled}</scanEnabled>
-					<projectName>${project.artifactId}</projectName>
-					<projectVersion>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}</projectVersion>
-					<upload>${fortify.upload}</upload>
-					<f360Url>${fortify.url}</f360Url>
-					<f360AuthToken>${fortify.token}</f360AuthToken>
-					<jre64>${fortify.jre64}</jre64>
-					<debug>${fortify.debug}</debug>
-					<maxHeap>${fortify.maxHeap}</maxHeap>
-					<maxPermGen>${fortify.maxPermGen}</maxPermGen>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	
-	<profiles>
-		<profile>
-			<id>docker-jar-project</id>
-			<activation>
-		     	<file><!-- add a file named .docker-jar-project-marker to war projects to activate this profile -->
-		       	<exists>${basedir}/.docker-jar-project-marker</exists>
-		     	</file>
-		    </activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>1.3.6</version>
-						<executions>
-							<execution>
-								<id>default</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<repository>ascent/${project.artifactId}</repository>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<!-- The Configuration of the development profile -->
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<!-- Only unit tests are run when the development profile is active -->
-				<skipTests>false</skipTests>
-				<skipITs>true</skipITs>
-			</properties>
-		</profile>
-		<!-- The Configuration of the inttest profile -->
-		<profile>
-			<id>inttest</id>
-			<properties>
-				<!-- Only int tests are run when this inttest profile is active -->
-				<skipTests>true</skipTests>
-				<skipITs>false</skipITs>
-			</properties>
-		</profile>
-	</profiles>
-  
- 
+	    <plugins>
+	      <plugin>
+	        <groupId>org.springframework.boot</groupId>
+	        <artifactId>spring-boot-maven-plugin</artifactId>
+	        <configuration>
+	          <skip>false</skip>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+   </build>
 </project>
