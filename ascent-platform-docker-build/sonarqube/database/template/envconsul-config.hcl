@@ -16,18 +16,10 @@ vault {
 
 upcase = true
 
-
 # Sonar Secret
 secret {
-    format = "sonar_{{ key }}"
-    no_prefix = true
-    path = "secret/sonar/admin"
-}
-
-
-# Sonar jdbc database Secret
-secret {
-    format = "sonarqube_jdbc_{{ key }}"
+    format = "postgres_{{ key }}"
     no_prefix = true
     path = "secret/sonar/database"
 }
+

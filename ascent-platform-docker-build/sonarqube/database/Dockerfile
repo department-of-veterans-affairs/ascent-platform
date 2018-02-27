@@ -1,0 +1,29 @@
+FROM postgres:9.6.5-alpine
+
+USER root
+WORKDIR /
+
+ENV POSTGRES_DB sonar
+
+# Install unzip for unzipping the vault package
+RUN apk add --no-cache unzip
+RUN apk update --no-cache ssl-certs
+RUN apk add --no-cache curl
+RUN apk add --no-cache bash
+
+# Install envconsul for retreiving secrets into ENV variables available only to the executed process
+RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/envconsul/0.7.1/envconsul_0.7.1_linux_amd64.tgz; \
+    tar -xzf envconsul_0.7.1_linux_amd64.tgz; \
+    mv envconsul /usr/local/bin/envconsul; \
+    chmod +x /usr/local/bin/envconsul; \
+    rm -f envconsul_0.7.1_linux_amd64.tgz
+
+COPY run-wrapper.sh run-wrapper.sh
+COPY template template
+RUN chown postgres:postgres /run-wrapper.sh
+RUN chmod 755 /run-wrapper.sh
+RUN chown -R postgres:postgres /template
+RUN chmod -R 755 /template
+
+USER postgres
+ENTRYPOINT ["/bin/bash", "/run-wrapper.sh"]
