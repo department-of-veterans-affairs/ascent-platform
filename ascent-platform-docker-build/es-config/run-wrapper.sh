@@ -34,9 +34,10 @@ if [[ $VAULT_TOKEN ]]; then
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/set-replicas.sh
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/configure-snapshots.sh
     # Run backups of Elasticsearch every 24 hours
-    if [[ $SNAPSHOT_BUCKET_NAME ]]; then 
+    if [[ $SNAPSHOT_BUCKET_NAME ]]; then
+        consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
         while true; do
-            envconsul -config="$ENVCONSUL_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN" /docker/scheduled-snapshots.sh
+            curator --config /docker/curator/config.yml /docker/curator/action.yml
             sleep 24h
         done
     fi

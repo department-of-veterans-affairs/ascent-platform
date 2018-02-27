@@ -15,8 +15,8 @@ vault {
 }
 
 template {
-  source = "/usr/share/elasticsearch/template/ca.pem.tpl"
-  destination = "/usr/share/elasticsearch/config/ca.pem"
+  source = "/docker/curator/config.tpl.yml"
+  destination = "/docker/curator/config.yml"
   perms = 0644
 }
 

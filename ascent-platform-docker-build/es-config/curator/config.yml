@@ -1,0 +1,16 @@
+---
+# Remember, leave a key empty if there is no value.  None will be a string,
+# not a Python "NoneType"
+client:
+  hosts:
+    - elastic.internal.vets-api.gov
+  port: 9200
+  url_prefix:
+  use_ssl: ${SSL:False}
+  certificate:
+  client_cert:
+  client_key:
+  ssl_no_validate: ${SSL_NO_VALIDATE:False}
+  http_auth: {{ with secret "secret/elasticsearch/admin" }}{{ with .Data.username }}:{{ with .Data.password }}{{ trimSpace . }}{{ end }}{{ end }}
+  timeout: 30
+  master_only: False
