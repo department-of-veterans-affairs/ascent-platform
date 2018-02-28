@@ -29,6 +29,12 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
 RUN curl -sL -o /usr/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64; \
     chmod 755 /usr/bin/jq
 
+# Install the Elasticsearch curator tool which will be used to manage snapshots and data retention
+RUN rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+COPY curator/curator.repo /etc/yum.repos.d/curator.repo
+RUN yum install -y elasticsearch-curator
+# Install the curator configuration files
+COPY curator/ /docker/curator/
 
 WORKDIR /usr/share/elasticsearch
 
@@ -40,7 +46,6 @@ COPY set-replicas.sh /docker/set-replicas.sh
 COPY changepass.sh /docker/changepass.sh
 COPY set-url.sh /docker/set-url.sh
 COPY configure-snapshots.sh /docker/configure-snapshots.sh
-COPY scheduled-snapshots.sh /docker/scheduled-snapshots.sh
 COPY restore-snapshot.sh /docker/restore-snapshot.sh
 
 # Change file permissions to elasticsearch user

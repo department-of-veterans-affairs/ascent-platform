@@ -20,3 +20,9 @@ template {
   perms = 0644
 }
 
+template {
+  source = "/docker/curator/config.tpl.yml"
+  destination = "/docker/curator/config.yml"
+  perms = 0644
+}
+
