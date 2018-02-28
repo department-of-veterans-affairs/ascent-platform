@@ -44,3 +44,5 @@ actions:
       repository: s3_repository
       name: snapshot-%Y%m%d-%H%M%S
       ignore_empty_list: True
+    filters:
+    - filtertype: none

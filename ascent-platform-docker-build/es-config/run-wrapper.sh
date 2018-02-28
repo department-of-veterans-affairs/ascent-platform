@@ -37,7 +37,7 @@ if [[ $VAULT_TOKEN ]]; then
     if [[ $SNAPSHOT_BUCKET_NAME ]]; then
         consul-template -once -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -vault-token="$VAULT_TOKEN"
         while true; do
-            curator --config /docker/curator/config.yml /docker/curator/action.yml
+            LC_ALL=en_US.utf8 curator --config /docker/curator/config.yml /docker/curator/action.yml
             sleep 24h
         done
     fi

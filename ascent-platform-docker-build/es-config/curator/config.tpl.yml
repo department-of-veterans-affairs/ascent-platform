@@ -6,11 +6,11 @@ client:
     - elastic.internal.vets-api.gov
   port: 9200
   url_prefix:
-  use_ssl: ${SECURE_CONNECT:False}
-  certificate:
+  use_ssl: ${SECURE_CONNECT:True}
+  certificate: /usr/share/elasticsearch/config/ca.pem
   client_cert:
   client_key:
   ssl_no_validate: ${SSL_NO_VALIDATE:False}
-  http_auth: {{ with secret "secret/elasticsearch/admin" }}{{ with .Data.username }}{{ trimSpace . }}{{ end }}: {{ with .Data.password }}{{ trimSpace . }}{{ end }}{{ end }}
+  http_auth: {{ with secret "secret/elasticsearch/admin" }}{{ with .Data.username }}{{ trimSpace . }}{{ end }}:{{ with .Data.password }}{{ trimSpace . }}{{ end }}{{ end }}
   timeout: 30
   master_only: False
