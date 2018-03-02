@@ -1,9 +1,7 @@
-FROM crunchydata/crunchy-postgres:centos7-9.6.5-1.6.0
+FROM percona/percona-xtradb-cluster:latest
 
 USER root
 WORKDIR /
-
-ENV POSTGRES_DB sonar
 
 # Install unzip for unzipping the vault package
 #RUN yum install -y unzip
@@ -20,11 +18,7 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
 
 COPY run-wrapper.sh run-wrapper.sh
 COPY template template
-RUN chown postgres:postgres /run-wrapper.sh
 RUN chmod 755 /run-wrapper.sh
-RUN chown -R postgres:postgres /template
 RUN chmod -R 755 /template
 
-USER postgres
 ENTRYPOINT ["/bin/bash", "/run-wrapper.sh"]
-EXPOSE 5432
