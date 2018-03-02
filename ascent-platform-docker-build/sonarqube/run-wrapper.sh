@@ -17,11 +17,10 @@ if [[ $VAULT_TOKEN ]]; then
  
    # Change the jdbc env variable to have USER instead of USERNAME
    # to match what's going to come from envconsul
-   #sed -i 's/USERNAME/USER/g' ./bin/run.sh 
+   sed -i 's/USERNAME/USER/g' ./bin/run.sh 
 
    # Start Sonar
-   #$ENV_CONSUL_CMD ./bin/run.sh &
-   echo "FIX ME SO I CAN WORK WITH VAULT!!!!"
+   $ENV_CONSUL_CMD ./bin/run.sh &
 else 
    ./bin/run.sh &
 fi
