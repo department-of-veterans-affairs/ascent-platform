@@ -4,6 +4,8 @@ version: "3"
 # provided). 
 # For testing with swarm and vault, use the docker-compose.swarm.yml file
 
+# TODO: before using, make sure to add functionality to jenkins
+#       for set up if vault_token is not provided
 services:
   sonarqube:
     build: .
