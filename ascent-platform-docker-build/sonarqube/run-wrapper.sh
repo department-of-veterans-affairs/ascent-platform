@@ -5,6 +5,7 @@ ENV_CONSUL_CMD="envconsul -config $ENV_CONSUL_CONFIG -vault-addr=$VAULT_ADDR -va
 # Install Github plugin
 ./provision/install_github_plugin.sh
 
+./provision/db_cluster_wait.sh
 
 if [[ $VAULT_TOKEN ]]; then
    # poll for vault
@@ -16,10 +17,11 @@ if [[ $VAULT_TOKEN ]]; then
  
    # Change the jdbc env variable to have USER instead of USERNAME
    # to match what's going to come from envconsul
-   sed -i 's/USERNAME/USER/g' ./bin/run.sh 
+   #sed -i 's/USERNAME/USER/g' ./bin/run.sh 
 
    # Start Sonar
-   $ENV_CONSUL_CMD ./bin/run.sh &
+   #$ENV_CONSUL_CMD ./bin/run.sh &
+   echo "FIX ME SO I CAN WORK WITH VAULT!!!!"
 else 
    ./bin/run.sh &
 fi
