@@ -1,6 +1,9 @@
 version: "3"
-# Compose file set to retrieve secrets from vault
-# Assumption is made that vault is running already
+# Meant to test jenkins and sonar configurations locally,
+# So vault is disabled (i.e, vault_token variable is not
+# provided). 
+# For testing with swarm and vault, use the docker-compose.swarm.yml file
+
 services:
   sonarqube:
     build: .
@@ -12,15 +15,15 @@ services:
     environment:
       - BASE_URL=http://127.0.0.1:9000
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
+      - SONARQUBE_JDBC_USER=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
   db:
-    build: ./database
+    image: postgres:9.6.5-alpine
     networks:
       - sonarnet
     environment:
