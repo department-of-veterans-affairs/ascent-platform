@@ -8,83 +8,83 @@ services:
       - "9000:9000"
     networks:
       - sonarnet
-      - ascentnet
     environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db_primary:5432/sonar
+      - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - DISCOVERY_SERVICE=etcd:2379
+      - CLUSTER_NAME=sonarcluster
       - BASE_URL=http://127.0.0.1:9000
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
+      #- VAULT_TOKEN=vaultroot
+      #- VAULT_ADDR=http://vault:8200
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
-  db_primary:
-    hostname: db_primary
+  db:
+    hostname: db
     build: ./database
-    image: localhost:5000/ascent/db:latest
-    ports:
-      - "5432:5432"
+    image: localhost:5000/ascnet/sonar-db:latest
     environment:
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
-      - PG_HOST=/tmp
-      - PG_MODE=primary
-      - PG_DATABASE=sonar
-      - PG_PRIMARY_PORT=5432
+      #- VAULT_TOKEN=vaultroot
+      #- VAULT_ADDR=http://vault:8200
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=sonar
+      - MYSQL_USER=sonar
+      - MYSQL_PASSWORD=sonar
+      - DISCOVERY_SERVICE=etcd:2379
+      - CLUSTER_NAME=sonarcluster
     networks:
       - sonarnet
-      - ascentnet
     volumes:
-      - postgresql:/var/lib/postgresql
-      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - postgresql_data:/var/lib/postgresql/data
-    deploy:
-      replicas: 3
-  db_replica:
-    build: ./database
-    image: localhost:5000/ascent/db:latest
-    environment:
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
-      - PG_HOST=/tmp
-      - PG_MODE=replica
-      - PG_DATABASE=sonar
-      - PG_PRIMARY_PORT=5432
-      - PG_MASTER_HOST=db_primary
-    networks:
-      - sonarnet
-      - ascentnet
-    volumes:
-      - postgresql:/var/lib/postgresql
-      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - postgresql_data:/var/lib/postgresql/data
-
-  vault:
-    build: ../vault/
-    image: localhost:5000/ascent/vault
-    hostname: vault
-    cap_add:
-      - IPC_LOCK
-    environment:
-      - SKIP_SETCAP=true
-      - VAULT_ADDR=http://vault:8200
-      - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
-      - VAULT_SECRETS_FILE=/config/secrets.json
-      - tls_disable=1
-      - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
-    volumes:
-      - ../vault/config:/config
+      - /var/log/mysql
+      - /var/lib/mysql
+    command:
+      - '--user=mysql --pxc-strict-mode=PERMISSIVE'
     ports:
-      - "8200:8200"
-    command: server -dev; tail -f /dev/null #-config /config/vault.conf
-    networks:
-        - ascentnet
+      - "3306:3306"
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 3 
+  etcd:
+    hostname: etcd
+    image: localhost:5000/ascent/sonar-db-discovery
+    build: ./discovery
+    ports:
+      - "4001:4001"
+      - "2380:2380"
+      - "2379:2379"
+    #command: -name etcd0 -advertise-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 -initial-advertise-peer-urls http://0.0.0.0:2380 -listen-peer-urls http://0.0.0.0:2380 -initial-cluster-token etcd-cluster-1 -initial-cluster etcd0=http://0.0.0.0:2380 -initial-cluster-state new
+      
+    networks:
+      - sonarnet
 
+#  vault:
+#    build: ../vault/
+#    image: localhost:5000/ascent/vault
+#    hostname: vault
+#    cap_add:
+#      - IPC_LOCK
+#    environment:
+#      - SKIP_SETCAP=true
+#      - VAULT_ADDR=http://vault:8200
+#      - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
+#      - VAULT_SECRETS_FILE=/config/secrets.json
+#      - tls_disable=1
+#      - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
+#    volumes:
+#      - ../vault/config:/config
+#    ports:
+#      - "8200:8200"
+#    command: server -dev; tail -f /dev/null #-config /config/vault.conf
+#    networks:
+#        - ascentnet
+#    deploy:
+#      mode: replicated
+#      replicas: 1
+#
 
 networks:
   sonarnet:
@@ -96,5 +96,5 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_bundled-plugins:
-  postgresql:
-  postgresql_data:
+  #postgresql:
+  #postgresql_data:
