@@ -1,11 +1,4 @@
 version: "3"
-# Meant to test jenkins and sonar configurations locally,
-# So vault is disabled (i.e, vault_token variable is not
-# provided). 
-# For testing with swarm and vault, use the docker-compose.swarm.yml file
-
-# TODO: before using, make sure to add functionality to jenkins
-#       for set up if vault_token is not provided
 services:
   sonarqube:
     build: .
@@ -15,26 +8,39 @@ services:
       - sonarnet
       - ascentnet
     environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
       - BASE_URL=http://127.0.0.1:9000
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
-      - SONARQUBE_JDBC_USER=sonar
-      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
   db:
-    image: postgres:9.6.5-alpine
+    hostname: db
+    build: ./database
+    volumes:
+      - /var/log/mysql
+      - /var/lib/mysql
+    command:
+      - '--user=mysql --pxc-strict-mode=PERMISSIVE'
+    ports:
+      - "3306:3306"
+    environment:
+      - VAULT_TOKEN=vaultroot
+      - VAULT_ADDR=http://vault:8200
+      - MYSQL_DATABASE=sonar
+      - CLUSTER_NAME=sonarcluster
     networks:
       - sonarnet
-    environment:
-      - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
+      - ascentnet
     volumes:
-      - postgresql:/var/lib/postgresql
-      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - postgresql_data:/var/lib/postgresql/data
+      - /var/log/mysql
+      - /var/lib/mysql
+    deploy:
+      placement:
+        constraints: [node.role == worker]
   jenkins:
     build: ../jenkins
     ports:
@@ -54,7 +60,6 @@ services:
       placement:
         constraints: [node.role == worker]
     environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
       - LANGUAGE=java
       - PROFILE_NAME=ASCENT
       - VAULT_TOKEN=vaultroot
@@ -74,5 +79,3 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_bundled-plugins:
-  postgresql:
-  postgresql_data:
