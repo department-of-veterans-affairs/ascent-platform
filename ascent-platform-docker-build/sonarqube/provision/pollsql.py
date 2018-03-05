@@ -1,6 +1,7 @@
 import mysql.connector
 import time
 import sys
+import os
 
 keepGoing = True
 while keepGoing:
@@ -8,7 +9,11 @@ while keepGoing:
 		if len(sys.argv) < 1:
 			sys.exit("should provid ip commandline parameter")
 		ip = sys.argv[1]
-		cnx = mysql.connector.connect(user='sonar', password='sonar', host=ip, database='sonar')
+                user = os.environ['SONARQUBE_JDBC_USER']
+		print("user is %s" % (user))
+                password = os.environ['SONARQUBE_JDBC_PASSWORD']
+		print("password is %s" % (password))
+		cnx = mysql.connector.connect(user=user, password=password, host=ip, database='sonar')
 		isconn = cnx.is_connected()
 		if isconn:
 			print("database is ready for connections")
