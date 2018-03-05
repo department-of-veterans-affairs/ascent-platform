@@ -3,12 +3,6 @@ FROM percona/percona-xtradb-cluster:latest
 USER root
 WORKDIR /
 
-# Install unzip for unzipping the vault package
-#RUN yum install -y unzip
-#RUN apk update --no-cache ssl-certs
-#RUN apk add --no-cache curl
-#RUN apk add --no-cache bash
-
 # Install envconsul for retreiving secrets into ENV variables available only to the executed process
 RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/envconsul/0.7.1/envconsul_0.7.1_linux_amd64.tgz; \
     tar -xzf envconsul_0.7.1_linux_amd64.tgz; \
