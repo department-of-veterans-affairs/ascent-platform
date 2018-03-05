@@ -1,6 +1,7 @@
 version: "3"
 services:
   sonarqube:
+    image: ascent/ascent-sonarqube
     build: .
     ports:
       - "9000:9000"
@@ -19,6 +20,7 @@ services:
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
   db:
     hostname: db
+    image: ascent/ascent-sonar-db
     build: ./database
     volumes:
       - /var/log/mysql
@@ -42,6 +44,7 @@ services:
       placement:
         constraints: [node.role == worker]
   jenkins:
+    image: ascent/ascent-jenkins
     build: ../jenkins
     ports:
       - "8080:8080" 
@@ -51,6 +54,7 @@ services:
     networks:
       - ascentnet
   jenkins-sonar-config:
+    image: ascent/ascent-jenkins-sonar-config
     build: ../jenkins-sonar-config
     networks:
       - ascentnet

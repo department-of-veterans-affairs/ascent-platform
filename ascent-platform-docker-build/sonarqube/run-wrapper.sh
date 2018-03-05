@@ -31,16 +31,11 @@ fi
 
 # Wait for sonar to be up
 ./provision/wait_for_sonar.sh
+./provision/set_main_profile.sh
 
-echo "Changing admin password..."
 if [[ $VAULT_TOKEN ]]; then
    echo "Changing admin password..."
    $ENV_CONSUL_CMD ./provision/set_new_password.sh
-   echo "Setting ascent profile..."
-   $ENV_CONSUL_CMD ./provision/set_main_profile.sh
-else 
-   export SONAR_PASSWORD=admin
-   ./provision/set_main_profile.sh
 fi
 
 echo "Done!"

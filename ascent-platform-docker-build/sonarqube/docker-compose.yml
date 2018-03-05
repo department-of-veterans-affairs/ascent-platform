@@ -2,6 +2,7 @@ version: "3"
 # Make sure to start vault container before running
 services:
   sonarqube:
+    image: ascent/ascent-sonarqube
     build: .
     ports:
       - "9000:9000"
@@ -21,6 +22,7 @@ services:
 
   db:
     hostname: db
+    image: ascent/ascent-sonar-db
     build: ./database
     volumes:
       - /var/log/mysql
