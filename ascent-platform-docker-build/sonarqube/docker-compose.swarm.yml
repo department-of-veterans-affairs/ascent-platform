@@ -12,10 +12,13 @@ services:
       - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
       # Uses discovery service to poll the database
       # cluster before connecting
-      - DISCOVERY_SERVICE=etcd:237
+      - DISCOVERY_SERVICE=etcd:2379
       # Uses the cluster name to poll the discovery service
       # to wait for cluster creation
       - CLUSTER_NAME=sonarcluster
+      # Need the initial size of the cluster
+      # to poll for all nodes coming up initially
+      - INITIAL_CLUSTER_SIZE=3 
       - BASE_URL=http://127.0.0.1:9000
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
@@ -35,9 +38,6 @@ services:
       - MYSQL_DATABASE=sonar
       - DISCOVERY_SERVICE=etcd:2379
       - CLUSTER_NAME=sonarcluster
-      # Need the initial size of the cluster
-      # to poll for all nodes coming up initially
-      - INITIAL_CLUSTER_SIZE=3 
     networks:
       - sonarnet
     volumes:
