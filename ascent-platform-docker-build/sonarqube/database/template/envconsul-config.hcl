@@ -15,17 +15,16 @@ vault {
 }
 
 upcase = true
-sanitize = true
 
 # Sonar Secret
 secret {
-    format = "pg_{{ key }}"
+    format = "mysql_{{ key }}"
     no_prefix = true
     path = "secret/sonar/database"
 }
 
 secret {
-    format = "pg_{{ key }}"
+    format = "mysql_root_{{ key }}"
     no_prefix = true
-    path = "secret/sonar/database/backend"
+    path = "secret/sonar/database/root"
 }
