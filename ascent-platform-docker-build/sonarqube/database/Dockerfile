@@ -1,4 +1,4 @@
-FROM percona/percona-xtradb-cluster:latest
+FROM percona/percona-xtradb-cluster:5.7
 
 USER root
 WORKDIR /

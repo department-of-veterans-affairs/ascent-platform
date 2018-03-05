@@ -1,4 +1,4 @@
-FROM quay.io/coreos/etcd:latest
+FROM quay.io/coreos/etcd:v3.3
 
 COPY run-wrapper.sh /run-wrapper.sh
 RUN chmod +x run-wrapper.sh
