@@ -8,12 +8,9 @@ services:
       - "9000:9000"
     networks:
       - sonarnet
-      - ascentnet
     environment:
       - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
       - BASE_URL=http://127.0.0.1:9000
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
@@ -23,12 +20,8 @@ services:
   db:
     image: ascent/ascent-sonar-db
     build: ./database
-    environment:
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
     networks:
       - sonarnet
-      - ascentnet
     volumes:
       - postgresql:/var/lib/postgresql
       # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
@@ -37,9 +30,6 @@ services:
 networks:
   sonarnet:
     driver: bridge
-  ascentnet:
-    external:
-      name: ascentplatformdockerbuild_ascentnet
 
 volumes:
   sonarqube_conf:
