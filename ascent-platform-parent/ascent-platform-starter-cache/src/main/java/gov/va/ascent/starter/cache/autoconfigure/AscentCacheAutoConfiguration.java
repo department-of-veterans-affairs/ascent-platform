@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,10 +86,10 @@ public class AscentCacheAutoConfiguration extends CachingConfigurerSupport {
 			public Object generate(Object o, Method method, Object... objects) {
 				LOGGER.debug("Generating cacheKey");
 				StringBuilder sb = new StringBuilder();
-				sb.append(o.getClass().getName());
+				sb.append(o.getClass().getName()).append(ClassUtils.PACKAGE_SEPARATOR_CHAR);
 				sb.append(method.getName());
 				for (Object obj : objects) {
-					sb.append(obj.toString());
+					sb.append(ClassUtils.PACKAGE_SEPARATOR_CHAR).append(obj.toString());
 				}
 				LOGGER.debug("Generated cacheKey: {}", sb.toString());
 				return sb.toString();
