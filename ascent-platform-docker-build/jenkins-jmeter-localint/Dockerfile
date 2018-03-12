@@ -1,5 +1,5 @@
 
-FROM jenkins/jenkins:2.60.3
+FROM jenkins/jenkins:2.89.3
 
 MAINTAINER Suchitha
 
@@ -25,8 +25,8 @@ USER root
 
 RUN apt-get -m update && apt-get install -y wget  zip
 
-ENV		JMETER_VERSION	3.2
-ENV		JMETER_HOME	/opt/jmeter/apache-jmeter-3.2
+ENV		JMETER_VERSION	4.0
+ENV		JMETER_HOME	/opt/jmeter/apache-jmeter-4.0
 ENV		JMETER_DOWNLOAD_URL  https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
 
 # download and extract jmeter 
@@ -54,26 +54,26 @@ RUN 	curl -L --silent ${JMETER_DOWNLOAD_URL} | tar -xz --strip=1 -C ${JMETER_HOM
 		curl -L --silent https://jmeter-plugins.org/files/packages/jpgc-dummy-0.2.zip -o /tmp/jpgc-dummy-0.2.zip && \
 		curl -L --silent https://jmeter-plugins.org/files/packages/jpgc-tst-2.1.zip -o /tmp/jpgc-tst-2.1.zip && \
 		curl -L --silent https://jmeter-plugins.org/files/packages/jpgc-casutg-2.1.zip -o /tmp/jpgc-casutg-2.1.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jmeter-plugins-standard.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jpgc-ggl-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jpgc-graphs-vs-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jpgc-graphs-additional-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jpgc-graphs-basic-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-graphs-composite-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jpgc-graphs-dist-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-cmd-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2 /tmp/jpgc-filterresults-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-mergeresults-2.1.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-perfmon-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-sense-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jmeter-plugins-standard.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jpgc-ggl-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jpgc-graphs-vs-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jpgc-graphs-additional-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jpgc-graphs-basic-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-graphs-composite-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jpgc-graphs-dist-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-cmd-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0 /tmp/jpgc-filterresults-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-mergeresults-2.1.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-perfmon-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-sense-2.0.zip && \
 		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-functions-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-plancheck-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-synthesis-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-fifo-0.2.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-ffw-2.0.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-dummy-0.2.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-tst-2.1.zip && \
-		unzip -o -d /opt/jmeter/apache-jmeter-3.2  /tmp/jpgc-casutg-2.1.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-plancheck-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-synthesis-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-fifo-0.2.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-ffw-2.0.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-dummy-0.2.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-tst-2.1.zip && \
+		unzip -o -d /opt/jmeter/apache-jmeter-4.0  /tmp/jpgc-casutg-2.1.zip && \
 		rm /tmp/jmeter-plugins-standard.zip
 
 RUN chmod +x $JMETER_HOME

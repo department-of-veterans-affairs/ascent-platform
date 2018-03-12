@@ -4,22 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.5.1">
-    <configVersion>2</configVersion>
-    <userRemoteConfigs>
-      <hudson.plugins.git.UserRemoteConfig>
-        <url>https://github.com/department-of-veterans-affairs/ascent-sample</url>
-      </hudson.plugins.git.UserRemoteConfig>
-    </userRemoteConfigs>
-    <branches>
-      <hudson.plugins.git.BranchSpec>
-        <name>*/development</name>
-      </hudson.plugins.git.BranchSpec>
-    </branches>
-    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
-    <submoduleCfg class="list"/>
-    <extensions/>
-  </scm>
+  <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
   <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
@@ -28,75 +13,16 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd ascent-demo-service-perftest
+      <command>git clone https://username:password@github.com/department-of-veterans-affairs/vetservices-refdata.git
+cd vetservices-refdata
+git checkout development
+cd vetservices-refdata-perftest
 echo ${WORKSPACE}
-sh /opt/jmeter/apache-jmeter-3.2/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=csv -n -t DemoServiceDocker.jmx -l ${WORKSPACE}/testresult.csv  -e -o ${WORKSPACE}/htlmlreport
+sh /opt/jmeter/apache-jmeter-4.0/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=csv -n -t RefdataLoadPerformanceTest.jmx -Jloadusers=4 -Jlduration=2 -Jprotocol=https -Jbaseurl=ci.internal.vets-api.gov -l ${WORKSPACE}/testresult.csv -e -o ${WORKSPACE}/htlmlreport
 zip -r ${WORKSPACE}/../../../htlmlreport.zip ${WORKSPACE}/htlmlreport</command>
     </hudson.tasks.Shell>
   </builders>
-  <publishers>
-    <hudson.plugins.performance.PerformancePublisher plugin="performance@3.3">
-      <errorFailedThreshold>-1</errorFailedThreshold>
-      <errorUnstableThreshold>-1</errorUnstableThreshold>
-      <errorUnstableResponseTimeThreshold></errorUnstableResponseTimeThreshold>
-      <relativeFailedThresholdPositive>0.0</relativeFailedThresholdPositive>
-      <relativeFailedThresholdNegative>0.0</relativeFailedThresholdNegative>
-      <relativeUnstableThresholdPositive>0.0</relativeUnstableThresholdPositive>
-      <relativeUnstableThresholdNegative>0.0</relativeUnstableThresholdNegative>
-      <nthBuildNumber>0</nthBuildNumber>
-      <configType>ART</configType>
-      <graphType>ART</graphType>
-      <modeOfThreshold>false</modeOfThreshold>
-      <failBuildIfNoResultFile>true</failBuildIfNoResultFile>
-      <compareBuildPrevious>false</compareBuildPrevious>
-      <optionType>ART</optionType>
-      <xml></xml>
-      <modePerformancePerTestCase>true</modePerformancePerTestCase>
-      <excludeResponseTime>false</excludeResponseTime>
-      <modeThroughput>true</modeThroughput>
-      <modeEvaluation>false</modeEvaluation>
-      <ignoreFailedBuilds>false</ignoreFailedBuilds>
-      <ignoreUnstableBuilds>false</ignoreUnstableBuilds>
-      <persistConstraintLog>false</persistConstraintLog>
-      <sourceDataFiles>testresult.csv</sourceDataFiles>
-    </hudson.plugins.performance.PerformancePublisher>
-    <hudson.tasks.Mailer plugin="mailer@1.20">
-      <recipients>sravi@meetveracity.com</recipients>
-      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
-      <sendToIndividuals>false</sendToIndividuals>
-    </hudson.tasks.Mailer>
-    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.59">
-      <recipientList>sravi@meetveracity.com</recipientList>
-      <configuredTriggers>
-        <hudson.plugins.emailext.plugins.trigger.AlwaysTrigger>
-          <email>
-            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>$PROJECT_DEFAULT_CONTENT</body>
-            <recipientProviders>
-              <hudson.plugins.emailext.plugins.recipients.DevelopersRecipientProvider/>
-              <hudson.plugins.emailext.plugins.recipients.ListRecipientProvider/>
-            </recipientProviders>
-            <attachmentsPattern></attachmentsPattern>
-            <attachBuildLog>false</attachBuildLog>
-            <compressBuildLog>false</compressBuildLog>
-            <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-            <contentType>project</contentType>
-          </email>
-        </hudson.plugins.emailext.plugins.trigger.AlwaysTrigger>
-      </configuredTriggers>
-      <contentType>default</contentType>
-      <defaultSubject>$PROJECT_DEFAULT_SUBJECT</defaultSubject>
-      <defaultContent>$PROJECT_DEFAULT_CONTENT</defaultContent>
-      <attachmentsPattern></attachmentsPattern>
-      <presendScript>$DEFAULT_PRESEND_SCRIPT</presendScript>
-      <postsendScript>$DEFAULT_POSTSEND_SCRIPT</postsendScript>
-      <attachBuildLog>false</attachBuildLog>
-      <compressBuildLog>false</compressBuildLog>
-      <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>
-      <saveOutput>false</saveOutput>
-      <disabled>false</disabled>
-    </hudson.plugins.emailext.ExtendedEmailPublisher>
-  </publishers>
+  <publishers/>
   <buildWrappers>
     <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.34">
       <deleteDirs>false</deleteDirs>

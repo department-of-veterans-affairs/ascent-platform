@@ -9,7 +9,7 @@ display-url-api:2.0
 mailer:1.20	
 matrix-project:1.11
 plain-credentials:1.4
-scm-api:2.2.2
+scm-api:2.2.6
 script-security:1.34
 ssh-credentials:1.13
 structs:1.10
