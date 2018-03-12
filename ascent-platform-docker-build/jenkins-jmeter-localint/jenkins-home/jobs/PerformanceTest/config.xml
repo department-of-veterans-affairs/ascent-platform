@@ -13,7 +13,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>git clone https://username:password@github.com/department-of-veterans-affairs/vetservices-refdata.git
+      <command>git clone https://${GIT_ACCESS_TOKEN}@github.com/department-of-veterans-affairs/vetservices-refdata.git
 cd vetservices-refdata
 git checkout development
 cd vetservices-refdata-perftest

@@ -2,6 +2,10 @@ version: "3.3"
 
 services:
   jenkins:
+    image: ascent/local-jenkins
     build: .
+    environment: 
+      - JAVA_OPTS=-Dhudson.model.DirectoryBrowserSupport.CSP=jmeter-jenkins
+      - GIT_ACCESS_TOKEN=${GIT_ACCESS_TOKEN}
     ports:
       - "9080:8080"
