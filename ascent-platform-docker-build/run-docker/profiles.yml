@@ -1,4 +1,4 @@
- all: 
+all: 
   - ../containers/vault
   - ../containers/elasticsearch
   - ../containers/es-config
