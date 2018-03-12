@@ -1,25 +1,21 @@
-profiles:
-   profile: all 
-   containers:
-    - ../containers/vault
-    - ../containers/elasticsearch
-    - ../containers/es-config
-    - ../containers/fluentd
-    - ../containers/kibana
-    - ../containers/redis-sentinel
-    - ../containers/rabbitmq
-    - ../../../ascent-config
-    - ../../../ascent-dashboard
-    - ../../../ascent-gateway
-    - ../../../ascent-discovery
-    - ../../../ascent-zipkin
-  profile: localint
-  containers:
-    - ../containers/rabbitmq
-    - ../containers/redis-sentinel
-  profile: logging
-  containers:
-    - ../containers/elasticsearch
-    - ../containers/kibana
-    - ../containers/es-config
-    - ../containers/fluentd
+ all: 
+  - ../containers/vault
+  - ../containers/elasticsearch
+  - ../containers/es-config
+  - ../containers/fluentd
+  - ../containers/kibana
+  - ../containers/redis-sentinel
+  - ../containers/rabbitmq
+  - ../../../ascent-config
+  - ../../../ascent-dashboard
+  - ../../../ascent-gateway
+  - ../../../ascent-discovery
+  - ../../../ascent-zipkin
+localint:
+  - ../containers/rabbitmq
+  - ../containers/redis-sentinel
+logging:
+  - ../containers/elasticsearch
+  - ../containers/kibana
+  - ../containers/es-config
+  - ../containers/fluentd
