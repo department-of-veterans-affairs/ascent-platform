@@ -8,13 +8,13 @@ import (
   "gopkg.in/urfave/cli.v1"
   "gopkg.in/yaml.v2"
 	"io/ioutil"
+  "strings"
 )
 type Config struct {
   All []string
   Localint []string
   Logging []string
 }
-
 
 var config Config
 
@@ -42,6 +42,10 @@ OPTIONS:
   }
 }
 
+// ----------------------------
+//     Helper functions
+// ----------------------------
+
 func executeDockerCommand(args []string) {
   cmd := exec.Command("docker-compose", args...);
   out, err := cmd.CombinedOutput();
@@ -60,18 +64,101 @@ func executeScript(script string) {
   }
 }
 
-func getDockerComposeFileArgsUp(profile string)([]string){
+func findInArray(config_array []string, container_name string)(int) {
+  for i, container_path := range config_array {
+    parsed := strings.Split(container_path, "/")
+    profile_container := parsed[len(parsed) - 1]
+    if profile_container == container_name {
+      return i
+    }
+  }
+  log.Fatal("container not found! Check profiles.yml under your profile " +
+    "to see if \"", container_name, "\" is defined. \nAborting...")
+  return -1
+}
+
+// --------------------------------
+//  Get docker-compose Build arguments
+// --------------------------------
+func getDockerComposeFileArgsBuild(profile string)([]string) {
   if profile == "all" {
-    return getUpArgsForProfileAndFile(config.All, "/docker-compose_local/docker-compose.yml")
+    return getBuildArgsForProfileWithFile(config.All, "/docker-compose_local/docker-compose.yml")
   } else if profile == "localint" {
-    return getUpArgsForProfileAndFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
+    return getBuildArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
   } else if profile == "logging" {
-    return getUpArgsForProfileAndFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+    return getBuildArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+  }
+  return nil
+}
+func getBuildArgsForProfileWithFile(config_array []string, file string)([]string) {
+  args :=make([]string, (len(config_array) * 2) + 3)
+  var config_index = 0
+  for i := range args {
+    if (i == len(args) - 3) {
+      args[i] = "up"
+    } else if (i == len(args) - 2) {
+      args[i] = "--build"
+    } else if (i == len(args) - 1) {
+      args[i] = "-d"
+    }else {
+      if i%2 == 0 {
+        args[i] = "-f"
+      } else {
+        args[i] = config_array[config_index] + file
+        config_index++
+      }
+    }
+  }
+  return args
+}
+func getBuildArgsForContainerInProfile(profile string, container_name string)([]string){
+  if(profile == "all") {
+    container_index := findInArray(config.All, container_name)
+    container := []string{config.All[container_index]}
+    return getBuildArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  } else if (profile == "localint") {
+    container_index := findInArray(config.Localint, container_name)
+    container := []string{config.Localint[container_index]}
+    return getBuildArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.localint.yml")
+  } else if (profile == "logging") {
+    container_index := findInArray(config.Logging, container_name)
+    container := []string{config.Logging[container_index]}
+    return getBuildArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
   }
   return nil
 }
 
-func getUpArgsForProfileAndFile(config_array []string, file string)([]string){
+
+// --------------------------------
+//  Get docker-compose Up arguments
+// --------------------------------
+func getDockerComposeFileArgsUp(profile string)([]string){
+  if profile == "all" {
+    return getUpArgsForProfileWithFile(config.All, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "localint" {
+    return getUpArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
+  } else if profile == "logging" {
+    return getUpArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+  }
+  return nil
+}
+func getUpArgsForContainerInProfile(profile string, container_name string)([]string) {
+  if(profile == "all") {
+    container_index := findInArray(config.All, container_name)
+    container := []string{config.All[container_index]}
+    return getUpArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  } else if (profile == "localint") {
+    container_index := findInArray(config.Localint, container_name)
+    container := []string{config.Localint[container_index]}
+    return getUpArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.localint.yml")
+  } else if (profile == "logging") {
+    container_index := findInArray(config.Logging, container_name)
+    container := []string{config.Logging[container_index]}
+    return getUpArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  }
+  return nil
+}
+func getUpArgsForProfileWithFile(config_array []string, file string)([]string){
   args :=make([]string, (len(config_array) * 2) + 2)
   var config_index = 0
   for i := range args {
@@ -91,19 +178,21 @@ func getUpArgsForProfileAndFile(config_array []string, file string)([]string){
   return args
 }
 
-
+// -----------------------------------
+//  Get Docker Compose Down arguments
+// -----------------------------------
 func getDockerComposeFileArgsDown(profile string)([]string){
   if profile == "all" {
-    return getDownArgsForProfileAndFile(config.All, "/docker-compose_local/docker-compose.yml")
+    return getDownArgsForProfileWithFile(config.All, "/docker-compose_local/docker-compose.yml")
   } else if profile == "localint" {
-    return getDownArgsForProfileAndFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
+    return getDownArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
   } else if profile == "logging" {
-    return getDownArgsForProfileAndFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+    return getDownArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
   }
   return nil
 }
 
-func getDownArgsForProfileAndFile(config_array []string, file string)([]string) {
+func getDownArgsForProfileWithFile(config_array []string, file string)([]string) {
   args :=make([]string, (len(config_array) * 2) + 4)
   var config_index = 0
   for i := range args {
@@ -126,20 +215,37 @@ func getDownArgsForProfileAndFile(config_array []string, file string)([]string) 
   }
   return args
 }
-
-
-func getDockerComposeFileArgsPull(profile string)([]string){
-  if profile == "all" {
-    return getPullArgsForProfileAndFile(config.All, "/docker-compose_local/docker-compose.yml")
-  } else if profile == "localint" {
-    return getPullArgsForProfileAndFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
-  } else if profile == "logging" {
-    return getPullArgsForProfileAndFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+func getDownArgsForContainerInProfile(profile string, container_name string)([]string) {
+  if(profile == "all") {
+    container_index := findInArray(config.All, container_name)
+    container := []string{config.All[container_index]}
+    return getDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  } else if (profile == "localint") {
+    container_index := findInArray(config.Localint, container_name)
+    container := []string{config.Localint[container_index]}
+    return getDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.localint.yml")
+  } else if (profile == "logging") {
+    container_index := findInArray(config.Logging, container_name)
+    container := []string{config.Logging[container_index]}
+    return getDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
   }
   return nil
 }
 
-func getPullArgsForProfileAndFile(config_array []string, file string)([]string) {
+// ----------------------------------
+//  Get Docker Compose Pull arguments
+// -----------------------------------
+func getDockerComposeFileArgsPull(profile string)([]string){
+  if profile == "all" {
+    return getPullArgsForProfileWithFile(config.All, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "localint" {
+    return getPullArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
+  } else if profile == "logging" {
+    return getPullArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+  }
+  return nil
+}
+func getPullArgsForProfileWithFile(config_array []string, file string)([]string) {
   args := make([]string, (len(config_array) * 2) + 1)
   var config_index = 0
   for i := range args {
@@ -156,33 +262,92 @@ func getPullArgsForProfileAndFile(config_array []string, file string)([]string) 
   }
     return args
 }
-
-func getPullArgsForContainerInProfile(profile string, container_name string){
-  container_index := findContainerIndexInProfile(profile, container_name)
-
-}
-
-
-func findContainerIndexInProfile(profile string, container_name string)(int){
+func getPullArgsForContainerInProfile(profile string, container_name string)([]string){
   if(profile == "all") {
-    return findInArray(config.All, container_name)
+    container_index := findInArray(config.All, container_name)
+    container := []string{config.All[container_index]}
+    return getPullArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
   } else if (profile == "localint") {
-    return findInArray(config.Localint, container_name)
+    container_index := findInArray(config.Localint, container_name)
+    container := []string{config.Localint[container_index]}
+    return getPullArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.localint.yml")
   } else if (profile == "logging") {
-    return findInArray(config.Logging, container_name)
+    container_index := findInArray(config.Logging, container_name)
+    container := []string{config.Logging[container_index]}
+    return getPullArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
   }
-  return -1
+  return nil
 }
 
-func findInArray(config_array []string, container_name string)(int) {
-  for i, v := range config_array {
-    if v.Key == container_name {
-      return i
-    }
-  }
-  return -1
+// ----------------------------------
+//  Execute Docker Compose Commands
+// ----------------------------------
+func dockerBuild(profile string){
+  log.Printf("\nBuild source: Dockerfile")
+  log.Printf("Profile: %s", profile)
+  compose_args := getDockerComposeFileArgsBuild(profile)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerBuildContainer(profile string, container string) {
+  log.Printf("\nBuild source: Docker-compose")
+  log.Printf("Profile: %s", profile)
+  log.Printf("Container: %s", container)
+  compose_args := getBuildArgsForContainerInProfile(profile, container)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerPull(profile string) {
+  log.Printf("\nPulling images...")
+  log.Printf("Build source: Docker hub repo")
+  log.Printf("Profile: %s", profile)
+  compose_args := getDockerComposeFileArgsPull(profile)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerPullContainer(profile string, container string) {
+  log.Printf("\nPulling image...")
+  log.Printf("Build source: Docker hub repo")
+  log.Printf("Profile: %s", profile)
+  log.Printf("Container: %s", container)
+  compose_args := getPullArgsForContainerInProfile(profile, container)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerUp(profile string) {
+  log.Printf("\nBring up containers...")
+  log.Printf("Profile: %s", profile)
+  compose_args := getDockerComposeFileArgsUp(profile)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerContainerUp(profile string, container string) {
+  log.Printf("\nBringing up...")
+  log.Printf("Profile: %s", profile)
+  log.Printf("Container: %s", container)
+  compose_args := getUpArgsForContainerInProfile(profile, container)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerDown(profile string){
+  log.Printf("\nBring Down Containers...")
+  log.Printf("Profile: %s", profile)
+  compose_args := getDockerComposeFileArgsDown(profile)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+func dockerContainerDown(profile string, container string) {
+  log.Printf("Bringing down container...")
+  log.Printf("Profile: %s", profile)
+  log.Printf("Container: %s", container)
+  compose_args := getDownArgsForContainerInProfile(profile, container)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
 }
 
+// ----------------------------
+//  COMMAND LINE INTERFACE ----
+// ----------------------------
 func main() {
   app := cli.NewApp()
   app.Name = "run-docker"
@@ -194,7 +359,6 @@ func main() {
       // ----------------------------
       // START COMMAND
       // ----------------------------
-
       Name: "start",
       Usage:   "Start a profile of containers",
       Action:  func(c *cli.Context) error {
@@ -207,18 +371,34 @@ func main() {
           // All Platform
           // ---
           Name: "all",
-          Usage: "All platform containers",
+          Usage: "All platform containers. See `start all --help`",
+          Flags: []cli.Flag{
+            cli.StringFlag{
+              Name: "container",
+              Usage: "Only bring up specified container",
+            },
+            cli.BoolFlag{
+              Name: "build, b",
+              Usage: "Build from Dockerfile instead of pulling image",
+            },
+          },
           Action: func(c *cli.Context) error {
-            log.Printf("Start Profile:      all Platform containers")
-            log.Printf("Image source:       docker hub repo (vault built locally though)")
-            log.Printf("Pulling Images...")
-            compose_args := getDockerComposeFileArgsPull("all")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
-            log.Printf("\n\n\nBring up containers...")
-            compose_args = getDockerComposeFileArgsUp("all")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
+            container := c.String("container")
+            if container == "" {
+              if c.Bool("build") {
+                dockerBuild("all")
+              } else {
+                dockerPull("all")
+                dockerUp("all")
+              }
+            } else {
+              if c.Bool("build") {
+                dockerBuildContainer("all", container)
+              } else {
+                dockerPullContainer("all", container)
+                dockerContainerUp("all", container)
+              }
+            }
             return nil
           },
         },
@@ -227,27 +407,34 @@ func main() {
           // Localint
           // ---
           Name: "localint",
-          Usage: "Localint containers",
+          Usage: "Localint containers. See `start localint --help`",
           Flags: []cli.Flag{
             cli.StringFlag{
               Name: "container",
+              Usage: "Only bring up specified container",
+            },
+            cli.BoolFlag{
+              Name: "build, b",
+              Usage: "Build from Dockerfile instead of pulling image",
             },
           },
           Action: func(c *cli.Context) error {
-            log.Printf("Starting:      localint containers")
-            log.Printf("Image source:  docker hub repo")
-            log.Printf("\nPulling images...")
-            compose_args := getDockerComposeFileArgsPull("localint")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
-            log.Printf("\nBring up containers...")
-            compose_args = getDockerComposeFileArgsUp("localint")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
-
-            //if c.String("container") == "" {
-
-
+            container := c.String("container")
+            if container == "" {
+              if c.Bool("build") {
+                dockerBuild("localint")
+              } else {
+                dockerPull("localint")
+                dockerUp("localint")
+              }
+            } else {
+              if c.Bool("build"){
+                dockerBuildContainer("localint", container)
+              } else {
+                dockerPullContainer("localint", container)
+                dockerContainerUp("localint", container)
+              }
+            }
             return nil
           },
         },
@@ -256,18 +443,34 @@ func main() {
         // ---
         {
           Name: "logging",
-          Usage: "Logging containers",
+          Usage: "Logging containers. See `start logging --help`",
+          Flags: []cli.Flag{
+            cli.StringFlag{
+              Name: "container",
+              Usage: "Only bring up specified container",
+            },
+            cli.BoolFlag{
+              Name: "build, b",
+              Usage: "Build from Dockerfile instead of pulling image",
+            },
+          },
           Action: func(c *cli.Context) error {
-            log.Printf("Starting:      logging containers")
-            log.Printf("Image source:  docker hub repo (but vault built locally)")
-            log.Printf("\nPulling images...")
-            compose_args := getDockerComposeFileArgsPull("logging")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
-            log.Printf("\nBring up containers...")
-            compose_args = getDockerComposeFileArgsUp("logging")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
+            container := c.String("container")
+            if container == "" {
+              if c.Bool("build") {
+                dockerBuild("logging")
+              } else {
+                dockerPull("logging")
+                dockerUp("logging")
+              }
+            } else {
+              if c.Bool("build") {
+                dockerBuildContainer("logging", container)
+              } else {
+                dockerPullContainer("logging", container)
+                dockerContainerUp("logging", container)
+              }
+            }
             return nil
           },
         },
@@ -305,14 +508,20 @@ func main() {
         // ---
         {
           Name: "all",
-          Usage: "All platform containers",
+          Usage: "All platform containers. See `stop all --help`",
+          Flags: []cli.Flag{
+            cli.StringFlag{
+              Name: "container",
+              Usage: "Only bring down specified container",
+            },
+          },
           Action: func(c *cli.Context) error {
-            log.Printf("Stopping:      all Platform containers")
-            log.Printf("Image source:  docker hub repo ")
-            log.Printf("\n\n\nBring down containers...")
-            compose_args := getDockerComposeFileArgsDown("all")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
+            container := c.String("container")
+            if container == "" {
+              dockerDown("all")
+            } else {
+              dockerContainerDown("all", container)
+            }
             return nil
           },
         },
@@ -321,19 +530,20 @@ func main() {
         // ---
         {
           Name: "localint",
-          Usage: "Localint containers",
+          Usage: "Localint containers. See `stop localint --help`",
           Flags: []cli.Flag{
             cli.StringFlag{
               Name: "container",
+              Usage: "Only bring down specified container",
             },
           },
           Action: func(c *cli.Context) error {
-            log.Printf("Stopping:      localint containers")
-            log.Printf("Image source:  docker hub repo")
-            log.Printf("\n\n\nBring down containers...")
-            compose_args := getDockerComposeFileArgsDown("localint")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
+            container := c.String("container")
+            if container == "" {
+              dockerDown("localint")
+            } else {
+              dockerContainerDown("localint", container)
+            }
             return nil
           },
         },
@@ -342,13 +552,20 @@ func main() {
         // ---
         {
           Name: "logging",
-          Usage: "Logging containers",
+          Usage: "Logging containers. See `stop logging --help`",
+          Flags: []cli.Flag{
+            cli.StringFlag{
+              Name: "container",
+              Usage: "Only bring down specified container",
+            },
+          },
           Action: func(c *cli.Context) error {
-            log.Printf("Stopping:     logging containers")
-            log.Printf("Image source: docker hub repo")
-            compose_args := getDockerComposeFileArgsDown("logging")
-            log.Printf("%v", compose_args)
-            executeDockerCommand(compose_args)
+            container := c.String("container")
+            if container == "" {
+              dockerDown("logging")
+            } else {
+              dockerContainerDown("logging", container)
+            }
             return nil
           },
         },
