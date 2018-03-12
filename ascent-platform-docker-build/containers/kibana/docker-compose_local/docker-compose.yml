@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+    kibana:
+        image: ascent/ascent-kibana
+        build:
+            context: ../
+        environment:
+            - SECURE_CONNECT=false
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+        ports:
+            - 5601:5601
+        networks:
+            logging:
+                aliases:
+                    - kibana.internal.vets-api.gov
+            ascentnet:
+                aliases:
+                    - kibana.internal.vets-api.gov
+        logging:
+            driver: fluentd
+            options:
+                fluentd-async-connect: "true"
+                fluentd-max-retries: "10"
+                fluentd-retry-wait: "30s"
+networks:
+  logging:
+    driver: bridge
+  ascentnet:
+    driver: bridge
+

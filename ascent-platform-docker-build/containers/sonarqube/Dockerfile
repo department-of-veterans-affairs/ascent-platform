@@ -1,0 +1,27 @@
+FROM sonarqube:6.5
+
+ENV LANGUAGE java
+ENV PROFILE_NAME ASCENT
+
+# Install unzip for unzipping the vault package
+RUN apt-get install unzip
+
+# Install envconsul for retreiving secrets into ENV variables available only to the executed process
+RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/envconsul/0.7.1/envconsul_0.7.1_linux_amd64.tgz; \
+    tar -xzf envconsul_0.7.1_linux_amd64.tgz; \
+    mv envconsul /usr/local/bin/envconsul; \
+    chmod +x /usr/local/bin/envconsul; \
+    rm -f envconsul_0.7.1_linux_amd64.tgz
+
+RUN apt-get update -y
+RUN apt-get install -y jq
+RUN apt-get install -y python-pip
+RUN pip install mysql-connector-python-rf
+ADD run-wrapper.sh /opt/sonarqube/run-wrapper.sh
+
+ADD template /opt/sonarqube/template
+
+ADD provision /opt/sonarqube/provision
+RUN chmod 755 /opt/sonarqube/provision/*
+
+ENTRYPOINT ["/opt/sonarqube/run-wrapper.sh"]

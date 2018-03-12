@@ -1,0 +1,13 @@
+#Overrides for local development.
+version: '3.3'
+
+services:
+    vault:
+        build:
+            context: ../containers/vault
+        image: vault-local:latest
+networks:
+  ascentnet:
+    driver: bridge
+  logging:
+    driver: bridge

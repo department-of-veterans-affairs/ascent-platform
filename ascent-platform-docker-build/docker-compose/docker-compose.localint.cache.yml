@@ -1,0 +1,9 @@
+version: '3.3'
+
+services:
+  redis-master:
+    image: ascent/redis-sentinel
+    ports:
+          - 6379:6379
+    environment:
+        - START_COMMAND=sh /redis/redis-wrapper.sh
