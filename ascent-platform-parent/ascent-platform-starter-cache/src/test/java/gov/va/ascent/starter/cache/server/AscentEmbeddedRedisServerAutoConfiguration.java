@@ -1,6 +1,6 @@
 package gov.va.ascent.starter.cache.server;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +30,7 @@ public class AscentEmbeddedRedisServerAutoConfiguration {
 		ascentCacheProperties.setRedisConfig(new RedisConfig());
 		ascentCacheProperties.getRedisConfig().setHost("localhost");
 		//ascentCacheProperties.getRedisConfig().setPort(6379);
-		ascentCacheProperties.setExpires(new HashMap<>());
+		ascentCacheProperties.setExpires(new ArrayList<>());
 		ascentCacheProperties.setDefaultExpires(500L);
 		return  ascentCacheProperties;
 	}

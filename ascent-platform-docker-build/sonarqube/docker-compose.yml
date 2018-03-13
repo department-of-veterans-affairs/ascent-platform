@@ -8,12 +8,9 @@ services:
       - "9000:9000"
     networks:
       - sonarnet
-      - ascentnet
     environment:
       - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
       - BASE_URL=http://127.0.0.1:9000
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
@@ -36,22 +33,9 @@ services:
       - VAULT_ADDR=http://vault:8200
       - MYSQL_DATABASE=sonar
       - CLUSTER_NAME=sonarcluster
-    networks:
-      - sonarnet
-      - ascentnet
-    volumes:
-      - /var/log/mysql
-      - /var/lib/mysql
-    deploy:
-      placement:
-        constraints: [node.role == worker]
-
 networks:
   sonarnet:
     driver: bridge
-  ascentnet:
-    external:
-      name: ascentplatformdockerbuild_ascentnet
 
 volumes:
   sonarqube_conf:
