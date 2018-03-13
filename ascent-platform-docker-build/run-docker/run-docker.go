@@ -8,7 +8,9 @@ import (
   "gopkg.in/urfave/cli.v1"
   "gopkg.in/yaml.v2"
 	"io/ioutil"
+  "io"
   "strings"
+  "bufio"
 )
 type Config struct {
   All []string
@@ -48,10 +50,23 @@ OPTIONS:
 
 func executeDockerCommand(args []string) {
   cmd := exec.Command("docker-compose", args...);
-  out, err := cmd.CombinedOutput();
-  fmt.Printf("output: %s \n", out)
-  if err != nil {
-     fmt.Printf("ERROR: %s", err)
+  stdout, err := cmd.StdoutPipe();
+  stderr, stderr_err := cmd.StderrPipe();
+  multi := io.MultiReader(stdout, stderr)
+
+  if err != nil || stderr_err != nil {
+    log.Printf("ERROR: %s ....... %s", err, stderr_err)
+  }
+  if err := cmd.Start(); err != nil {
+    log.Printf("ERROR: %s", err)
+  }
+
+  in := bufio.NewScanner(multi)
+  for in.Scan() {
+    log.Printf(in.Text())
+  }
+  if err := in.Err(); err != nil {
+    log.Printf("ERROR: %s", err)
   }
 }
 
