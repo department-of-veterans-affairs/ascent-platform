@@ -18,8 +18,13 @@ upcase = true
 
 # Sonar Secret
 secret {
-    format = "postgres_{{ key }}"
+    format = "mysql_{{ key }}"
     no_prefix = true
     path = "secret/sonar/database"
 }
 
+secret {
+    format = "mysql_root_{{ key }}"
+    no_prefix = true
+    path = "secret/sonar/database/root"
+}

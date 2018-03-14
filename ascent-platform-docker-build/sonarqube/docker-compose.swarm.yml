@@ -8,9 +8,17 @@ services:
       - "9000:9000"
     networks:
       - sonarnet
-      - ascentnet
     environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
+      # Uses discovery service to poll the database
+      # cluster before connecting
+      - DISCOVERY_SERVICE=etcd:2379
+      # Uses the cluster name to poll the discovery service
+      # to wait for cluster creation
+      - CLUSTER_NAME=sonarcluster
+      # Need the initial size of the cluster
+      # to poll for all nodes coming up initially
+      - INITIAL_CLUSTER_SIZE=3 
       - BASE_URL=http://127.0.0.1:9000
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
@@ -21,26 +29,46 @@ services:
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
   db:
+    hostname: db
     build: ./database
-    image: localhost:5000/ascent/db:latest
+    image: localhost:5000/ascnet/sonar-db:latest
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
+      - MYSQL_DATABASE=sonar
+      - DISCOVERY_SERVICE=etcd:2379
+      - CLUSTER_NAME=sonarcluster
     networks:
       - sonarnet
-      - ascentnet
     volumes:
-      - postgresql:/var/lib/postgresql
-      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - postgresql_data:/var/lib/postgresql/data
+      - /var/log/mysql
+      - /var/lib/mysql
+    command:
+      - '--user=mysql --pxc-strict-mode=PERMISSIVE'
+    ports:
+      - "3306:3306"
+    deploy:
+      mode: replicated
+      replicas: 3 
+  etcd:
+    hostname: etcd
+    image: localhost:5000/ascent/sonar-db-discovery
+    build: ./discovery
+    ports:
+      - "4001:4001"
+      - "2380:2380"
+      - "2379:2379"
+    networks:
+      - sonarnet
+
   vault:
-    build: ../vault
-    image: localhost:5000/ascent/vault:latest
+    build: ../vault/
+    image: localhost:5000/ascent/vault
     hostname: vault
     cap_add:
       - IPC_LOCK
     environment:
-      - SKIP_SETCAP=$SKIP_SETCAP
+      - SKIP_SETCAP=true
       - VAULT_ADDR=http://vault:8200
       - VAULT_DEV_ROOT_TOKEN_ID=vaultroot
       - VAULT_SECRETS_FILE=/config/secrets.json
@@ -50,19 +78,19 @@ services:
       - ../vault/config:/config
     ports:
       - "8200:8200"
-    command: server -dev #-config /config/vault.conf
+    command: server -dev; tail -f /dev/null #-config /config/vault.conf
     networks:
-        - ascentnet
+        - sonarnet
+    deploy:
+      mode: replicated
+      replicas: 1
+
 
 networks:
   sonarnet:
-    driver: overlay
-  ascentnet:
     driver: overlay
 volumes:
   sonarqube_conf:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_bundled-plugins:
-  postgresql:
-  postgresql_data:

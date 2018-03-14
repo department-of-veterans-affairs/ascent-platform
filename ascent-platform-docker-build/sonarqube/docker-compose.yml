@@ -9,7 +9,7 @@ services:
     networks:
       - sonarnet
     environment:
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
       - BASE_URL=http://127.0.0.1:9000
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
@@ -18,15 +18,21 @@ services:
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
   db:
+    hostname: db
     image: ascent/ascent-sonar-db
     build: ./database
-    networks:
-      - sonarnet
     volumes:
-      - postgresql:/var/lib/postgresql
-      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
-      - postgresql_data:/var/lib/postgresql/data
-
+      - /var/log/mysql
+      - /var/lib/mysql
+    command:
+      - '--user=mysql --pxc-strict-mode=PERMISSIVE'
+    ports:
+      - "3306:3306"
+    environment:
+      - VAULT_TOKEN=vaultroot
+      - VAULT_ADDR=http://vault:8200
+      - MYSQL_DATABASE=sonar
+      - CLUSTER_NAME=sonarcluster
 networks:
   sonarnet:
     driver: bridge
@@ -36,5 +42,3 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_bundled-plugins:
-  postgresql:
-  postgresql_data:
