@@ -49,6 +49,7 @@ OPTIONS:
 // ----------------------------
 
 func executeDockerCommand(args []string) {
+  log.Printf("docker-compose %v", args)
   cmd := exec.Command("docker-compose", args...);
   stdout, err := cmd.StdoutPipe();
   stderr, stderr_err := cmd.StderrPipe();

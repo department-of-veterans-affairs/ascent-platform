@@ -3,7 +3,7 @@ services:
     kibana:
         image: ascent/ascent-kibana
         build:
-            context: ../
+            context: ../../kibana
         environment:
             - SECURE_CONNECT=false
             - VAULT_TOKEN=vaultroot

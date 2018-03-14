@@ -2,7 +2,7 @@ version: '3.3'
 services:
   vault:
     image: ascent/ascent-vault
-    build: .. 
+    build: ../../vault
     hostname: vault
     cap_add:
       - IPC_LOCK

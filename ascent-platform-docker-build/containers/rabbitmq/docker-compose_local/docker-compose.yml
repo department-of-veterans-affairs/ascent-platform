@@ -6,7 +6,7 @@ services:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200
     build:
-      context: ..
+      context: ../../rabbitmq
     networks:
       back:
         aliases:

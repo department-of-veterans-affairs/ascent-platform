@@ -3,7 +3,7 @@ services:
   fluentd:
       image: ascent/fluentd
       build:
-          context: ../
+          context: ../../fluentd
       environment:
           - SECURE_CONNECT=false
           - VAULT_TOKEN=vaultroot
