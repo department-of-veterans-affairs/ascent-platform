@@ -14,7 +14,7 @@ services:
       - tls_disable=1
       - GIT_ACCESS_TOKEN=$GIT_ACCESS_TOKEN
     volumes:
-      - ./vault/config:/config
+      - ../config:/config
     ports:
       - "8200:8200"
     command: server -dev #-config /config/vault.conf
