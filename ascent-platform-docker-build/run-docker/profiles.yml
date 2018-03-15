@@ -20,3 +20,5 @@ logging:
   - ../containers/kibana
   - ../containers/es-config
   - ../containers/fluentd
+sonarqube:
+  - ../containers/sonarqube
