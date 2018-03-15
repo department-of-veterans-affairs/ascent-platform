@@ -1,7 +1,6 @@
 package main
 
 import (
-  "fmt"
   "log"
   "os"
   "os/exec"
@@ -17,6 +16,7 @@ type Config struct {
   Localint []string
   Logging []string
   Allservices []string
+  Sonarqube []string
 }
 
 var config Config
@@ -74,10 +74,21 @@ func executeDockerCommand(args []string) {
 
 func executeScript(script string) {
   cmd := exec.Command("bash", "-c", script);
-  out, err := cmd.CombinedOutput();
-  fmt.Printf("output: %s \n", out)
-  if err != nil {
-     fmt.Printf("ERROR: %s", err)
+  stdout, err := cmd.StdoutPipe()
+  stderr, stderr_err := cmd.StderrPipe()
+  multi := io.MultiReader(stdout, stderr)
+  if err != nil || stderr_err != nil {
+    log.Printf("ERROR: %s ....... %s", err, stderr_err)
+  }
+  if err := cmd.Start(); err != nil {
+    log.Printf("ERROR: %s", err)
+  }
+  in := bufio.NewScanner(multi)
+  for in.Scan() {
+    log.Printf(in.Text())
+  }
+  if err := in.Err(); err != nil {
+    log.Printf("ERROR: %s", err)
   }
 }
 
@@ -106,6 +117,8 @@ func getDockerComposeFileArgsBuild(profile string)([]string) {
     return getBuildArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
   } else if profile == "logging" {
     return getBuildArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "sonarqube" {
+    return getBuildArgsForProfileWithFile(config.Sonarqube, "/docker-compose_local/docker-compose.yml")
   }
   return nil
 }
@@ -215,17 +228,54 @@ func getDockerComposeFileArgsDown(profile string)([]string){
     return getDownArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
   } else if profile == "logging" {
     return getDownArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "sonarqube" {
+    return getDownArgsForProfileWithFile(config.Sonarqube, "/docker-compose_local/docker-compose.yml")
+  }
+  return nil
+}
+
+func getCompleteDockerComposeFileArgsDown(profile string)([]string){
+  if profile == "all" {
+    return getCompleteDownArgsForProfileWithFile(config.All, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "all-services" {
+    return getCompleteDownArgsForProfileWithFile(config.Allservices, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "localint" {
+    return getCompleteDownArgsForProfileWithFile(config.Localint, "/docker-compose_local/docker-compose.localint.yml")
+  } else if profile == "logging" {
+    return getCompleteDownArgsForProfileWithFile(config.Logging, "/docker-compose_local/docker-compose.yml")
+  } else if profile == "sonarqube" {
+    return getCompleteDownArgsForProfileWithFile(config.Sonarqube, "/docker-compose_local/docker-compose.yml")
   }
   return nil
 }
 
 func getDownArgsForProfileWithFile(config_array []string, file string)([]string) {
-  args :=make([]string, (len(config_array) * 2) + 4)
+  args :=make([]string, (len(config_array) * 2) + 1)
   var config_index = 0
   for i := range args {
-    if(i == len(args) - 4) {
+    if(i == len(args) - 1) {
       args[i] = "down"
-    } else if(i == len(args) - 3) {
+    } else {
+      if i%2 == 0 {
+        args[i] = "-f"
+      } else {
+        args[i] = config_array[config_index] + file
+        config_index++
+      }
+    }
+  }
+  return args
+}
+
+func getCompleteDownArgsForProfileWithFile(config_array []string, file string)([]string) {
+  args :=make([]string, (len(config_array) * 2) + 5)
+  var config_index = 0
+  for i := range args {
+    if(i == len(args) - 5) {
+      args[i] = "down"
+    } else if (i == len(args) - 4) {
+      args[i] = "--remove-orphans"
+    } else if (i == len(args) - 3) {
       args[i] = "-v"
     } else if (i == len(args) - 2) {
       args[i] = "--rmi"
@@ -242,6 +292,29 @@ func getDownArgsForProfileWithFile(config_array []string, file string)([]string)
   }
   return args
 }
+
+func getCompleteDownArgsForContainerInProfile(profile string, container_name string)([]string) {
+  if(profile == "all") {
+    container_index := findInArray(config.All, container_name)
+    container := []string{config.All[container_index]}
+    return getCompleteDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  } else  if (profile == "all-services") {
+    container_index := findInArray(config.Allservices, container_name)
+    container := []string{config.Allservices[container_index]}
+    return getCompleteDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  } else if (profile == "localint") {
+    container_index := findInArray(config.Localint, container_name)
+    container := []string{config.Localint[container_index]}
+    return getCompleteDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.localint.yml")
+  } else if (profile == "logging") {
+    container_index := findInArray(config.Logging, container_name)
+    container := []string{config.Logging[container_index]}
+    return getCompleteDownArgsForProfileWithFile(container, "/docker-compose_local/docker-compose.yml")
+  }
+  return nil
+}
+
+
 func getDownArgsForContainerInProfile(profile string, container_name string)([]string) {
   if(profile == "all") {
     container_index := findInArray(config.All, container_name)
@@ -387,6 +460,7 @@ func dockerContainerUp(profile string, container string) {
   log.Printf("%v", compose_args)
   executeDockerCommand(compose_args)
 }
+
 func dockerDown(profile string){
   log.Printf("\nBring Down Containers...")
   log.Printf("Profile: %s", profile)
@@ -403,6 +477,33 @@ func dockerDown(profile string){
     executeDockerCommand(compose_args)
   }
 }
+
+func dockerCompleteDown(profile string){
+  log.Printf("\nBring Down Containers...")
+  log.Printf("Profile: %s", profile)
+  if(profile == "all") {
+    compose_args_core_services := getCompleteDockerComposeFileArgsDown("all-services")
+    compose_args := getCompleteDockerComposeFileArgsDown(profile)
+    log.Printf("\n\nBRINGING DOWN PLATFORM CONTAINERS")
+    executeDockerCommand(compose_args)
+    log.Printf("\n\nBRINGING DOWN PLATFORM SERVICE CONTAINERS (gateway, etc)")
+    executeDockerCommand(compose_args_core_services)
+  } else {
+    compose_args := getCompleteDockerComposeFileArgsDown(profile)
+    log.Printf("%v", compose_args)
+    executeDockerCommand(compose_args)
+  }
+}
+
+func dockerContainerCompleteDown(profile string, container string) {
+  log.Printf("Bringing down container...")
+  log.Printf("Profile: %s", profile)
+  log.Printf("Container: %s", container)
+  compose_args := getCompleteDownArgsForContainerInProfile(profile, container)
+  log.Printf("%v", compose_args)
+  executeDockerCommand(compose_args)
+}
+
 func dockerContainerDown(profile string, container string) {
   log.Printf("Bringing down container...")
   log.Printf("Profile: %s", profile)
@@ -525,15 +626,32 @@ func main() {
             container := c.String("container")
             if container == "" {
               if c.Bool("build") {
+                log.Printf("\n\n PULLING VAULT")
+                dockerPullContainer("all", "vault")
+                log.Printf("\n\n STARTING VAULT")
+                dockerContainerUp("all", "vault")
+                log.Printf("\n\n Start logging")
                 dockerBuild("logging")
               } else {
+                log.Printf("\n\n PULLING VAULT")
+                dockerPullContainer("all", "vault")
+                log.Printf("\n\n STARTING VAULT")
+                dockerContainerUp("all", "vault")
                 dockerPull("logging")
                 dockerUp("logging")
               }
             } else {
               if c.Bool("build") {
+                log.Printf("\n\n PULLING VAULT")
+                dockerPullContainer("all", "vault")
+                log.Printf("\n\n STARTING VAULT")
+                dockerContainerUp("all", "vault")
                 dockerBuildContainer("logging", container)
               } else {
+                log.Printf("\n\n PULLING VAULT")
+                dockerPullContainer("all", "vault")
+                log.Printf("\n\n STARTING VAULT")
+                dockerContainerUp("all", "vault")
                 dockerPullContainer("logging", container)
                 dockerContainerUp("logging", container)
               }
@@ -550,8 +668,7 @@ func main() {
           Action: func(c *cli.Context) error {
             log.Printf("Starting:     sonarqube containers")
             log.Printf("Image Source: built locally")
-            log.Printf("Bringing up containers...")
-            executeScript("scripts/start-sonar.sh")
+            dockerBuild("sonarqube")
             return nil
           },
         },
@@ -581,13 +698,25 @@ func main() {
               Name: "container",
               Usage: "Only bring down specified container",
             },
+            cli.BoolFlag{
+              Name: "clean, c",
+              Usage: "Completely remove volumes and images associated with profile",
+            },
           },
           Action: func(c *cli.Context) error {
             container := c.String("container")
             if container == "" {
-              dockerDown("all")
+              if c.Bool("clean") {
+                dockerCompleteDown("all")
+              } else {
+                dockerDown("all")
+              }
             } else {
-              dockerContainerDown("all", container)
+              if c.Bool("clean") {
+                dockerContainerCompleteDown("all", container)
+              } else {
+                dockerContainerDown("all", container)
+              }
             }
             return nil
           },
@@ -603,13 +732,25 @@ func main() {
               Name: "container",
               Usage: "Only bring down specified container",
             },
+            cli.BoolFlag{
+              Name: "clean, c",
+              Usage: "Completely remove volumes and images associated with profile",
+            },
           },
           Action: func(c *cli.Context) error {
             container := c.String("container")
             if container == "" {
-              dockerDown("localint")
+              if c.Bool("clean") {
+                dockerCompleteDown("localint")
+              } else {
+                dockerDown("localint")
+              }
             } else {
-              dockerContainerDown("localint", container)
+              if c.Bool("clean") {
+                dockerContainerCompleteDown("localint", container)
+              } else {
+                dockerContainerDown("localint", container)
+              }
             }
             return nil
           },
@@ -625,13 +766,31 @@ func main() {
               Name: "container",
               Usage: "Only bring down specified container",
             },
+            cli.BoolFlag{
+              Name: "clean, c",
+              Usage: "Completely remove volumes and images associated with profile",
+            },
           },
           Action: func(c *cli.Context) error {
             container := c.String("container")
             if container == "" {
-              dockerDown("logging")
+              if c.Bool("clean") {
+                log.Printf("\n\nBRING DOWN VAULT")
+                dockerContainerCompleteDown("all", "vault")
+                log.Printf("\n\n")
+                dockerCompleteDown("logging")
+              } else {
+                log.Printf("\n\nBRING DOWN VAULT")
+                dockerContainerDown("all", "vault")
+                log.Printf("\n\n")
+                dockerDown("logging")
+              }
             } else {
-              dockerContainerDown("logging", container)
+              if c.Bool("clean") {
+                dockerContainerCompleteDown("logging", container)
+              } else {
+                dockerContainerDown("logging", container)
+              }
             }
             return nil
           },
@@ -639,15 +798,26 @@ func main() {
         {
           Name: "sonarqube",
           Usage: "Sonarqube containers",
+          Flags: []cli.Flag{
+            cli.BoolFlag{
+              Name: "clean, c",
+              Usage: "Completely remove volumes and images associated with profile",
+            },
+          },
           Action: func(c *cli.Context) error {
             log.Printf("Stopping:     sonarqube containers")
-            log.Printf("Image sourcs: built locally")
-            executeScript("scripts/stop-sonar.sh")
+            log.Printf("Image source: built locally")
+            if c.Bool("clean") {
+              dockerCompleteDown("sonarqube")
+            } else {
+              dockerDown("sonarqube")
+            }
             return nil
           },
         },
       },
     },
+
   }
     // ----------------------------
     // NO COMMAND SUPPLIED
