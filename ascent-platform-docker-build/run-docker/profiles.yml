@@ -6,6 +6,7 @@ all:
   - ../containers/kibana
   - ../containers/redis-sentinel
   - ../containers/rabbitmq
+allservices:
   - ../../../ascent-config
   - ../../../ascent-dashboard
   - ../../../ascent-gateway
