@@ -3,7 +3,7 @@ version: "3"
 services:
   sonarqube:
     image: ascent/ascent-sonarqube
-    build: .
+    build: ../../sonarqube
     ports:
       - "9000:9000"
     networks:
@@ -20,7 +20,7 @@ services:
   db:
     hostname: db
     image: ascent/ascent-sonar-db
-    build: ./database
+    build: ../../sonarqube/database
     volumes:
       - /var/log/mysql
       - /var/lib/mysql
@@ -29,8 +29,6 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - VAULT_TOKEN=vaultroot
-      - VAULT_ADDR=http://vault:8200
       - MYSQL_DATABASE=sonar
       - CLUSTER_NAME=sonarcluster
     networks:
