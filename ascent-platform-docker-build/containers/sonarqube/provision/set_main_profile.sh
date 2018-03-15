@@ -9,6 +9,6 @@ SONAR_URL="http://localhost:9000"
 if [ "$LANGUAGE" ] && [ "$PROFILE_NAME" ]; then
     curlAdmin -F "backup=@/opt/sonarqube/provision/qualityprofile/java-ascent-32413.xml" -X POST "$SONAR_URL/api/qualityprofiles/restore"
     curlAdmin -X POST "$SONAR_URL/api/qualityprofiles/set_default?language=$LANGUAGE&profileName=$PROFILE_NAME"
-    curlAdmin -X POST "$SONAR_URL/api/settings/set?key=sonar.coverage.exclusions&values=**/api/v*/transfer/**/*,**/*Application.java"
+    curlAdmin -X POST "$SONAR_URL/api/settings/set?key=sonar.coverage.exclusions&values=**/api/v*/transfer/**/*,**/*Application.java,**/*AbstractRemoteServiceCallMock.java"
 fi
 
