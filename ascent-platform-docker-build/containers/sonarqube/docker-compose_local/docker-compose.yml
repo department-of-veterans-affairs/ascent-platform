@@ -10,6 +10,8 @@ services:
       - sonarnet
     environment:
       - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
+      - SONARQUBE_JDBC_USER=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
       - BASE_URL=http://127.0.0.1:9000
     volumes:
       - sonarqube_conf:/opt/sonarqube/conf
@@ -31,6 +33,9 @@ services:
     environment:
       - MYSQL_DATABASE=sonar
       - CLUSTER_NAME=sonarcluster
+      - MYSQL_ROOT_PASSWORD=defaultpassword
+      - MYSQL_USER=sonar
+      - MYSQL_PASSWORD=sonar
     networks:
       - sonarnet
 networks:
