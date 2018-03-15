@@ -24,8 +24,8 @@ services:
     image: ascent/ascent-sonar-db
     build: ../../sonarqube/database
     volumes:
-      - /var/log/mysql
-      - /var/lib/mysql
+      - mysql_log:/var/log/mysql
+      - mysql_lib:/var/lib/mysql
     command:
       - '--user=mysql --pxc-strict-mode=PERMISSIVE'
     ports:
@@ -46,3 +46,5 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_bundled-plugins:
+  mysql_log:
+  mysql_lib:
