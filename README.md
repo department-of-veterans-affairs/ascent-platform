@@ -1,6 +1,6 @@
 ## What is this repository for? ##
 
-Ascent Platform Repository is a suite of Project POM files that provides application services with parent and starter dependencies for the new platform. 
+Ascent Platform Repository is a suite of Project POM files that provides application services with parent and starter dependencies for the new platform.
 
 ## Overview of core platform services ##
 **ascent-discovery: Discovery Service**
@@ -34,9 +34,9 @@ For more documentation details, please see the [wiki](https://github.com/departm
 
 ## How do I get set up? ##
 
-Create a **GitHub** account. Make sure to follow the [Ascent Quick Start Guide](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/DEV-:-Platform-Quick-Start-Guide) for the system prerequisites that needs to be installed in your machine  and follow the steps  for generating new SSH key with passphrase to connect to GitHub using your account. 
+Create a **GitHub** account. Make sure to follow the [Ascent Quick Start Guide](https://github.com/department-of-veterans-affairs/ascent-platform/wiki/DEV-:-Platform-Quick-Start-Guide) for the system prerequisites that needs to be installed in your machine  and follow the steps  for generating new SSH key with passphrase to connect to GitHub using your account.
 
-Create a project workspace locally. From the command line, go to your project workspace and run the below command to checkout ascent-platform code base. 
+Create a project workspace locally. From the command line, go to your project workspace and run the below command to checkout ascent-platform code base.
 
 *git clone https://github.com/department-of-veterans-affairs/ascent-platform.git*
 
@@ -46,10 +46,10 @@ The repository contains the start up script **ascent-builds.sh** that gets the c
 
 <h3>Running the core services in docker-demo profile</h3>
 
-Upon successfully building the docker images, running the **start-all.sh** script under **ascent-platform-docker-build** should bring up the docker containers for the core platform services,elk stack,filebeat and redis. Run the **stop-all.sh** script to bring down the docker containers.
+Upon successfully building the docker images, running the **run-docker/run-docker start all** command should bring up the docker containers for the core platform services,elk stack,filebeat and redis. Run the **run-docker/run-docker stop all** command to bring down the docker containers.
+There are many other options for run-docker. **run-docker/run-docker** to print out menu or see run-docker's README on the development branch.
 
 <h3>Integrating application services with core platform services</h3>
 
 A few sample services are created in order to demonstrate how the applications would integrate with the core platform services. The code base for these services are pushed under the **ascent-sample** repository.
 See the [Ascent Sample quick start guide](https://github.com/department-of-veterans-affairs/ascent-sample/wiki/DEV-:-Quick-Start-Guide-for-Ascent-Sample) for step by step details.
-
