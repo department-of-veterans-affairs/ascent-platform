@@ -12,14 +12,16 @@ The following tools will need to be installed before you can successfully deploy
 To deploy our logging stack locally, run the following command in your terminal:
 
 ```bash
-docker-compose -f docker-compose.logging.yml -f docker-compose.logging.override.yml up --build -d
+cd ascent-platform-docker-build/run-docker
+./run-docker start logging
 ```
+See README in the run-docker folder for more details and options
 
 ### Swarm Deployment
 To deploy our logging stack to a Docker Swarm, run the following command in your terminal:
 
 ```bash
-docker stack deploy -c docker-compose.logging.yml logging
+docker stack deploy -c swarm/docker-compose/docker-compose.logging.yml logging
 ```
 ## Usage
 The Kibana UI should be available at [http://localhost:5601](http://localhost:5601). The default credentials are:<br/>
