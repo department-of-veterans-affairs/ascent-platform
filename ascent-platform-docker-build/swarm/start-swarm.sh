@@ -3,6 +3,7 @@
 docker-machine create --driver virtualbox \
   --virtualbox-memory 3072 \
   --virtualbox-boot2docker-url https://github.com/boot2docker/boot2docker/releases/download/v17.11.0-ce/boot2docker.iso \
+  --virtualbox-memory 4000 \
   manager1
 docker-machine create --driver virtualbox --virtualbox-boot2docker-url https://github.com/boot2docker/boot2docker/releases/download/v17.11.0-ce/boot2docker.iso --virtualbox-memory 3072 node1
 docker-machine create --driver virtualbox --virtualbox-boot2docker-url https://github.com/boot2docker/boot2docker/releases/download/v17.11.0-ce/boot2docker.iso --virtualbox-memory 3072 node2

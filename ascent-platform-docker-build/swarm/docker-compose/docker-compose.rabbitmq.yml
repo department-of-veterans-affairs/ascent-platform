@@ -1,0 +1,37 @@
+version: "3.3"
+services:
+   ascent-amqp:
+    image: ascent/ascent-amqp
+    networks:
+      back:
+        aliases:
+          - rabbit
+      ascentnet:
+        aliases:
+          - rabbit
+    build:
+      context: ./rabbitmq
+    expose:
+      - 15672
+      - 5672
+      - 5671
+      - 15671
+    # publish 15672 for seeing rabbitmq management console
+    ports:
+      - 15672:15672
+    tty: true
+   consul:
+    image: consul:1.0.2
+    hostname: consul
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+      - "8600:53"
+    networks:
+      - back
+
+networks:
+  back:
+    driver: overlay
+  ascentnet:
+    driver: overlay
