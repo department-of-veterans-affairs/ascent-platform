@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.pipeline.modeldefinition.config.GlobalConfig plugin="pipeline-model-definition@1.1.9">
+  <dockerLabel>Ascent Docker Repo</dockerLabel>
+  <registry plugin="docker-commons@1.8">
+    <url>https://internal-vets-nexus-elb-2087468458.us-gov-west-1.elb.amazonaws.com/</url>
+    <credentialsId>Nexus</credentialsId>
+  </registry>
+</org.jenkinsci.plugins.pipeline.modeldefinition.config.GlobalConfig>

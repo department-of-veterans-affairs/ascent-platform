@@ -1,0 +1,40 @@
+#Overrides for local development.
+version: '3.3'
+
+services:
+    elasticsearch:
+        build:
+            context: ../containers/elasticsearch
+        environment:  
+            - "ES_JAVA_OPTS=$ES_JAVA_OPTS"
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
+        ports:
+            - 9200:9200
+    es-config:
+        build:
+           context: ../containers/es-config
+        environment:  
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
+    kibana:
+        build:
+            context: ../containers/kibana   
+        environment:  
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+            - SECURE_CONNECT=false
+    fluentd:
+        build:
+            context: ../containers/fluentd
+        environment:  
+            - SECURE_CONNECT=false
+            - VAULT_TOKEN=vaultroot
+            - VAULT_ADDR=http://vault:8200
+networks:
+    ascentnet:
+        driver: bridge
+    logging:
+        driver: bridge

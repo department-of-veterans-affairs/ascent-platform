@@ -1,0 +1,48 @@
+#Overrides for local development.
+version: '3.3'
+
+services:
+  redis-master:
+    build:
+      context: ../containers/redis-sentinel
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  redis-slave:
+    build:
+      context: ../containers/redis-sentinel
+    environment:
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  redis-sentinel:
+    build:
+      context: ../containers/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  redis-sentinel2:
+    build:
+      context: ../containers/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+  redis-sentinel3:
+    build:
+      context: ../containers/redis-sentinel
+    environment:
+      - SENTINEL_QUORUM=2
+      - SENTINEL_DOWN_AFTER=5000
+      - SENTINEL_FAILOVER=15000
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=vaultroot
+networks:
+    ascentnet:
+        driver: bridge
+    logging:
+        driver: bridge
