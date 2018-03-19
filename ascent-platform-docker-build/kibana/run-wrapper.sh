@@ -20,8 +20,6 @@ fi
 
 cp $BASE_CONFIG /usr/share/kibana/config/kibana.yml
 
-/docker/wait-es-container-shutdown.sh
-
 # If ENVCONSUL_CONFIG is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN ]]; then
     if [ "$SECURE_CONNECT" = true ]; then
