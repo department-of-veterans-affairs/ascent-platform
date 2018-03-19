@@ -1,0 +1,55 @@
+#Overrides for local development.
+version: '3.3'
+
+services:
+    ascent-discovery:
+        build:
+            context: ../../../ascent-discovery
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - VAULT_ADDR=http://vault:8200
+            - VAULT_TOKEN=vaultroot
+            - discovery.server.peer.name=ascent-discovery-peer
+    ascent-discovery-peer:
+        build:
+            context: ../../../ascent-discovery
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - VAULT_ADDR=http://vault:8200
+            - VAULT_TOKEN=vaultroot
+            - discovery.server.peer.name=ascent-discovery
+    ascent-config:
+        build:
+            context: ../../../ascent-config
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - VAULT_ADDR=http://vault:8200
+            - VAULT_TOKEN=vaultroot
+            - VAULT_HOST=vault
+            - VAULT_SCHEME=http
+    ascent-gateway:
+        build:
+            context: ../../../ascent-gateway
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - VAULT_ADDR=http://vault:8200
+            - VAULT_TOKEN=vaultroot
+    ascent-dashboard:
+        build:
+            context: ../../../ascent-dashboard
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - VAULT_ADDR=http://vault:8200
+            - VAULT_TOKEN=vaultroot
+    ascent-zipkin:
+        build:
+            context: ../../../ascent-zipkin
+        environment:
+            - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+            - VAULT_ADDR=http://vault:8200
+            - VAULT_TOKEN=vaultroot
+networks:
+    ascentnet:
+        driver: bridge
+    logging:
+        driver: bridge

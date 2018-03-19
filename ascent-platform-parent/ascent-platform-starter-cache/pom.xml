@@ -4,7 +4,7 @@
   <parent>
       <groupId>gov.va.ascent</groupId>
       <artifactId>ascent-platform-parent</artifactId>
-      <version>0.0.4-SNAPSHOT</version>
+      <version>0.0.5-SNAPSHOT</version>
   </parent>
   
   <artifactId>ascent-platform-starter-cache</artifactId>
@@ -15,6 +15,10 @@
   	 <dependency>
           <groupId>gov.va.ascent</groupId>
           <artifactId>ascent-framework</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework.cloud</groupId>
+          <artifactId>spring-cloud-config-client</artifactId>
       </dependency>
       <dependency>
           <groupId>org.springframework.boot</groupId>

@@ -1,0 +1,24 @@
+all: 
+  - ../containers/vault
+  - ../containers/elasticsearch
+  - ../containers/es-config
+  - ../containers/fluentd
+  - ../containers/kibana
+  - ../containers/redis-sentinel
+  - ../containers/rabbitmq
+allservices:
+  - ../../../ascent-config
+  - ../../../ascent-dashboard
+  - ../../../ascent-gateway
+  - ../../../ascent-discovery
+  - ../../../ascent-zipkin
+localint:
+  - ../containers/rabbitmq
+  - ../containers/redis-sentinel
+logging:
+  - ../containers/elasticsearch
+  - ../containers/kibana
+  - ../containers/es-config
+  - ../containers/fluentd
+sonarqube:
+  - ../containers/sonarqube
