@@ -20,7 +20,7 @@ cd vetservices-refdata
 git checkout development
 cd vetservices-refdata-perftest
 echo ${WORKSPACE}
-sh /opt/jmeter/apache-jmeter-4.0/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=csv -n -t RefdataLoadPerformanceTest.jmx -Jloadusers=4 -Jlduration=2 -Jprotocol=https -Jbaseurl=ci.internal.vets-api.gov -l ${WORKSPACE}/testresult.csv -e -o ${WORKSPACE}/htlmlreport
+sh /opt/jmeter/apache-jmeter-4.0/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=csv -n -t RefdataLoadPerformanceTest.jmx -Jloadusers=4 -Jlduration=2 -Jprotocol=https -Jbaseurl=ci.internal.vets-api.gov -Jport=443 -l ${WORKSPACE}/testresult.csv -e -o ${WORKSPACE}/htlmlreport
 zip -r ${WORKSPACE}/../../../htlmlreport.zip ${WORKSPACE}/htlmlreport</command>
     </hudson.tasks.Shell>
   </builders>
