@@ -64,7 +64,7 @@ public class SwaggerAutoConfiguration {
                 .globalResponseMessage(RequestMethod.GET, globalResponseMessages())
                 .globalResponseMessage(RequestMethod.POST, globalResponseMessages())
                 .globalResponseMessage(RequestMethod.DELETE, globalResponseMessages())
-                .enableUrlTemplating(true)
+                .enableUrlTemplating(false)
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()));
     }
