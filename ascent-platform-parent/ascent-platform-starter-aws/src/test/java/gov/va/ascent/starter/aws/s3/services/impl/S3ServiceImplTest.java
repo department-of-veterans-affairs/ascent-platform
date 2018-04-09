@@ -2,7 +2,6 @@ package gov.va.ascent.starter.aws.s3.services.impl;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -14,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -41,7 +41,8 @@ public class S3ServiceImplTest {
 	private static final String TEST_DLQ_BUCKET = "test-dlq-bucket";
 	
 	@Autowired
-	private S3Service s3Service;
+	@InjectMocks
+	private S3Service s3Service = new S3ServiceImpl();
 	
 	@Mock
 	private AmazonS3 mockS3Client;
@@ -58,8 +59,6 @@ public class S3ServiceImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		s3Service = new S3ServiceImpl();
-		ReflectionTestUtils.setField(s3Service, "s3client", mockS3Client);
 		ReflectionTestUtils.setField(s3Service, "bucketName", TEST_BUCKET_NAME);
 		ReflectionTestUtils.setField(s3Service, "targetBucketName", TEST_TARGET_BUCKET);
 		ReflectionTestUtils.setField(s3Service, "dlqBucketName", TEST_DLQ_BUCKET);
@@ -87,7 +86,6 @@ public class S3ServiceImplTest {
 	}
 	
 	private void prepareS3Mock(List<Bucket> bucketList) throws Exception {
-		S3Object mockS3Object = mock(S3Object.class);
 		Mockito.when(mockS3Client.listBuckets()).thenReturn(bucketList);
 		Mockito.when(mockS3Client.getRegionName()).thenReturn(TEST_REGION);
 		Mockito.when(mockS3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Object);

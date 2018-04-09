@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.ProducerCallback;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
@@ -39,14 +39,13 @@ public class SqsServiceImplTest {
 	JmsOperations jmsOperations;
 
 	@Autowired
-	private SqsService sqsService;
+	@InjectMocks
+	private SqsService sqsService = new SqsServiceImpl();
 
 
 	@Before
 	public void setUp() throws Exception {
-		sqsService = new SqsServiceImpl();
 		prepareSqsMock();
-		ReflectionTestUtils.setField(sqsService, "jmsOperations", jmsOperations);
 	}
 	
 	@Test
