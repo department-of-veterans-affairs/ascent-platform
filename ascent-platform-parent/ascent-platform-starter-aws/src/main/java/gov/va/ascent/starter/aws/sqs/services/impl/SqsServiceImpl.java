@@ -33,6 +33,7 @@ public class SqsServiceImpl implements SqsService {
 	@ManagedOperation
 	public ResponseEntity<String> sendMessage(String request) {
 		logger.info("Handling request: '{}'", request);
+		logger.info("jmsOperations: '{}'", jmsOperations);
 
 		final String messageId = jmsOperations.execute(new ProducerCallback<String>() {
 			@Override

@@ -33,7 +33,7 @@ import gov.va.ascent.starter.aws.s3.services.S3Service;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class S3ServicesImplTest {
+public class S3ServiceImplTest {
 	
 	private static final String TEST_REGION = "test-region";
 	private static final String TEST_BUCKET_NAME = "test-bucket";
