@@ -24,6 +24,7 @@
 	<module>ascent-platform-starter-cache</module>
 	<module>ascent-platform-starter-logger</module>
 	<module>ascent-platform-starter</module>
+	<module>ascent-platform-starter-aws</module>
   </modules>
 
  <dependencyManagement>

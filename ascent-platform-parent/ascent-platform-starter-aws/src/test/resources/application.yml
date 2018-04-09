@@ -1,0 +1,26 @@
+## S3 and SQS Configurations for Ascent  
+# ascent.s3.region: ${AWS_REGION:us-west-2}
+ascent:
+  aws:
+    access_key_id: ${AWS_ACCESS_KEY:test-key}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY:test-secret}
+  s3:
+    bucket: ${AWS_S3_BUCKET_NAME:test-bucket}
+    region: ${AWS_REGION:us-west-2}
+    uploadfile: classpath:ascent-s3-upload-file.txt
+    key: ascent-s3-upload-file.txt
+    target:
+      bucket: ${AWS_S3_TARGET_BUCKET_NAME:test-s3-target-bucket}
+    dlq:
+      bucket: ${AWS_S3_DLQ_BUCKET_NAME:test-s3-dlq-bucket}
+  sqs:
+    region: ${AWS_SQS_REGION:us-west-2}
+    endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4576}
+    dlqendpoint: ${AWS_SQS_DLQ_ENDPOINT:test-sqs-dlq-bucket}
+    dlqRetriesCount: 2
+    numberOfMessagesToPrefetch: ${AMAZON_SQS_NUMBER_OF_MESSAGES_TO_PREFETCH:5}
+    extended:
+      s3BucketName: ${AWS_SQS_EXT_S3_BUCKET_NAME:test-sqs-ext-s3-bucket}
+
+#cloud.aws.stack.auto: false
+#cloud.aws.region.static: ${AWS_REGION:us-west-2}
