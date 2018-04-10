@@ -74,22 +74,25 @@ public class S3ServiceImpl implements S3Service {
 	public ResponseEntity<byte[]> downloadFile(String keyName) throws IOException {
 		
 		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
-		logger.info ("getObjectRequest: {}", getObjectRequest);
-		logger.info ("s3client: {}", s3client);
         S3Object s3Object = s3client.getObject(getObjectRequest);
-        logger.info ("s3Object: {}", s3Object);
         S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
-        logger.info ("objectInputStream: {}", objectInputStream);
 
         byte[] bytes = IOUtils.toByteArray(objectInputStream);
-        logger.info ("bytes: {}", bytes);
         String fileName = URLEncoder.encode(keyName, "UTF-8").replaceAll("\\+", "%20");
-        logger.info ("fileName: {}", fileName);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         httpHeaders.setContentLength(bytes.length);
         httpHeaders.setContentDispositionFormData("attachment", fileName);
+        
+        if (logger.isDebugEnabled()) {
+        	logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
+        	logger.debug("S3Object: {}", ReflectionToStringBuilder.toString(s3Object));
+            logger.debug("File Name: {}", fileName);
+            if (bytes !=null) {
+            	logger.debug("Bytes Length: {}", bytes.length);
+            }
+        }
 
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
 	}
@@ -114,6 +117,10 @@ public class S3ServiceImpl implements S3Service {
 						e.printStackTrace();
 					}
 				});
+		
+		 if (logger.isDebugEnabled()) {
+			 logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResults));
+	     }
 
 		return new ResponseEntity<>(putObjectResults, HttpStatus.OK);
 	}
@@ -132,6 +139,10 @@ public class S3ServiceImpl implements S3Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+        if (logger.isDebugEnabled()) {
+			 logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResult));
+	    }
 
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
@@ -157,18 +168,18 @@ public class S3ServiceImpl implements S3Service {
 			uploadResult = upload.waitForUploadResult();
 			logger.info("Upload completed, bucket={}, key={}", uploadResult.getBucketName(), uploadResult.getKey());
 		} catch (AmazonServiceException ase) {
-			logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
-			logger.info("Error Message:    " + ase.getMessage());
-			logger.info("HTTP Status Code: " + ase.getStatusCode());
-			logger.info("AWS Error Code:   " + ase.getErrorCode());
-			logger.info("Error Type:       " + ase.getErrorType());
-			logger.info("Request ID:       " + ase.getRequestId());
+			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
+			logger.error("Error Message:    {}", ase.getMessage());
+			logger.error("HTTP Status Code: {}", ase.getStatusCode());
+			logger.error("AWS Error Code:   {}", ase.getErrorCode());
+			logger.error("Error Type:       {}", ase.getErrorType());
+			logger.error("Request ID:       {}", ase.getRequestId());
 		} catch (AmazonClientException ace) {
-			logger.info("Caught an AmazonClientException from PUT requests, rejected reasons:");
-			logger.info("Error Message:    " + ace.getMessage());
+			logger.error("Caught an AmazonClientException from PUT requests, rejected reasons:");
+			logger.error("Error Message:    " + ace.getMessage());
 		} catch (InterruptedException ie) {
-			logger.info("Caught an InterruptedException from PUT requests, rejected reasons:");
-			logger.info("Error Message:    " + ie.getMessage());
+			logger.error("Caught an InterruptedException from PUT requests, rejected reasons:");
+			logger.error("Error Message:    " + ie.getMessage());
 		}
 		finally {
 			IOUtils.closeQuietly(inputStream);
@@ -192,21 +203,25 @@ public class S3ServiceImpl implements S3Service {
 		
 		try {
 			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
-	        logger.info("===================== Upload File - Done! =====================");
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("===================== Upload File - Done! =====================");
+				logger.debug("UploadResult:    {}", putObjectResult);
+			}
 	        
 		} catch (AmazonServiceException ase) {
-			logger.info("Caught an AmazonServiceException from PUT requests, rejected reasons:");
-			logger.info("Error Message:    " + ase.getMessage());
-			logger.info("HTTP Status Code: " + ase.getStatusCode());
-			logger.info("AWS Error Code:   " + ase.getErrorCode());
-			logger.info("Error Type:       " + ase.getErrorType());
-			logger.info("Request ID:       " + ase.getRequestId());
+			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
+			logger.error("Error Message:    {}",  ase.getMessage());
+			logger.error("HTTP Status Code: {}", ase.getStatusCode());
+			logger.error("AWS Error Code:   {}", ase.getErrorCode());
+			logger.error("Error Type:       {}", ase.getErrorType());
+			logger.error("Request ID:       {}", ase.getRequestId());
         } catch (IOException ioe) {
-        	 logger.info("Caught an IOException: ");
-             logger.info("Error Message: " + ioe.getMessage());
+        	 logger.error("Caught an IOException: ");
+             logger.error("Error Message: {}", ioe.getMessage());
 		} catch (AmazonClientException ace) {
-            logger.info("Caught an AmazonClientException: ");
-            logger.info("Error Message: " + ace.getMessage());
+            logger.error("Caught an AmazonClientException: ");
+            logger.error("Error Message: {}", ace.getMessage());
         }
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
@@ -231,18 +246,18 @@ public class S3ServiceImpl implements S3Service {
             		"which means your request made it " + 
             		"to Amazon S3, but was rejected with an error " +
                     "response for some reason.");
-        	logger.error("Error Message:    " + ase.getMessage());
-        	logger.error("HTTP Status Code: " + ase.getStatusCode());
-        	logger.error("AWS Error Code:   " + ase.getErrorCode());
-        	logger.error("Error Type:       " + ase.getErrorType());
-        	logger.error("Request ID:       " + ase.getRequestId());
+        	logger.error("Error Message:    {}", ase.getMessage());
+        	logger.error("HTTP Status Code: {}", ase.getStatusCode());
+        	logger.error("AWS Error Code:   {}", ase.getErrorCode());
+        	logger.error("Error Type:       {}", ase.getErrorType());
+        	logger.error("Request ID:       {}", ase.getRequestId());
         } catch (AmazonClientException ace) {
         	logger.error("Caught an AmazonClientException, " +
             		"which means the client encountered " +
                     "an internal error while trying to " +
                     " communicate with S3, " +
                     "such as not being able to access the network.");
-        	logger.error("Error Message: " + ace.getMessage());
+        	logger.error("Error Message: {}", ace.getMessage());
         }
 	}
 	
