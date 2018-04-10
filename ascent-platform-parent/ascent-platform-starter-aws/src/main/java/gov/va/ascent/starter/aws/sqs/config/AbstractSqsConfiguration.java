@@ -79,60 +79,6 @@ public abstract class AbstractSqsConfiguration {
 		return new SQSConnectionFactory(providerConfiguration, sqsClient);
 	}
 
-	protected SQSConnectionFactory createExtendedSQSConnectionFactory(SqsProperties sqsProperties) {
-		AmazonS3 s3Client = createAmazonS3Client(sqsProperties);
-
-		// Set the SQS extended client configuration with large payload support enabled.
-		ExtendedClientConfiguration extendedClientConfig = new ExtendedClientConfiguration()
-				.withLargePayloadSupportEnabled(s3Client, sqsProperties.getExtended().getS3BucketName());
-
-		ProviderConfiguration providerConfiguration = new ProviderConfiguration();
-		sqsProperties.getNumberOfMessagesToPrefetch()
-		.ifPresent(providerConfiguration::setNumberOfMessagesToPrefetch);
-
-		AmazonSQS sqsClient = createAmazonSQSClient(sqsProperties);
-
-		return new SQSConnectionFactory(
-				providerConfiguration,
-				new AmazonSQSExtendedClient(sqsClient, extendedClientConfig)
-				);
-	}
-
-	private AmazonS3 createAmazonS3Client(SqsProperties sqsProperties) {
-		AWSCredentialsProvider awsCredentialsProvider = createAwsCredentialsProvider(
-				sqsProperties.getAccessKey(),
-				sqsProperties.getSecretKey()
-				);
-
-		Regions region = Regions.fromName(sqsProperties.getRegion());
-
-		AmazonS3 amazonS3Client = AmazonS3ClientBuilder
-				.standard()
-				.withCredentials(awsCredentialsProvider)
-				.withRegion(region)
-				.build();
-
-		String s3BucketName = sqsProperties.getExtended().getS3BucketName();
-
-		if (!amazonS3Client.doesBucketExist(s3BucketName)) {
-			amazonS3Client.createBucket(s3BucketName);
-
-			// Set the Amazon S3 bucket name, and set a lifecycle rule on the bucket to
-			// permanently delete objects a certain number of days after each object's creation date.
-			// Next, create the bucket, and enable message objects to be stored in the bucket.
-			BucketLifecycleConfiguration.Rule expirationRule =
-					new BucketLifecycleConfiguration.Rule()
-					.withExpirationInDays(14).withStatus("Enabled");
-
-			BucketLifecycleConfiguration lifecycleConfig =
-					new BucketLifecycleConfiguration().withRules(expirationRule);
-
-			amazonS3Client.setBucketLifecycleConfiguration(s3BucketName, lifecycleConfig);
-		}
-
-		return amazonS3Client;
-	}
-
 	private AmazonSQS createAmazonSQSClient(SqsProperties sqsProperties) {
 		Regions region = Regions.fromName(sqsProperties.getRegion());
 

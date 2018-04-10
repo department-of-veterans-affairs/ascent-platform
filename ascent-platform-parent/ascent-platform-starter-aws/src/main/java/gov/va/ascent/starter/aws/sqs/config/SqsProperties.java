@@ -28,8 +28,6 @@ public class SqsProperties {
 
 	private Integer numberOfMessagesToPrefetch;
 
-	private Extended extended = new Extended();
-
 	public Optional<Integer> getNumberOfMessagesToPrefetch() {
 		return Optional.ofNullable(numberOfMessagesToPrefetch);
 	}
@@ -48,20 +46,6 @@ public class SqsProperties {
 		int pos = path.lastIndexOf('/');
 		logger.info("path: {}", path);
 		return path.substring(pos + 1);
-	}
-
-	/**
-	 * @return the extended
-	 */
-	public Extended getExtended() {
-		return extended;
-	}
-
-	/**
-	 * @param extended the extended to set
-	 */
-	public void setExtended(Extended extended) {
-		this.extended = extended;
 	}
 
 	/**
@@ -150,37 +134,6 @@ public class SqsProperties {
 	 */
 	public void setDlqRetriesCount(int dlqRetriesCount) {
 		this.dlqRetriesCount = dlqRetriesCount;
-	}
-
-	public static class Extended {
-
-		private String s3Region;
-		private String s3BucketName;
-
-		/**
-		 * @return the s3Region
-		 */
-		public String getS3Region() {
-			return s3Region;
-		}
-		/**
-		 * @param s3Region the s3Region to set
-		 */
-		public void setS3Region(String s3Region) {
-			this.s3Region = s3Region;
-		}
-		/**
-		 * @return the s3BucketName
-		 */
-		public String getS3BucketName() {
-			return s3BucketName;
-		}
-		/**
-		 * @param s3BucketName the s3BucketName to set
-		 */
-		public void setS3BucketName(String s3BucketName) {
-			this.s3BucketName = s3BucketName;
-		}
 	}
 
 }

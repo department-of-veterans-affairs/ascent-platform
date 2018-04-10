@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import gov.va.ascent.starter.aws.sqs.config.AbstractSqsConfiguration;
-import gov.va.ascent.starter.aws.sqs.config.ExtendedSqsConfiguration;
 import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 import gov.va.ascent.starter.aws.sqs.config.StandardSqsConfiguration;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
@@ -21,7 +20,7 @@ import gov.va.ascent.starter.aws.sqs.services.impl.SqsServiceImpl;
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
-@Import({AbstractSqsConfiguration.class, StandardSqsConfiguration.class, ExtendedSqsConfiguration.class})
+@Import({AbstractSqsConfiguration.class, StandardSqsConfiguration.class})
 public class AscentSqsAutoConfiguration {
 	
 	@Bean
