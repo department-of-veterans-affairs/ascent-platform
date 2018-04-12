@@ -78,7 +78,7 @@
  	  	<groupId>org.apache.commons</groupId>
  	  	<artifactId>commons-lang3</artifactId>
  	  </dependency>
- 	  <!-- localstack-spring-boot-starter -->
+ 	  <!-- cloud.localstack localstack-utils -->
  	 <!-- https://mvnrepository.com/artifact/cloud.localstack/localstack-utils -->
       <dependency>
 		 <groupId>cloud.localstack</groupId>

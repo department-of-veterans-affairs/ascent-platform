@@ -7,10 +7,10 @@
         </encoder>
     </appender>
     
-    <logger name="gov.va.ascent.starter.aws.autoconfigure" level="DEBUG"/>
-    <logger name="gov.va.ascent" level="DEBUG"/>
+    <logger name="gov.va.ascent.starter.aws.autoconfigure" level="INFO"/>
+    <logger name="gov.va.ascent" level="INFO"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

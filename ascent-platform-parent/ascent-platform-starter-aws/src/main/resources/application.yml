@@ -1,7 +1,16 @@
-## S3 and SQS Configurations for Ascent  
-# ascent.s3.region: ${AWS_REGION:us-west-2}
+## S3 and SQS Configurations for Ascent
 #ascent:
 #  aws:
+#    localstack-config:
+#     services:
+#      # name: Service Name
+#      # port:  port
+#      - 
+#        name: s3
+#        port: 4572 #port
+#      - 
+#        name: sqs
+#        port: 4576 #port
 #    access_key_id: ${AWS_ACCESS_KEY}
 #    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
 #  s3:
