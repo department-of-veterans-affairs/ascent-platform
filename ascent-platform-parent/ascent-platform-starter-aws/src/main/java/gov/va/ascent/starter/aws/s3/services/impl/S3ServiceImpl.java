@@ -107,20 +107,21 @@ public class S3ServiceImpl implements S3Service {
 	public ResponseEntity<List<UploadResult>> uploadMultiPart(MultipartFile[] multipartFiles) {
 		List<UploadResult> putObjectResults = new ArrayList<>();
 
-		Arrays.stream(multipartFiles)
-				.filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
+		Arrays.stream(multipartFiles).filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
 				.forEach(multipartFile -> {
 					try {
-						//Passing null temporaily. When this method is used, null needs to be replaced with document metadata.
-						putObjectResults.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
+						// Passing null temporaily. When this method is used, null needs to be replaced
+						// with document metadata.
+						putObjectResults
+								.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
 					} catch (IOException e) {
-						e.printStackTrace();
+						logger.error("Error Message: {}", e.getMessage());
 					}
 				});
-		
-		 if (logger.isDebugEnabled()) {
-			 logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResults));
-	     }
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResults));
+		}
 
 		return new ResponseEntity<>(putObjectResults, HttpStatus.OK);
 	}
@@ -137,7 +138,7 @@ public class S3ServiceImpl implements S3Service {
         try {
             putObjectResult = upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
         } catch (IOException e) {
-            e.printStackTrace();
+        		logger.error("Error Message: {}", e.getMessage());
         }
         
         if (logger.isDebugEnabled()) {
@@ -198,31 +199,21 @@ public class S3ServiceImpl implements S3Service {
 	@Override
 	public ResponseEntity<UploadResult> uploadFile(String keyName, String uploadFilePath) {
 		UploadResult putObjectResult = new UploadResult();
-		
-		 Map<String, String> propertyMap = new HashMap<String, String>();
-		
+
+		Map<String, String> propertyMap = new HashMap<String, String>();
+
 		try {
 			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
-			
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("===================== Upload File - Done! =====================");
 				logger.debug("UploadResult:    {}", putObjectResult);
 			}
-	        
-		} catch (AmazonServiceException ase) {
-			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
-			logger.error("Error Message:    {}",  ase.getMessage());
-			logger.error("HTTP Status Code: {}", ase.getStatusCode());
-			logger.error("AWS Error Code:   {}", ase.getErrorCode());
-			logger.error("Error Type:       {}", ase.getErrorType());
-			logger.error("Request ID:       {}", ase.getRequestId());
-        } catch (IOException ioe) {
-        	 logger.error("Caught an IOException: ");
-             logger.error("Error Message: {}", ioe.getMessage());
-		} catch (AmazonClientException ace) {
-            logger.error("Caught an AmazonClientException: ");
-            logger.error("Error Message: {}", ace.getMessage());
-        }
+
+		} catch (IOException ioe) {
+			logger.error("Caught an IOException: ");
+			logger.error("Error Message: {}", ioe.getMessage());
+		}
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 

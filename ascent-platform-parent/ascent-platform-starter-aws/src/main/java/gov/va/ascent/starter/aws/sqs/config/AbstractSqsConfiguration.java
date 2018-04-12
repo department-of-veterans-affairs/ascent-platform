@@ -12,8 +12,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.util.StringUtils;
 
-import com.amazon.sqs.javamessaging.AmazonSQSExtendedClient;
-import com.amazon.sqs.javamessaging.ExtendedClientConfiguration;
 import com.amazon.sqs.javamessaging.ProviderConfiguration;
 import com.amazon.sqs.javamessaging.SQSConnectionFactory;
 import com.amazon.sqs.javamessaging.SQSSession;
@@ -24,9 +22,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
@@ -42,20 +37,6 @@ public abstract class AbstractSqsConfiguration {
 	@Bean
 	public DestinationResolver destinationResolver(SqsProperties sqsProperties) {
 		return new StaticDestinationResolver(sqsProperties.getQueueName());
-	}
-
-	@Bean
-	public JmsListenerContainerFactory<?> jmsListenerContainerFactory(
-			ConnectionFactory connectionFactory, DestinationResolver destinationResolver) {
-
-		DefaultJmsListenerContainerFactory jmsListenerContainerFactory =
-				new DefaultJmsListenerContainerFactory();
-		jmsListenerContainerFactory.setConnectionFactory(connectionFactory);
-		jmsListenerContainerFactory.setDestinationResolver(destinationResolver);
-		jmsListenerContainerFactory.setSessionTransacted(false);
-		jmsListenerContainerFactory.setSessionAcknowledgeMode(SQSSession.UNORDERED_ACKNOWLEDGE);
-
-		return jmsListenerContainerFactory;
 	}
 
 	@Bean

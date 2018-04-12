@@ -40,14 +40,10 @@ public class S3Config {
 
 	@Bean
 	public AmazonS3 s3client() {
-		
+
 		BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
-		AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-								.withRegion(Regions.fromName(region))
-		                        .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-		                        .build();
-		
-		return s3Client;
+		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
+				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 	}
 	
 	@Bean
@@ -56,10 +52,10 @@ public class S3Config {
 		TransferManager tm = TransferManagerBuilder.standard()
 									.withS3Client(s3client())
 									.withDisableParallelDownloads(false)
-									.withMinimumUploadPartSize(Long.valueOf(5 * MB))
-									.withMultipartUploadThreshold(Long.valueOf(16 * MB))
-									.withMultipartCopyPartSize(Long.valueOf(5 * MB))
-									.withMultipartCopyThreshold(Long.valueOf(100 * MB))
+									.withMinimumUploadPartSize(Long.valueOf(5 * Long.valueOf(MB)))
+									.withMultipartUploadThreshold(Long.valueOf(16 * Long.valueOf(MB)))
+									.withMultipartCopyPartSize(Long.valueOf(5 * Long.valueOf(MB)))
+									.withMultipartCopyThreshold(Long.valueOf(100 * Long.valueOf(MB)))
 									.withExecutorFactory(()->createExecutorService(20))
 									.build();
 		
@@ -71,7 +67,7 @@ public class S3Config {
 			tm.abortMultipartUploads(bucketName, oneDayAgo);
 			
 		} catch (AmazonClientException e) {
-			logger.error("Unable to upload file, upload was aborted, reason: " + e.getMessage());
+			logger.error("Unable to upload file, upload was aborted, reason: {}" + e.getMessage());
 		}
 		
 		return tm;
