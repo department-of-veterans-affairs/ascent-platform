@@ -11,7 +11,7 @@ import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
 
 /**
  * 
- * @author rthota
+ * @author akulkarni
  *
  */
 @Configuration

@@ -25,8 +25,8 @@ import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
 
 
 /**
- * this class will start AWS localstack services, to be used for local envs. The profile embedded-aws needs to be added in order for
- * this bean to be created
+ * This class will start and stop AWS localstack services, to be used for local envs. The profile embedded-aws needs to be 
+ * added in order for this bean to be created
  *
  * @author akulkarni
  */
@@ -43,7 +43,7 @@ public class AscentEmbeddedAwsLocalstack {
 	private static Map<String, String> environmentVariables = new HashMap<>();
 	
 	/**
-     * Cache Properties Bean
+     * Localstack Properties Bean
      */
     @Autowired
     private AscentAwsLocalstackProperties localstackProperties;
@@ -59,12 +59,12 @@ public class AscentEmbeddedAwsLocalstack {
 	 * @throws IOException
 	 */
 	@PostConstruct
-	public void startAwsLocalStack() throws IOException {
+	public void startAwsLocalStack() {
 		
 		if(localstackDocker !=null && localstackDocker.getLocalStackContainer() !=null) {
 			LOGGER.info("AWS localstack already running, not trying to re-start: {} ", localstackDocker.getLocalStackContainer());
 			return;
-		} else {
+		} else if (localstackDocker !=null) {
 			localstackDocker.setExternalHostName(externalHostName);
 			localstackDocker.setPullNewImage(pullNewImage);
 			localstackDocker.setRandomizePorts(randomizePorts);

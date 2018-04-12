@@ -115,7 +115,7 @@ public class S3ServiceImpl implements S3Service {
 						putObjectResults
 								.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
 					} catch (IOException e) {
-						logger.error("Error Message: {}", e.getMessage());
+						logger.error("Error Message: {}", e);
 					}
 				});
 
@@ -138,7 +138,7 @@ public class S3ServiceImpl implements S3Service {
         try {
             putObjectResult = upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
         } catch (IOException e) {
-        		logger.error("Error Message: {}", e.getMessage());
+        		logger.error("Error Message: {}", e);
         }
         
         if (logger.isDebugEnabled()) {
@@ -178,7 +178,7 @@ public class S3ServiceImpl implements S3Service {
 		} catch (AmazonClientException ace) {
 			logger.error("Caught an AmazonClientException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    " + ace.getMessage());
-		} catch (InterruptedException ie) {
+		} catch (InterruptedException ie) { //NOSONAR
 			logger.error("Caught an InterruptedException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    " + ie.getMessage());
 		}
@@ -212,7 +212,7 @@ public class S3ServiceImpl implements S3Service {
 
 		} catch (IOException ioe) {
 			logger.error("Caught an IOException: ");
-			logger.error("Error Message: {}", ioe.getMessage());
+			logger.error("Error Message: {}", ioe);
 		}
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
