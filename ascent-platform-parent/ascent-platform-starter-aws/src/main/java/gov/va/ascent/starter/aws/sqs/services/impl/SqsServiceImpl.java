@@ -1,6 +1,7 @@
 package gov.va.ascent.starter.aws.sqs.services.impl;
 
 import javax.annotation.Resource;
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -8,6 +9,7 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsOperations;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
-
 @Service
 public class SqsServiceImpl implements SqsService {
 
@@ -26,6 +27,20 @@ public class SqsServiceImpl implements SqsService {
 	 @Resource
 	 JmsOperations jmsOperations;
 
+	@Autowired
+	ConnectionFactory connectionFactory;
+
+	@Override
+	@ManagedOperation
+	public ResponseEntity<String> sendMessage(TextMessage message) {
+		try {
+			return sendMessage(message.getText());
+		} catch (JMSException e) {
+			logger.error("Error Message: {}", e);
+		}
+		return null;
+	}
+	 
 	/**
 	 * Sends the message to the main queue.
 	 */
@@ -47,5 +62,18 @@ public class SqsServiceImpl implements SqsService {
 		});
 
 		return new ResponseEntity<>(messageId, HttpStatus.OK);
+	}
+	
+	/**
+	 * Creates a TextMessage
+	 */
+	public TextMessage createTextMessage(String message) {
+		try {
+			return connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
+					.createTextMessage(message);
+		} catch (JMSException e) {
+			logger.error("Error Message: {}", e);
+		}
+		return null;
 	}
 }

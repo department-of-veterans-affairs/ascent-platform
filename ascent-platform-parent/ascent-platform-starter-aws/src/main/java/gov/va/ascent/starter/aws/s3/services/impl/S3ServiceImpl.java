@@ -169,6 +169,7 @@ public class S3ServiceImpl implements S3Service {
 			uploadResult = upload.waitForUploadResult();
 			logger.info("Upload completed, bucket={}, key={}", uploadResult.getBucketName(), uploadResult.getKey());
 		} catch (AmazonServiceException ase) {
+			logger.error("Error: {}", ase);
 			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    {}", ase.getMessage());
 			logger.error("HTTP Status Code: {}", ase.getStatusCode());
@@ -176,6 +177,7 @@ public class S3ServiceImpl implements S3Service {
 			logger.error("Error Type:       {}", ase.getErrorType());
 			logger.error("Request ID:       {}", ase.getRequestId());
 		} catch (AmazonClientException ace) {
+			logger.error("Error: {}", ace);
 			logger.error("Caught an AmazonClientException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    " + ace.getMessage());
 		} catch (InterruptedException ie) { //NOSONAR
@@ -200,7 +202,7 @@ public class S3ServiceImpl implements S3Service {
 	public ResponseEntity<UploadResult> uploadFile(String keyName, String uploadFilePath) {
 		UploadResult putObjectResult = new UploadResult();
 
-		Map<String, String> propertyMap = new HashMap<String, String>();
+		Map<String, String> propertyMap = new HashMap<>();
 
 		try {
 			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
@@ -233,22 +235,20 @@ public class S3ServiceImpl implements S3Service {
             s3client.deleteObject(bucketName, key);
             logger.info("Deleting object. Bucket Name: {} Key : {}", bucketName, key);
         } catch (AmazonServiceException ase) {
-        	logger.error("Caught an AmazonServiceException, " +
-            		"which means your request made it " + 
-            		"to Amazon S3, but was rejected with an error " +
-                    "response for some reason.");
-        	logger.error("Error Message:    {}", ase.getMessage());
-        	logger.error("HTTP Status Code: {}", ase.getStatusCode());
-        	logger.error("AWS Error Code:   {}", ase.getErrorCode());
-        	logger.error("Error Type:       {}", ase.getErrorType());
-        	logger.error("Request ID:       {}", ase.getRequestId());
-        } catch (AmazonClientException ace) {
-        	logger.error("Caught an AmazonClientException, " +
-            		"which means the client encountered " +
-                    "an internal error while trying to " +
-                    " communicate with S3, " +
-                    "such as not being able to access the network.");
-        	logger.error("Error Message: {}", ace.getMessage());
+			logger.error("Error: {}", ase);
+			logger.error("Caught an AmazonServiceException, " + "which means your request made it "
+					+ "to Amazon S3, but was rejected with an error " + "response for some reason.");
+			logger.error("Error Message:    {}", ase.getMessage());
+			logger.error("HTTP Status Code: {}", ase.getStatusCode());
+			logger.error("AWS Error Code:   {}", ase.getErrorCode());
+			logger.error("Error Type:       {}", ase.getErrorType());
+			logger.error("Request ID:       {}", ase.getRequestId());
+		} catch (AmazonClientException ace) {
+			logger.error("Error: {}", ace);
+			logger.error("Caught an AmazonClientException, " + "which means the client encountered "
+					+ "an internal error while trying to " + " communicate with S3, "
+					+ "such as not being able to access the network.");
+			logger.error("Error Message: {}", ace.getMessage());
         }
 	}
 	

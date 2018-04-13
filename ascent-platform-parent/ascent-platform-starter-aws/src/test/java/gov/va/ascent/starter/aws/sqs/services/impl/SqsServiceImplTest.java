@@ -1,10 +1,15 @@
 package gov.va.ascent.starter.aws.sqs.services.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TemporaryQueue;
@@ -38,10 +43,17 @@ public class SqsServiceImplTest {
 	@Mock
 	JmsOperations jmsOperations;
 
+	@Mock
+	ConnectionFactory connectionFactory;
+	
+	@Mock
+	Connection connection;
+	 
 	@Autowired
 	@InjectMocks
 	private SqsService sqsService = new SqsServiceImpl();
 
+	TextMessage mockTextMessage;
 
 	@Before
 	public void setUp() throws Exception {
@@ -54,6 +66,16 @@ public class SqsServiceImplTest {
 	}
 	
 	@Test
+	public void testSendMessageWithMessageObject() throws Exception {
+		ResponseEntity<String> response = sqsService.sendMessage(mockTextMessage);
+		assertNotNull(response);
+		assertNotNull(response.getStatusCode());
+		assertNotNull(response.getStatusCodeValue());
+		assertEquals(200, response.getStatusCodeValue());
+	}
+	
+	
+	@Test
 	public void testSendMessage() throws Exception {
 		ResponseEntity<String> response = sqsService.sendMessage("Test-Message");
 		assertNotNull(response);
@@ -63,10 +85,17 @@ public class SqsServiceImplTest {
 		logger.info("response: {}", response);
 	}
 	
+	@Test
+	public void testCreateTextMessage() throws JMSException {
+		TextMessage response = sqsService.createTextMessage("Test-Message");
+		assertNotNull(response);
+		assertEquals("Test-Message", response.getText());
+	}
+	
 	private void prepareSqsMock() throws Exception {
 		Session mockSession = mock(Session.class);
 		TemporaryQueue mockTemporaryQueue = mock(TemporaryQueue.class);
-		TextMessage mockTextMessage = mock(TextMessage.class);
+		mockTextMessage = mock(TextMessage.class);
 		MessageProducer mockMessageProducer = mock(MessageProducer.class);
 		
 		String content = "Test-Message";
@@ -91,6 +120,11 @@ public class SqsServiceImplTest {
 		when(mockSession.createTextMessage(content)).thenReturn(mockTextMessage);
 		when(mockTextMessage.getText()).thenReturn(content);
 		when(mockTextMessage.getJMSMessageID()).thenReturn(messageId);
+		
+		when(connectionFactory.createConnection()).thenReturn(connection);
+		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
+		when(mockSession.createTextMessage(anyString())).thenReturn(mockTextMessage);
+
 	     
 	}
 }

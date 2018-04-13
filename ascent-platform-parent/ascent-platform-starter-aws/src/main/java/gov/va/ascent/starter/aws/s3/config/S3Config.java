@@ -67,7 +67,7 @@ public class S3Config {
 			tm.abortMultipartUploads(bucketName, oneDayAgo);
 			
 		} catch (AmazonClientException e) {
-			logger.error("Unable to upload file, upload was aborted, reason: {}" + e.getMessage());
+			logger.error("Unable to upload file, upload was aborted, reason: {}" + e);
 		}
 		
 		return tm;
