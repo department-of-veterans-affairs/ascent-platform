@@ -1,6 +1,6 @@
-# Centralize Logging for Ascent Platform
+# Ascent Platform Docker Build
 
-Implementation of the [Ascent Logging Design](https://github.com/department-of-veterans-affairs/ascent/wiki/Ascent-Logging:-Search-Visualize-and-Monitor) and [Platform Logging Design](https://github.com/department-of-veterans-affairs/ascent/wiki/Platform-Logging).
+This project includes docker build and deployment for the Ascent Platform
 
 ## Deployment
 
