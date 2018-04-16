@@ -74,17 +74,6 @@ public class SqsServiceImplTest {
 		assertEquals(200, response.getStatusCodeValue());
 	}
 	
-	
-	@Test
-	public void testSendMessage() throws Exception {
-		ResponseEntity<String> response = sqsService.sendMessage("Test-Message");
-		assertNotNull(response);
-		assertNotNull(response.getStatusCode());
-		assertNotNull(response.getStatusCodeValue());
-		logger.info("response.getStatusCode(): {}", response.getStatusCode());
-		logger.info("response: {}", response);
-	}
-	
 	@Test
 	public void testCreateTextMessage() throws JMSException {
 		TextMessage response = sqsService.createTextMessage("Test-Message");

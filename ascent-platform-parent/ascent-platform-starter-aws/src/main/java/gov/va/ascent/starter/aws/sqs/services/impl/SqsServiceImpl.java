@@ -3,6 +3,7 @@ package gov.va.ascent.starter.aws.sqs.services.impl;
 import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -23,47 +24,36 @@ import gov.va.ascent.starter.aws.sqs.services.SqsService;
 public class SqsServiceImpl implements SqsService {
 
 	private Logger logger = LoggerFactory.getLogger(SqsServiceImpl.class);
-	
-	 @Resource
-	 JmsOperations jmsOperations;
+
+	@Resource
+	JmsOperations jmsOperations;
 
 	@Autowired
 	ConnectionFactory connectionFactory;
 
-	@Override
-	@ManagedOperation
-	public ResponseEntity<String> sendMessage(TextMessage message) {
-		try {
-			return sendMessage(message.getText());
-		} catch (JMSException e) {
-			logger.error("Error Message: {}", e);
-		}
-		return null;
-	}
-	 
+
 	/**
 	 * Sends the message to the main queue.
 	 */
 	@Override
 	@ManagedOperation
-	public ResponseEntity<String> sendMessage(String request) {
-		logger.info("Handling request: '{}'", request);
+	public ResponseEntity<String> sendMessage(Message message) {
+		logger.info("Handling request: '{}'", message);
 		logger.info("jmsOperations: '{}'", jmsOperations);
 
 		final String messageId = jmsOperations.execute(new ProducerCallback<String>() {
 			@Override
 			public String doInJms(Session session, MessageProducer producer) throws JMSException {
-				final TextMessage message = session.createTextMessage(request);
 				message.setJMSTimestamp(System.currentTimeMillis());
 				producer.send(message);
-				logger.info("Sent JMS message with payload='{}', id: '{}'", request, message.getJMSMessageID());
+				logger.info("Sent JMS message with payload='{}', id: '{}'", message, message.getJMSMessageID());
 				return message.getJMSMessageID();
 			}
 		});
 
 		return new ResponseEntity<>(messageId, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Creates a TextMessage
 	 */

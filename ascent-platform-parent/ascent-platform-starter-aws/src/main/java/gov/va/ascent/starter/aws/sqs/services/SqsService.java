@@ -1,28 +1,23 @@
 package gov.va.ascent.starter.aws.sqs.services;
 
+import javax.jms.Message;
 import javax.jms.TextMessage;
 
 import org.springframework.http.ResponseEntity;
 
 public interface SqsService {
+	
 	/**
-     * Sends a message to SQS
-     * @param request message
-     * @return response entity
-     */
-	public ResponseEntity<String> sendMessage(String request);
-
-	/**
-	 * Send a TextMessage
+	 * Send a Message
 	 * @param message
-	 * @return
+	 * @return returns a JMS ID
 	 */
-	public ResponseEntity<String> sendMessage(TextMessage message);
+	public ResponseEntity<String> sendMessage(Message message);
     
 	/**
 	 * Create a TextMessage
 	 * @param message
-	 * @return
+	 * @return returns a TextMessage 
 	 */
 	public TextMessage createTextMessage(String message);
 }
