@@ -2,6 +2,11 @@
 
 This project includes docker build and deployment for the Ascent Platform
 
+### containers
+### run-docker 
+### swarm 
+
+
 ## Deployment
 
 ### Tool Needed
