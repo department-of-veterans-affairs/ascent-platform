@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+rm -rf $WORKSPACE/*
+git clone https://${GIT_ACCESS_TOKEN}@github.com/department-of-veterans-affairs/vetservices-refdata.git
+cd vetservices-refdata
+git checkout development
+cd vetservices-refdata-perftest
+echo ${WORKSPACE}
+sh /opt/jmeter/apache-jmeter-4.0/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=csv -n -t RefdataLoadPerformanceTest.jmx -Jloadusers=4 -Jlduration=2 -Jprotocol=https -Jbaseurl=ci.internal.vets-api.gov -Jport=443 -l ${WORKSPACE}/testresult.csv -e -o ${WORKSPACE}/htlmlreport
+zip -r ${WORKSPACE}/../../../htlmlreport.zip ${WORKSPACE}/htlmlreport</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.34">
+      <deleteDirs>false</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+  </buildWrappers>
+</project>

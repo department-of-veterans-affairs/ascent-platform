@@ -11,9 +11,6 @@
   <artifactId>ascent-platform-starter-swagger</artifactId>
   <name>${project.artifactId}</name>
   <description>Ascent platform starter for Swagger</description>
-  <properties>
-    <springfox.version>2.7.0</springfox.version>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
