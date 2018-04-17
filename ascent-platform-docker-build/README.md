@@ -3,9 +3,18 @@
 This project includes docker build and deployment for the Ascent Platform
 
 ### containers
-### run-docker 
-### swarm 
+Holds all containers needed for ascent-platform-docker-build. Use the container/{container_name}/docker-compose_local directory for deploying locally. For example, to deploy the elasticsearch container:
+```
+cd containers/elasticsearch/docker-compose_local
+docker-compose up --build
+```
+If you want to deploy more than one container, you would need to use `-f` with the path of each docker-compose.yml files (not the recommended way). Instead, use the run-docker binary file in the run-docker directory (see below).
 
+### run-docker
+Contains the golang code and binary for run-docker, which consolidates all of the `docker-compose -f ...` commands into a single command line application. Do `run-docker/run-docker` from the ascent-platform-docker-build dir to see all of the options or see the [README](https://github.com/department-of-veterans-affairs/ascent-platform/tree/development/ascent-platform-docker-build/run-docker) in the run-docker directory for more details.
+
+### swarm
+Contains all of the docker-compose files necessary for deploying a stack to a swarm.
 
 ## Deployment
 
