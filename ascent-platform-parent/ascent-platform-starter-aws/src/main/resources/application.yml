@@ -2,6 +2,12 @@
 #ascent:
 #  aws:
 #    localstack-config:
+#      s3:
+#       bucket: evsstestbucket
+#       target:
+#         bucket: evsstargetbucket
+#       region: us-east-1
+#       s3ednpoint: http://localhost:4572/
 #     services:
 #      # name: Service Name
 #      # port:  port

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -22,7 +23,10 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 
+import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+
 @Configuration
+@Profile(AscentCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS)
 public class S3Config {
 	private Logger logger = LoggerFactory.getLogger(S3Config.class);
 	

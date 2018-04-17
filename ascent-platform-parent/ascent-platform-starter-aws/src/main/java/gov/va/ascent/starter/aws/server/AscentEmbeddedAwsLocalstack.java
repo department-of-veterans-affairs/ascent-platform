@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.CollectionUtils;
 
@@ -31,6 +32,7 @@ import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
  * @author akulkarni
  */
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
+@EnableConfigurationProperties(AscentAwsLocalstackProperties.class)
 public class AscentEmbeddedAwsLocalstack {
 
 	/** The Constant LOGGER. */
@@ -39,14 +41,14 @@ public class AscentEmbeddedAwsLocalstack {
 	private static LocalstackDocker localstackDocker = LocalstackDocker.getLocalstackDocker();
 	private static String externalHostName = "localhost";
 	private static boolean pullNewImage = true;
-	private static boolean randomizePorts = true;
+	private static boolean randomizePorts = false;
 	private static Map<String, String> environmentVariables = new HashMap<>();
 	
 	/**
      * Localstack Properties Bean
      */
     @Autowired
-    private AscentAwsLocalstackProperties localstackProperties;
+    private AscentAwsLocalstackProperties ascentAwsLocalstackProperties;
 
 
 	public LocalstackDocker getLocalstackDocker() {
@@ -60,7 +62,6 @@ public class AscentEmbeddedAwsLocalstack {
 	 */
 	@PostConstruct
 	public void startAwsLocalStack() {
-		
 		if(localstackDocker !=null && localstackDocker.getLocalStackContainer() !=null) {
 			LOGGER.info("AWS localstack already running, not trying to re-start: {} ", localstackDocker.getLocalStackContainer());
 			return;
@@ -69,7 +70,7 @@ public class AscentEmbeddedAwsLocalstack {
 			localstackDocker.setPullNewImage(pullNewImage);
 			localstackDocker.setRandomizePorts(randomizePorts);
 			
-			List<Services> listServices = localstackProperties.getServices();
+			List<Services> listServices = ascentAwsLocalstackProperties.getServices();
 			
 			if (!CollectionUtils.isEmpty(listServices)) {
 				LOGGER.info("Services List: {}", ReflectionToStringBuilder.toString(listServices));
