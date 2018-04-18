@@ -40,8 +40,8 @@ public class S3LocalStackConfig {
 	@Value("${ascent.aws.localstack-config.s3.region}")
 	private String region;
 	
-	@Value("${ascent.aws.localstack-config.s3.s3ednpoint}")
-	private String s3ednpoint;
+	@Value("${ascent.aws.localstack-config.s3.s3endpoint}")
+	private String s3endpoint;
 	
 	@Value("${ascent.aws.localstack-config.s3.bucket}")
 	private String sourceBucket;
@@ -61,7 +61,7 @@ public class S3LocalStackConfig {
 		AmazonS3ClientBuilder s3ClientBuider = AmazonS3ClientBuilder.standard()
 		    .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("foo", "foo")));
 		
-		s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(s3ednpoint, region));
+		s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(s3endpoint, region));
 		s3ClientBuider.setPathStyleAccessEnabled(true);
 		AmazonS3 s3 = s3ClientBuider.build();
 		s3.createBucket(sourceBucket);

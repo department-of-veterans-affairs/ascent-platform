@@ -5,6 +5,7 @@ import javax.jms.ConnectionFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -23,10 +24,13 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
+import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
 @EnableJms
+@Profile(AscentCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS)
 public abstract class AbstractSqsConfiguration {
 
 	@Bean
