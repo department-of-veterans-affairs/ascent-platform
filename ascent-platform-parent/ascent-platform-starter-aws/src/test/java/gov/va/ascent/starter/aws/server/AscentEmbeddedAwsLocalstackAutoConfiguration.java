@@ -3,11 +3,13 @@ package gov.va.ascent.starter.aws.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
+import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 
 /**
  * 
@@ -21,6 +23,15 @@ public class AscentEmbeddedAwsLocalstackAutoConfiguration {
 	@ConditionalOnMissingBean
 	public AscentEmbeddedAwsLocalstack ascentEmbeddedAwsServers() {
 		return new AscentEmbeddedAwsLocalstack();
+	}
+	
+	@Bean
+	@ConditionalOnMissingBean
+	public SqsProperties sqsProperties() {
+		SqsProperties sqsProperties = new SqsProperties();
+		sqsProperties.setEndpoint("https://localhost/180197991925/evssstandardqueue");
+		sqsProperties.setDlqendpoint("https://localhost/180197991925/evssdeadletterqueue");
+		return sqsProperties;
 	}
 	
 	@Bean

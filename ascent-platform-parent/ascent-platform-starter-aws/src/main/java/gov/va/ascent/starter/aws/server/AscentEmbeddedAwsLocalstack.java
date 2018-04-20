@@ -64,14 +64,11 @@ public class AscentEmbeddedAwsLocalstack {
 
     @Autowired
     private SqsProperties sqsProperties;
-    
-    @Autowired
-    private AmazonS3 s3client;
 	
-	@Value("${ascent.s3.bucket}")
+	@Value("${ascent.s3.bucket:sourcebucket}")
 	private String sourcebucket;
 	
-	@Value("${ascent.s3.target.bucket}")
+	@Value("${ascent.s3.target.bucket:targetbucket}")
 	private String targetbucket;
 
 	public LocalstackDocker getLocalstackDocker() {
@@ -124,8 +121,10 @@ public class AscentEmbeddedAwsLocalstack {
 	}
 
 	private void createBuckets() {
-		s3client.createBucket(sourcebucket);
-		s3client.createBucket(targetbucket);
+		AmazonS3 amazonS3Client = DockerTestUtils.getClientS3();
+
+		amazonS3Client.createBucket(sourcebucket);
+		amazonS3Client.createBucket(targetbucket);
 	}
 	private void createQueues() {
 		AmazonSQS client = DockerTestUtils.getClientSQS();

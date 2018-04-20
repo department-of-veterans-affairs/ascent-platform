@@ -7,14 +7,35 @@ package gov.va.ascent.starter.aws.sqs.config;
 
 import javax.jms.ConnectionFactory;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.core.env.Environment;
+
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 /**
  *
  * @author rajuthota
  */
+@RunWith(MockitoJUnitRunner.class)
 public class StandardSqsConfigurationTest {
+	
+    @InjectMocks
+    StandardSqsConfiguration standardSqsConfiguration = new StandardSqsConfiguration();
+	
+    @Mock
+    private Environment environment;
+    
+	@Before
+	public void setUp() throws Exception {
+        String[] profiles = { "local-int" };
+		when(environment.getActiveProfiles()).thenReturn(profiles);
+	}
 
     /**
      * Test of connectionFactory method, of class StandardSqsConfiguration.
@@ -26,9 +47,7 @@ public class StandardSqsConfigurationTest {
         sqsProperties.setSecretKey("sampleSecrectKey");
         sqsProperties.setRegion("us-west-2");
         sqsProperties.setEndpoint("http://localhost:8080/endpoint");
-        StandardSqsConfiguration instance = new StandardSqsConfiguration();
-        ConnectionFactory result = instance.connectionFactory(sqsProperties);
+        ConnectionFactory result = standardSqsConfiguration.connectionFactory(sqsProperties);
         assertNotNull(result);
     }
-    
 }
