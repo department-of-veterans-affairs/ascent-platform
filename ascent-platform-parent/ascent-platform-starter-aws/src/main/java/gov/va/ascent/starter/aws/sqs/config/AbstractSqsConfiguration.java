@@ -3,7 +3,6 @@ package gov.va.ascent.starter.aws.sqs.config;
 import javax.jms.ConnectionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,6 @@ import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
 import cloud.localstack.docker.LocalstackDockerTestRunner;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
-import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstack;
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
@@ -36,9 +34,6 @@ import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstack;
 public abstract class AbstractSqsConfiguration {
 	@Autowired
     Environment environment;
-	
-	@Autowired
-	AscentEmbeddedAwsLocalstack ascentEmbeddedAwsLocalstack;
 	
 	@Bean
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);

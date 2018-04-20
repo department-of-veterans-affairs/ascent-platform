@@ -1,18 +1,24 @@
 package gov.va.ascent.starter.aws.s3.config;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.transfer.TransferManager;
+
+import ch.qos.logback.core.Appender;
 
 @RunWith(MockitoJUnitRunner.class)
 public class S3ConfigTest {
@@ -22,16 +28,23 @@ public class S3ConfigTest {
 	private static final String TEST_AWS_REGION = "us-east-1";
 	private static final String TEST_AWS_BUCKET = "test-bucket";
 	
-	@Autowired
-	S3Config s3Config;
+    @InjectMocks
+	S3Config s3Config = new S3Config();
 	
+    @Mock
+    private Environment environment;
+    
 	@Before
 	public void setUp() throws Exception {
-		s3Config = new S3Config();
 		ReflectionTestUtils.setField(s3Config, "awsId", TEST_AWS_ID);
 		ReflectionTestUtils.setField(s3Config, "awsKey", TEST_AWS_KEY);
 		ReflectionTestUtils.setField(s3Config, "region", TEST_AWS_REGION);
 		ReflectionTestUtils.setField(s3Config, "bucketName", TEST_AWS_BUCKET);
+		
+        String[] profiles = { "local-int" };
+
+		
+		when(environment.getActiveProfiles()).thenReturn(profiles);
 	}
 	
 	@Test
