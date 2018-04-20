@@ -57,8 +57,7 @@ public class S3Config {
 						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsId, awsKey)));
 				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(endpoint, region));
 				s3ClientBuider.setPathStyleAccessEnabled(true);
-				AmazonS3 s3 = s3ClientBuider.build();
-				return s3;
+				return s3ClientBuider.build();
 			}
 		}
 

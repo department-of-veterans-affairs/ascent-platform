@@ -2,11 +2,8 @@ package gov.va.ascent.starter.aws.sqs.config;
 
 import javax.jms.ConnectionFactory;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstack;
 
 @Configuration
 public class StandardSqsConfiguration extends AbstractSqsConfiguration {
