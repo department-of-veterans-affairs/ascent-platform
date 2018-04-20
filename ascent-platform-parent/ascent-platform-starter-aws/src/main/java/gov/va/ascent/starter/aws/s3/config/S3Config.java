@@ -9,14 +9,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -26,7 +28,6 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 
 @Configuration
-@Profile(AscentCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS)
 public class S3Config {
 	private Logger logger = LoggerFactory.getLogger(S3Config.class);
 	
@@ -41,9 +42,25 @@ public class S3Config {
 	
 	@Value("${ascent.s3.bucket}")
 	private String bucketName;
+	
+	@Value("${ascent.aws.localstack-config.s3.endpoint}")
+	private String endpoint;
+	
+	@Autowired
+    Environment environment;
 
 	@Bean
 	public AmazonS3 s3client() {
+		for (final String profileName : environment.getActiveProfiles()) {
+			if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				AmazonS3ClientBuilder s3ClientBuider = AmazonS3ClientBuilder.standard()
+						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsId, awsKey)));
+				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(endpoint, region));
+				s3ClientBuider.setPathStyleAccessEnabled(true);
+				AmazonS3 s3 = s3ClientBuider.build();
+				return s3;
+			}
+		}
 
 		BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
 		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))

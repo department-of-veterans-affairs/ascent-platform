@@ -15,15 +15,25 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.CollectionUtils;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
+import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
+import com.amazonaws.services.sqs.model.QueueAttributeName;
+
+import cloud.localstack.DockerTestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.LocalstackDocker;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
-
+import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 
 /**
  * This class will start and stop AWS localstack services, to be used for local envs. The profile embedded-aws needs to be 
@@ -31,14 +41,16 @@ import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
  *
  * @author akulkarni
  */
+@Configuration
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
-@EnableConfigurationProperties(AscentAwsLocalstackProperties.class)
+@EnableConfigurationProperties({AscentAwsLocalstackProperties.class, SqsProperties.class})
 public class AscentEmbeddedAwsLocalstack {
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(AscentEmbeddedAwsLocalstack.class);
 
 	private static LocalstackDocker localstackDocker = LocalstackDocker.getLocalstackDocker();
+	
 	private static String externalHostName = "localhost";
 	private static boolean pullNewImage = true;
 	private static boolean randomizePorts = false;
@@ -50,6 +62,17 @@ public class AscentEmbeddedAwsLocalstack {
     @Autowired
     private AscentAwsLocalstackProperties ascentAwsLocalstackProperties;
 
+    @Autowired
+    private SqsProperties sqsProperties;
+    
+    @Autowired
+    private AmazonS3 s3client;
+	
+	@Value("${ascent.s3.bucket}")
+	private String sourcebucket;
+	
+	@Value("${ascent.s3.target.bucket}")
+	private String targetbucket;
 
 	public LocalstackDocker getLocalstackDocker() {
 		return localstackDocker;
@@ -94,10 +117,37 @@ public class AscentEmbeddedAwsLocalstack {
 			// create and start S3, SQS API mock
 			LOGGER.info("starting localstack: {} ", ReflectionToStringBuilder.toString(localstackDocker));
 			localstackDocker.startup();
+			
+			createBuckets();
+			createQueues();
 		}
-
 	}
 
+	private void createBuckets() {
+		s3client.createBucket(sourcebucket);
+		s3client.createBucket(targetbucket);
+	}
+	private void createQueues() {
+		AmazonSQS client = DockerTestUtils.getClientSQS();
+
+		String deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
+
+		GetQueueAttributesRequest getAttributesRequest = new GetQueueAttributesRequest(deadletterQueueUrl)
+				.withAttributeNames(QueueAttributeName.QueueArn);
+		GetQueueAttributesResult queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
+
+		String redrivePolicy = "{\"maxReceiveCount\":\"1\", \"deadLetterTargetArn\":\""
+				+ queueAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+		
+		Map<String, String> attributeMap = new HashMap<>();
+		attributeMap.put("DelaySeconds", "0");
+		attributeMap.put("MaximumMessageSize", "262144");
+		attributeMap.put("MessageRetentionPeriod", "1209600");
+		attributeMap.put("ReceiveMessageWaitTimeSeconds", "20");
+		attributeMap.put("VisibilityTimeout", "30");
+		attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
+		client.createQueue(new CreateQueueRequest(sqsProperties.getQueueName()).withAttributes(attributeMap));
+	}
 	/**
 	 * stop embedded AWS servers on context destroy
 	 */

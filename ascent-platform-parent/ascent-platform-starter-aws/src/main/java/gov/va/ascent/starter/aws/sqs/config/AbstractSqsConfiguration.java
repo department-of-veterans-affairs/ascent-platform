@@ -2,10 +2,12 @@ package gov.va.ascent.starter.aws.sqs.config;
 
 import javax.jms.ConnectionFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -24,15 +26,20 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
+import cloud.localstack.docker.LocalstackDockerTestRunner;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
-
+import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstack;
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
 @EnableJms
-@Profile(AscentCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS)
 public abstract class AbstractSqsConfiguration {
-
+	@Autowired
+    Environment environment;
+	
+	@Autowired
+	AscentEmbeddedAwsLocalstack ascentEmbeddedAwsLocalstack;
+	
 	@Bean
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
 
@@ -63,10 +70,8 @@ public abstract class AbstractSqsConfiguration {
 	}
 
 	private AmazonSQS createAmazonSQSClient(SqsProperties sqsProperties) {
-		Regions region = Regions.fromName(sqsProperties.getRegion());
 
-		EndpointConfiguration endpointConfiguration = new EndpointConfiguration(
-				sqsProperties.getEndpoint(), region.getName());
+	    EndpointConfiguration endpointConfiguration = getEndpointConfiguration(sqsProperties);
 
 		AWSCredentialsProvider awsCredentialsProvider = createAwsCredentialsProvider(
 				sqsProperties.getAccessKey(),
@@ -80,6 +85,28 @@ public abstract class AbstractSqsConfiguration {
 				.build();
 	}
 
+	private EndpointConfiguration getEndpointConfiguration(SqsProperties sqsProperties) {
+	    boolean isEmbeddedAws = false;
+	    EndpointConfiguration endpointConfiguration = null;
+	    
+	    Regions region = Regions.fromName(sqsProperties.getRegion());
+
+	    for (final String profileName : environment.getActiveProfiles()) {
+	      if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+	        isEmbeddedAws = true;
+	      }
+	    }
+	    
+	    if (isEmbeddedAws) {
+	      endpointConfiguration = new EndpointConfiguration(
+	    		  LocalstackDockerTestRunner.getLocalstackDocker().getEndpointSQS(), region.getName());
+	    } else {
+	      endpointConfiguration = new EndpointConfiguration(
+	          sqsProperties.getEndpoint(), region.getName());
+	    }
+	    return endpointConfiguration;
+	  }
+	
 	private AWSCredentialsProvider createAwsCredentialsProvider(
 			String localAccessKey, String localSecretKey) {
 

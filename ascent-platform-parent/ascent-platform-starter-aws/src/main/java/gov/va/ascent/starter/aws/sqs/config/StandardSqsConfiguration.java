@@ -1,14 +1,14 @@
 package gov.va.ascent.starter.aws.sqs.config;
 
 import javax.jms.ConnectionFactory;
+
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstack;
 
 @Configuration
-@Profile(AscentCommonSpringProfiles.NOT_PROFILE_EMBEDDED_AWS)
 public class StandardSqsConfiguration extends AbstractSqsConfiguration {
 
   @Bean
