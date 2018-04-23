@@ -46,7 +46,6 @@ public class S3ConfigTest {
 		ReflectionTestUtils.setField(s3Config, "endpoint", TEST_END_POINT);
 		
         final Logger logger = (Logger) LoggerFactory.getLogger(S3Config.class);
-        //logger.addAppender(mockAppender);
         logger.setLevel(Level.DEBUG);
 	}
 	

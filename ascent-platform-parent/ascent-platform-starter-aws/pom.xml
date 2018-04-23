@@ -14,6 +14,7 @@
   <properties>
 	  <amazon-sqs-java-extended-client-lib.version>1.0.1</amazon-sqs-java-extended-client-lib.version>
 	  <amazon-sqs-java-messaging-lib.version>1.0.3</amazon-sqs-java-messaging-lib.version>
+	  <sonar.exclusions>src/main/java/gov/va/ascent/starter/aws/server/*Application.java</sonar.exclusions>
   </properties>
   
   <dependencies>

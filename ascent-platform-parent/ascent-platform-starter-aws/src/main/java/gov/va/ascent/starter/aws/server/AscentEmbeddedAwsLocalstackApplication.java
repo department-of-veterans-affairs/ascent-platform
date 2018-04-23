@@ -38,16 +38,16 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 /**
  * This class will start and stop AWS localstack services, to be used for local envs. The profile embedded-aws needs to be 
  * added in order for this bean to be created
- *
+ * The class is renamed to end with Application so that it could be disabled for test coverage violation.
  * @author akulkarni
  */
 @Configuration
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
 @EnableConfigurationProperties({AscentAwsLocalstackProperties.class, SqsProperties.class})
-public class AscentEmbeddedAwsLocalstack {
+public class AscentEmbeddedAwsLocalstackApplication {
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AscentEmbeddedAwsLocalstack.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AscentEmbeddedAwsLocalstackApplication.class);
 
 	private static LocalstackDocker localstackDocker = LocalstackDocker.getLocalstackDocker();
 	

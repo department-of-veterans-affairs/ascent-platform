@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstack;
+import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstackApplication;
 import gov.va.ascent.starter.aws.sqs.config.AbstractSqsConfiguration;
 import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 import gov.va.ascent.starter.aws.sqs.config.StandardSqsConfiguration;
@@ -24,7 +24,7 @@ import gov.va.ascent.starter.aws.sqs.services.impl.SqsServiceImpl;
 public class AscentSqsAutoConfiguration {
 	
 	@Autowired
-	AscentEmbeddedAwsLocalstack ascentEmbeddedAwsLocalstack;
+	AscentEmbeddedAwsLocalstackApplication ascentEmbeddedAwsLocalstack;
 	
 	@Bean
 	@ConditionalOnMissingBean
