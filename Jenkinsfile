@@ -20,7 +20,7 @@ dockerPipeline {
         "ascent/rabbitmq":"ascent-platform-docker-build/containers/rabbitmq",
         "ascent/ascent-vault":"ascent-platform-docker-build/containers/vault",
         "ascent/sonar":"ascent-platform-docker-build/containers/sonarqube",
-        "ascent/sonar-db":"ascent-platform-docker-build/containers/sonarqube/database",
+        "ascent/sonar-db":"ascent-platform-docker-build/containers/sonarqube-database",
         "ascent/jenkins":"ascent-platform-docker-build/containers/jenkins",
         "ascent/jenkins-sonar-config":"ascent-platform-docker-build/containers/jenkins-sonar-config",
     ]
