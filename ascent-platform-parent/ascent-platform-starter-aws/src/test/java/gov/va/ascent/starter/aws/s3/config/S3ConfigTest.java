@@ -11,12 +11,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.transfer.TransferManager;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -40,12 +43,11 @@ public class S3ConfigTest {
 		ReflectionTestUtils.setField(s3Config, "awsKey", TEST_AWS_KEY);
 		ReflectionTestUtils.setField(s3Config, "region", TEST_AWS_REGION);
 		ReflectionTestUtils.setField(s3Config, "bucketName", TEST_AWS_BUCKET);
-		ReflectionTestUtils.setField(s3Config, "endpoint", TEST_AWS_BUCKET);
-
-        String[] profiles = { AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS };
-
+		ReflectionTestUtils.setField(s3Config, "endpoint", TEST_END_POINT);
 		
-		when(environment.getActiveProfiles()).thenReturn(profiles);
+        final Logger logger = (Logger) LoggerFactory.getLogger(S3Config.class);
+        //logger.addAppender(mockAppender);
+        logger.setLevel(Level.DEBUG);
 	}
 	
 	@Test
@@ -58,12 +60,24 @@ public class S3ConfigTest {
 	
 	@Test
 	public void testS3Client() throws Exception {
+        String[] profiles = { AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS };
+		when(environment.getActiveProfiles()).thenReturn(profiles);
+		AmazonS3 amazonS3 = s3Config.s3client();
+		assertNotNull(amazonS3);
+	}
+	
+	@Test
+	public void testS3Client_localIntProfile() throws Exception {
+        String[] profiles = { AscentCommonSpringProfiles.PROFILE_ENV_LOCAL_INT };
+		when(environment.getActiveProfiles()).thenReturn(profiles);
 		AmazonS3 amazonS3 = s3Config.s3client();
 		assertNotNull(amazonS3);
 	}
 	
 	@Test
 	public void testS3TransferManager() throws Exception {
+        String[] profiles = { AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS };
+		when(environment.getActiveProfiles()).thenReturn(profiles);
 		TransferManager amazonS3TransferManager = s3Config.transferManager();
 		assertNotNull(amazonS3TransferManager);
 	}

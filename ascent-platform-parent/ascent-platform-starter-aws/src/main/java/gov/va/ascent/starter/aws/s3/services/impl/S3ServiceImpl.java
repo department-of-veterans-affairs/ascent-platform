@@ -46,6 +46,10 @@ import gov.va.ascent.starter.aws.s3.services.S3Service;
 public class S3ServiceImpl implements S3Service {
 	
 	private Logger logger = LoggerFactory.getLogger(S3ServiceImpl.class);
+
+	public static final String ERROR_MESSAGE = "Error Message: {}"; 
+	public static final String ERROR = "Error: {}"; 
+	public static final String UPLOAD_RESULT = "UploadResult: {}"; 
 	
 	@Autowired
 	private AmazonS3 s3client;
@@ -98,7 +102,6 @@ public class S3ServiceImpl implements S3Service {
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
 	}
 	
-	
 	/**
      * Upload a list of multipart files to S3
      * @param multipartFiles list of multipart files
@@ -116,12 +119,12 @@ public class S3ServiceImpl implements S3Service {
 						putObjectResults
 								.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
 					} catch (IOException e) {
-						logger.error("Error Message: {}", e);
+						logger.error(ERROR_MESSAGE, e);
 					}
 				});
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResults));
+			logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResults));
 		}
 
 		return new ResponseEntity<>(putObjectResults, HttpStatus.OK);
@@ -139,11 +142,11 @@ public class S3ServiceImpl implements S3Service {
         try {
             putObjectResult = upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
         } catch (IOException e) {
-        		logger.error("Error Message: {}", e);
+        		logger.error(ERROR_MESSAGE, e);
         }
         
         if (logger.isDebugEnabled()) {
-			 logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResult));
+			 logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
 	    }
 
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
@@ -157,14 +160,14 @@ public class S3ServiceImpl implements S3Service {
 	 * @return PutObjectResult returned from Amazon sdk
 	 */
 	@Override
-	public ResponseEntity<UploadResult> uploadByteArray(byte[] byteData, String fileName, Map<String, String> propertyMap) {
-		UploadResult putObjectResult = new UploadResult();
+	public ResponseEntity<UploadResult> uploadByteArray(byte[] byteData, String fileName,
+			Map<String, String> propertyMap) {
 
-		putObjectResult = upload(fileName, new ByteArrayInputStream(byteData), propertyMap);
-		
-        if (logger.isDebugEnabled()) {
-			 logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResult));
-	    }
+		UploadResult putObjectResult = upload(fileName, new ByteArrayInputStream(byteData), propertyMap);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
+		}
 
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
@@ -189,7 +192,7 @@ public class S3ServiceImpl implements S3Service {
 			uploadResult = upload.waitForUploadResult();
 			logger.info("Upload completed, bucket={}, key={}", uploadResult.getBucketName(), uploadResult.getKey());
 		} catch (AmazonServiceException ase) {
-			logger.error("Error: {}", ase);
+			logger.error(ERROR, ase);
 			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    {}", ase.getMessage());
 			logger.error("HTTP Status Code: {}", ase.getStatusCode());
@@ -197,7 +200,7 @@ public class S3ServiceImpl implements S3Service {
 			logger.error("Error Type:       {}", ase.getErrorType());
 			logger.error("Request ID:       {}", ase.getRequestId());
 		} catch (AmazonClientException ace) {
-			logger.error("Error: {}", ace);
+			logger.error(ERROR, ace);
 			logger.error("Caught an AmazonClientException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    " + ace.getMessage());
 		} catch (InterruptedException ie) { //NOSONAR
@@ -234,7 +237,7 @@ public class S3ServiceImpl implements S3Service {
 
 		} catch (IOException ioe) {
 			logger.error("Caught an IOException: ");
-			logger.error("Error Message: {}", ioe);
+			logger.error(ERROR_MESSAGE, ioe);
 		}
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
@@ -255,7 +258,7 @@ public class S3ServiceImpl implements S3Service {
             s3client.deleteObject(bucketName, key);
             logger.info("Deleting object. Bucket Name: {} Key : {}", bucketName, key);
         } catch (AmazonServiceException ase) {
-			logger.error("Error: {}", ase);
+			logger.error(ERROR, ase);
 			logger.error("Caught an AmazonServiceException, " + "which means your request made it "
 					+ "to Amazon S3, but was rejected with an error " + "response for some reason.");
 			logger.error("Error Message:    {}", ase.getMessage());
@@ -264,11 +267,11 @@ public class S3ServiceImpl implements S3Service {
 			logger.error("Error Type:       {}", ase.getErrorType());
 			logger.error("Request ID:       {}", ase.getRequestId());
 		} catch (AmazonClientException ace) {
-			logger.error("Error: {}", ace);
+			logger.error(ERROR, ace);
 			logger.error("Caught an AmazonClientException, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
 					+ "such as not being able to access the network.");
-			logger.error("Error Message: {}", ace.getMessage());
+			logger.error(ERROR_MESSAGE, ace.getMessage());
         }
 	}
 	
