@@ -17,6 +17,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.transfer.TransferManager;
 
+import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+
 @RunWith(MockitoJUnitRunner.class)
 public class S3ConfigTest {
 	
@@ -24,7 +26,8 @@ public class S3ConfigTest {
 	private static final String TEST_AWS_KEY = "test-key";
 	private static final String TEST_AWS_REGION = "us-east-1";
 	private static final String TEST_AWS_BUCKET = "test-bucket";
-	
+	private static final String TEST_END_POINT = "http://localhost:4572/evsstestbucket/";
+
     @InjectMocks
 	S3Config s3Config = new S3Config();
 	
@@ -37,8 +40,9 @@ public class S3ConfigTest {
 		ReflectionTestUtils.setField(s3Config, "awsKey", TEST_AWS_KEY);
 		ReflectionTestUtils.setField(s3Config, "region", TEST_AWS_REGION);
 		ReflectionTestUtils.setField(s3Config, "bucketName", TEST_AWS_BUCKET);
-		
-        String[] profiles = { "local-int" };
+		ReflectionTestUtils.setField(s3Config, "endpoint", TEST_AWS_BUCKET);
+
+        String[] profiles = { AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS };
 
 		
 		when(environment.getActiveProfiles()).thenReturn(profiles);

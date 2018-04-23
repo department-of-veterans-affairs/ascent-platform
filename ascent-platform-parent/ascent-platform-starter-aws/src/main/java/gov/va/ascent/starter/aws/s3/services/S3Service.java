@@ -50,4 +50,13 @@ public interface S3Service {
      * @param message
      */
     public void moveMessageToS3(String key, String message);
+    
+	/**
+	 * Upload a byte array to S3
+	 * @param byteData
+	 * @param fileName
+	 * @param propertyMap
+	 * @return
+	 */
+    public ResponseEntity<UploadResult> uploadByteArray(byte[] byteData, String fileName, Map<String, String> propertyMap);
 }

@@ -1,5 +1,6 @@
 package gov.va.ascent.starter.aws.s3.services.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -148,6 +149,25 @@ public class S3ServiceImpl implements S3Service {
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 	
+	/**
+	 * Upload a byte array to S3
+	 * @param byteData
+	 * @param fileName
+	 * @param propertyMap
+	 * @return PutObjectResult returned from Amazon sdk
+	 */
+	@Override
+	public ResponseEntity<UploadResult> uploadByteArray(byte[] byteData, String fileName, Map<String, String> propertyMap) {
+		UploadResult putObjectResult = new UploadResult();
+
+		putObjectResult = upload(fileName, new ByteArrayInputStream(byteData), propertyMap);
+		
+        if (logger.isDebugEnabled()) {
+			 logger.debug("UploadResult: {}", ReflectionToStringBuilder.toString(putObjectResult));
+	    }
+
+		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
+	}
 	/**
      * Upload stream to S3
      * @param uploadKey

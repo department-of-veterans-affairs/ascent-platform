@@ -151,6 +151,20 @@ public class S3ServiceImplTest {
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
+	
+	@Test
+	public void testUploadByteArray() throws Exception {
+		List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+		Map<String, String> propertyMap = new HashMap<>();
+		propertyMap.put("documentName", "Sample Upload File");
+		Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadByteArray("some xml".getBytes(), "filename.txt", propertyMap);
+		assertEquals(200, bytesArray.getStatusCodeValue());
+	}
+	
 	@Test
 	public void testUploadMultiPartSingle_AmazonServiceException() throws Exception {
 		List<Bucket> bucketList = prepareBucketList();
