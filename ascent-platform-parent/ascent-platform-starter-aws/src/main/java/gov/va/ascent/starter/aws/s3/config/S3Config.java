@@ -2,11 +2,11 @@ package gov.va.ascent.starter.aws.s3.config;
 
 import static com.amazonaws.services.s3.internal.Constants.MB;
 
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
@@ -39,9 +38,6 @@ public class S3Config {
 	
 	@Value("${ascent.s3.region}")
 	private String region;
-	
-	@Value("${ascent.s3.bucket}")
-	private String bucketName;
 	
 	@Value("${ascent.aws.localstack-config.s3.endpoint}")
 	private String endpoint;
@@ -78,18 +74,7 @@ public class S3Config {
 									.withMultipartCopyThreshold(Long.valueOf(100 * Long.valueOf(MB)))
 									.withExecutorFactory(()->createExecutorService(20))
 									.build();
-		
-		int oneDay = 1000 * 60 * 60 * 24;
-		Date oneDayAgo = new Date(System.currentTimeMillis() - oneDay);
-		
-		try {
-			logger.info("bucketName: {}", bucketName);
-			tm.abortMultipartUploads(bucketName, oneDayAgo);
-			
-		} catch (AmazonClientException e) {
-			logger.error("Unable to upload file, upload was aborted, reason: {}" + e);
-		}
-		
+		logger.debug("TransferManager {}", ReflectionToStringBuilder.toString(tm));
 		return tm;
 	}
 	
