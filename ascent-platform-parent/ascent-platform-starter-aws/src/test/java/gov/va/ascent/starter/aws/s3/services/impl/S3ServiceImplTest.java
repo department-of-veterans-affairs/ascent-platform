@@ -5,19 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,13 +25,11 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -51,7 +45,6 @@ import com.amazonaws.services.s3.transfer.model.UploadResult;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import gov.va.ascent.starter.aws.s3.config.S3Config;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
 
@@ -147,7 +140,7 @@ public class S3ServiceImplTest {
 	public void testUploadMultiPartSingle() throws Exception {
 		List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
-		Map<String, String> propertyMap = new HashMap();
+		Map<String, String> propertyMap = new HashMap<String, String>();
 		propertyMap.put("documentName", "Sample Upload File");
 		MockMultipartFile mockFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
 		Upload upload = mock(Upload.class);
@@ -175,7 +168,7 @@ public class S3ServiceImplTest {
 	public void testUploadMultiPartSingle_AmazonServiceException() throws Exception {
 		List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
-		Map<String, String> propertyMap = new HashMap();
+		Map<String, String> propertyMap = new HashMap<String, String>();
 		propertyMap.put("documentName", "Sample Upload File");
 		MockMultipartFile mockFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
 		Upload upload = mock(Upload.class);
@@ -189,7 +182,7 @@ public class S3ServiceImplTest {
 	public void testUploadMultiPartSingle_AmazonClientException() throws Exception {
 		List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
-		Map<String, String> propertyMap = new HashMap();
+		Map<String, String> propertyMap = new HashMap<String, String>();
 		propertyMap.put("documentName", "Sample Upload File");
 		MockMultipartFile mockFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
 		Upload upload = mock(Upload.class);
@@ -203,7 +196,7 @@ public class S3ServiceImplTest {
 	public void testUploadMultiPartSingle_IOException() throws Exception {
 		List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
-		Map<String, String> propertyMap = new HashMap();
+		Map<String, String> propertyMap = new HashMap<String, String>();
 		propertyMap.put("documentName", "Sample Upload File");
 		MockMultipartFile mockFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
 		Upload upload = mock(Upload.class);
