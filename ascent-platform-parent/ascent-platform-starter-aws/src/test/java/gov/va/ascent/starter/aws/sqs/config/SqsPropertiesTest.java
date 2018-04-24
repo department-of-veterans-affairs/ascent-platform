@@ -5,11 +5,9 @@
  */
 package gov.va.ascent.starter.aws.sqs.config;
 
-import java.util.Optional;
-import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

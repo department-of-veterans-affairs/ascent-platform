@@ -25,8 +25,6 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsOperations;
@@ -37,8 +35,6 @@ import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SqsServiceImplTest {
-
-	private Logger logger = LoggerFactory.getLogger(SqsServiceImplTest.class);
 
 	@Mock
 	JmsOperations jmsOperations;
@@ -81,6 +77,7 @@ public class SqsServiceImplTest {
 		assertEquals("Test-Message", response.getText());
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void prepareSqsMock() throws Exception {
 		Session mockSession = mock(Session.class);
 		TemporaryQueue mockTemporaryQueue = mock(TemporaryQueue.class);
