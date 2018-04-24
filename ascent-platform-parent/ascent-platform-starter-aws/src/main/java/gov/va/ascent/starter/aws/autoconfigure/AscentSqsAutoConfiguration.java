@@ -13,7 +13,6 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 import gov.va.ascent.starter.aws.sqs.config.StandardSqsConfiguration;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 import gov.va.ascent.starter.aws.sqs.services.impl.SqsServiceImpl;
-
 /**
  * Created by akulkarni on 2/1/18.
  */
@@ -23,7 +22,7 @@ import gov.va.ascent.starter.aws.sqs.services.impl.SqsServiceImpl;
 @Import({AbstractSqsConfiguration.class, StandardSqsConfiguration.class})
 public class AscentSqsAutoConfiguration {
 	
-	@Autowired
+	@Autowired(required=false)
 	AscentEmbeddedAwsLocalstackApplication ascentEmbeddedAwsLocalstack;
 	
 	@Bean
