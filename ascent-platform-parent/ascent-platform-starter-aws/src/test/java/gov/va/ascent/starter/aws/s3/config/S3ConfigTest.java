@@ -28,7 +28,6 @@ public class S3ConfigTest {
 	private static final String TEST_AWS_ID = "test-id";
 	private static final String TEST_AWS_KEY = "test-key";
 	private static final String TEST_AWS_REGION = "us-east-1";
-	private static final String TEST_AWS_BUCKET = "test-bucket";
 	private static final String TEST_END_POINT = "http://localhost:4572/evsstestbucket/";
 
     @InjectMocks
@@ -42,7 +41,6 @@ public class S3ConfigTest {
 		ReflectionTestUtils.setField(s3Config, "awsId", TEST_AWS_ID);
 		ReflectionTestUtils.setField(s3Config, "awsKey", TEST_AWS_KEY);
 		ReflectionTestUtils.setField(s3Config, "region", TEST_AWS_REGION);
-		ReflectionTestUtils.setField(s3Config, "bucketName", TEST_AWS_BUCKET);
 		ReflectionTestUtils.setField(s3Config, "endpoint", TEST_END_POINT);
 		
         final Logger logger = (Logger) LoggerFactory.getLogger(S3Config.class);
@@ -54,7 +52,6 @@ public class S3ConfigTest {
 		Assert.assertEquals(TEST_AWS_ID, FieldUtils.readField(s3Config, "awsId", true));
 		Assert.assertEquals(TEST_AWS_KEY, FieldUtils.readField(s3Config, "awsKey", true));
 		Assert.assertEquals(TEST_AWS_REGION, FieldUtils.readField(s3Config, "region", true));
-		Assert.assertEquals(TEST_AWS_BUCKET, FieldUtils.readField(s3Config, "bucketName", true));
 	}
 	
 	@Test
