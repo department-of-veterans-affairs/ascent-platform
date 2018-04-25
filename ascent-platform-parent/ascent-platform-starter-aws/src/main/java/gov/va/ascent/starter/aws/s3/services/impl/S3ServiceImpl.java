@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -60,14 +59,6 @@ public class S3ServiceImpl implements S3Service {
 	@Autowired
 	private ResourceLoader resourceLoader;
 
-	@Value("${ascent.s3.bucket}")
-	private String bucketName;
-
-	@Value("${ascent.s3.target.bucket}")
-	private String targetBucketName;
-	
-	@Value("${ascent.s3.dlq.bucket}")
-	private String dlqBucketName;
 	/**
      * Retrieves a file from S3
      * @param key key to the file i.e. /myfolder/myfile
@@ -76,7 +67,7 @@ public class S3ServiceImpl implements S3Service {
      * @throws IOException
      */
 	@Override
-	public ResponseEntity<byte[]> downloadFile(String keyName) throws IOException {
+	public ResponseEntity<byte[]> downloadFile(String bucketName, String keyName) throws IOException {
 		
 		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
         S3Object s3Object = s3client.getObject(getObjectRequest);
@@ -108,7 +99,7 @@ public class S3ServiceImpl implements S3Service {
      * @return list of PutObjectResults returned from Amazon sdk
      */
 	@Override
-	public ResponseEntity<List<UploadResult>> uploadMultiPart(MultipartFile[] multipartFiles) {
+	public ResponseEntity<List<UploadResult>> uploadMultiPart(String bucketName, MultipartFile[] multipartFiles) { 
 		List<UploadResult> putObjectResults = new ArrayList<>();
 
 		Arrays.stream(multipartFiles).filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
@@ -117,7 +108,7 @@ public class S3ServiceImpl implements S3Service {
 						// Passing null temporaily. When this method is used, null needs to be replaced
 						// with document metadata.
 						putObjectResults
-								.add(upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
+								.add(upload(bucketName, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
 					} catch (IOException e) {
 						logger.error(ERROR_MESSAGE, e);
 					}
@@ -136,11 +127,11 @@ public class S3ServiceImpl implements S3Service {
      * @return PutObjectResult returned from Amazon sdk
      */
 	@Override
-	public ResponseEntity<UploadResult> uploadMultiPartSingle(MultipartFile multipartFile, Map<String, String> propertyMap) {
+	public ResponseEntity<UploadResult> uploadMultiPartSingle(String bucketName, MultipartFile multipartFile, Map<String, String> propertyMap) {
 		UploadResult putObjectResult = new UploadResult();
 
         try {
-            putObjectResult = upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
+            putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
         } catch (IOException e) {
         		logger.error(ERROR_MESSAGE, e);
         }
@@ -160,10 +151,10 @@ public class S3ServiceImpl implements S3Service {
 	 * @return PutObjectResult returned from Amazon sdk
 	 */
 	@Override
-	public ResponseEntity<UploadResult> uploadByteArray(byte[] byteData, String fileName,
+	public ResponseEntity<UploadResult> uploadByteArray(String bucketName, byte[] byteData, String fileName,
 			Map<String, String> propertyMap) {
 
-		UploadResult putObjectResult = upload(fileName, new ByteArrayInputStream(byteData), propertyMap);
+		UploadResult putObjectResult = upload(bucketName, fileName, new ByteArrayInputStream(byteData), propertyMap);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
@@ -177,16 +168,15 @@ public class S3ServiceImpl implements S3Service {
      * @param inputStream 
      * @return PutObjectResult returned from Amazon sdk
      */
-	private UploadResult upload(String uploadKey, InputStream inputStream, Map<String, String> propertyMap) {
+	private UploadResult upload(String bucketName, String uploadKey, InputStream inputStream, Map<String, String> propertyMap) {
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setUserMetadata(propertyMap);
 		
 		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadKey, inputStream, objectMetadata);
 
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-		
 		Upload upload = transferManager.upload(putObjectRequest);
-		
+
 		UploadResult uploadResult = new UploadResult();
 		try {
 			uploadResult = upload.waitForUploadResult();
@@ -210,7 +200,7 @@ public class S3ServiceImpl implements S3Service {
 		finally {
 			IOUtils.closeQuietly(inputStream);
 		}
-		
+
 		return uploadResult;
 	}
 	
@@ -222,13 +212,13 @@ public class S3ServiceImpl implements S3Service {
      * @return 
      */
 	@Override
-	public ResponseEntity<UploadResult> uploadFile(String keyName, String uploadFilePath) {
+	public ResponseEntity<UploadResult> uploadFile(String bucketName, String keyName, String uploadFilePath) {
 		UploadResult putObjectResult = new UploadResult();
 
 		Map<String, String> propertyMap = new HashMap<>();
 
 		try {
-			putObjectResult = upload(keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
+			putObjectResult = upload(bucketName, keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("===================== Upload File - Done! =====================");
@@ -247,16 +237,16 @@ public class S3ServiceImpl implements S3Service {
      * @param key
 	 */
 	@Override
-	public void copyFileFromSourceToTargetBucket(String key) {
+	public void copyFileFromSourceToTargetBucket(String sourceBucketName, String targetBucketName, String key) {
         try {
             // Copying object
             CopyObjectRequest copyObjRequest = new CopyObjectRequest(
-            		bucketName, key, targetBucketName, key);
+            		sourceBucketName, key, targetBucketName, key);
             logger.info("Copying object. {}", ReflectionToStringBuilder.toString(copyObjRequest));
             s3client.copyObject(copyObjRequest);
             // Deleting object from original source bucket
-            s3client.deleteObject(bucketName, key);
-            logger.info("Deleting object. Bucket Name: {} Key : {}", bucketName, key);
+            s3client.deleteObject(sourceBucketName, key);
+            logger.info("Deleting object. Bucket Name: {} Key : {}", sourceBucketName, key);
         } catch (AmazonServiceException ase) {
 			logger.error(ERROR, ase);
 			logger.error("Caught an AmazonServiceException, " + "which means your request made it "
@@ -278,7 +268,7 @@ public class S3ServiceImpl implements S3Service {
 	/**
 	 * Copy the DLQ Message to S3 DLQ Bucket.
 	 */
-	public void moveMessageToS3(String key, String message) {
+	public void moveMessageToS3(String dlqBucketName, String key, String message) {
 		logger.info("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
 		s3client.putObject(dlqBucketName, key, message);
 	}

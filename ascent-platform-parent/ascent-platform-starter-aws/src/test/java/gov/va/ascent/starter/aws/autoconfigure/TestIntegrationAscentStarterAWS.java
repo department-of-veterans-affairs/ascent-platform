@@ -38,6 +38,7 @@ import gov.va.ascent.starter.aws.s3.services.S3Service;
 public class TestIntegrationAscentStarterAWS {
 
 	private static Logger logger = LoggerFactory.getLogger(TestIntegrationAscentStarterAWS.class);
+	private static final String TEST_BUCKET_NAME = "test-bucket";
 
 	private AnnotationConfigApplicationContext context;
 	
@@ -98,7 +99,7 @@ public class TestIntegrationAscentStarterAWS {
 			stream.write(content.getBytes());
 		}
 		
-		s3Service.uploadFile("test", file.getAbsolutePath());
+		s3Service.uploadFile(TEST_BUCKET_NAME, "test", file.getAbsolutePath());
 	}
 
 }

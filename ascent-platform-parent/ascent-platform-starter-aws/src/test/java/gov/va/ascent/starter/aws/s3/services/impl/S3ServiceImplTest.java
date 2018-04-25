@@ -75,9 +75,6 @@ public class S3ServiceImplTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		ReflectionTestUtils.setField(s3Service, "bucketName", TEST_BUCKET_NAME);
-		ReflectionTestUtils.setField(s3Service, "targetBucketName", TEST_TARGET_BUCKET);
-		ReflectionTestUtils.setField(s3Service, "dlqBucketName", TEST_DLQ_BUCKET);
         final Logger logger = (Logger) LoggerFactory.getLogger(S3ServiceImpl.class);
         logger.setLevel(Level.DEBUG);
 	}
@@ -85,9 +82,6 @@ public class S3ServiceImplTest {
 	@Test
 	public void testFields() throws Exception {
 		Assert.assertEquals(mockS3Client, FieldUtils.readField(s3Service, "s3client", true));
-		Assert.assertEquals(TEST_BUCKET_NAME, FieldUtils.readField(s3Service, "bucketName", true));
-		Assert.assertEquals(TEST_TARGET_BUCKET, FieldUtils.readField(s3Service, "targetBucketName", true));
-		Assert.assertEquals(TEST_DLQ_BUCKET, FieldUtils.readField(s3Service, "dlqBucketName", true));
 	}
 	
 	@Test
@@ -95,7 +89,7 @@ public class S3ServiceImplTest {
 		List<Bucket> bucketList = prepareBucketList();
 
 		prepareS3Mock(bucketList);
-		ResponseEntity<byte[]> bytesArray = s3Service.downloadFile("TEST-KEY");
+		ResponseEntity<byte[]> bytesArray = s3Service.downloadFile(TEST_BUCKET_NAME, "TEST-KEY");
 		assertNotNull(bytesArray);
 	}
 
@@ -131,7 +125,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
-		ResponseEntity<List<UploadResult>> bytesArray = s3Service.uploadMultiPart(multipartFiles);
+		ResponseEntity<List<UploadResult>> bytesArray = s3Service.uploadMultiPart(TEST_BUCKET_NAME, multipartFiles);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -146,7 +140,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -160,7 +154,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadByteArray("some xml".getBytes(), "filename.txt", propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadByteArray(TEST_BUCKET_NAME, "some xml".getBytes(), "filename.txt", propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 	
@@ -174,7 +168,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenThrow(new AmazonServiceException("Error occurred"));
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -188,7 +182,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenThrow(new AmazonClientException("Error occurred"));
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -203,7 +197,7 @@ public class S3ServiceImplTest {
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenThrow(new InterruptedException());
 		// doThrow(IOException.class).when(upload).waitForUploadResult();
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -213,7 +207,7 @@ public class S3ServiceImplTest {
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
 		when(resourceLoader.getResource(anyString())).thenReturn(mock(Resource.class));
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadFile("testFile.txt", "testFile.txt");
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -223,23 +217,23 @@ public class S3ServiceImplTest {
 		List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
 		when(mockS3Client.copyObject(anyObject())).thenReturn(mock(CopyObjectResult.class));
-		s3Service.copyFileFromSourceToTargetBucket("testFile.txt");
+		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
 	}
 	
 	@Test
 	public void testCopyFileFromSourceToTargetBucket_AmazonServiceException() {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonServiceException("Error occurred"));
-		s3Service.copyFileFromSourceToTargetBucket("testFile.txt");
+		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
 	}
 	
 	@Test
 	public void testCopyFileFromSourceToTargetBucket_AmazonClientException() {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
-		s3Service.copyFileFromSourceToTargetBucket("testFile.txt");
+		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
 	}
 	
 	@Test
 	public void testMoveMessageToS3() {
-		s3Service.moveMessageToS3("key", "messageBody");
+		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
 	}
 }

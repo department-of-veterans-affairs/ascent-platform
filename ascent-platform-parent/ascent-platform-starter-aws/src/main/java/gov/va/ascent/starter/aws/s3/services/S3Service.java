@@ -17,39 +17,39 @@ public interface S3Service {
      * @return response entity
      * @throws IOException
      */
-	public ResponseEntity<byte[]> downloadFile(String keyName) throws IOException;
+	public ResponseEntity<byte[]> downloadFile(String bucketName, String keyName) throws IOException;
 	/**
      * Upload a file to S3
      * @param keyName 
      * @param uploadFilePath 
      * @return 
      */
-	public ResponseEntity<UploadResult> uploadFile(String keyName, String uploadFilePath);
+	public ResponseEntity<UploadResult> uploadFile(String bucketName, String keyName, String uploadFilePath);
 	/**
      * Upload a list of multipart files to S3
      * @param multipartFiles list of multipart files
      * @return ResponseEntity<List of UploadResult> returned from Amazon sdk
      */
-	public ResponseEntity<List<UploadResult>> uploadMultiPart(MultipartFile[] multipartFiles);
+	public ResponseEntity<List<UploadResult>> uploadMultiPart(String bucketName, MultipartFile[] multipartFiles);
 	/**
      * Upload a single multipart file to S3
      * @param multipartFile multipart file
      * @return ResponseEntity<UploadResult> returned from Amazon sdk
      */
-    public ResponseEntity<UploadResult> uploadMultiPartSingle(MultipartFile multipartFile, Map<String, String> propertyMap);
+    public ResponseEntity<UploadResult> uploadMultiPartSingle(String bucketName, MultipartFile multipartFile, Map<String, String> propertyMap);
     
     /**
      * Copy a file from one bucket to another bucket.
      * @param key
      */
-    public void copyFileFromSourceToTargetBucket(String key);
+    public void copyFileFromSourceToTargetBucket(String sourceBucketName, String targetBucketName, String key);
     
     /**
      * Copy the DLQ Message to S3 DLQ Bucket.
      * @param key
      * @param message
      */
-    public void moveMessageToS3(String key, String message);
+    public void moveMessageToS3(String dlqBucketName, String key, String message);
     
 	/**
 	 * Upload a byte array to S3
@@ -58,5 +58,5 @@ public interface S3Service {
 	 * @param propertyMap
 	 * @return
 	 */
-    public ResponseEntity<UploadResult> uploadByteArray(byte[] byteData, String fileName, Map<String, String> propertyMap);
+    public ResponseEntity<UploadResult> uploadByteArray(String bucketName, byte[] byteData, String fileName, Map<String, String> propertyMap);
 }

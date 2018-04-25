@@ -69,7 +69,7 @@ public class S3Config {
 									.withS3Client(s3client())
 									.withDisableParallelDownloads(false)
 									.withMinimumUploadPartSize(Long.valueOf(5 * Long.valueOf(MB)))
-									.withMultipartUploadThreshold(Long.valueOf(16 * Long.valueOf(MB)))
+									.withMultipartUploadThreshold(Long.valueOf(5 * Long.valueOf(MB)))
 									.withMultipartCopyPartSize(Long.valueOf(5 * Long.valueOf(MB)))
 									.withMultipartCopyThreshold(Long.valueOf(100 * Long.valueOf(MB)))
 									.withExecutorFactory(()->createExecutorService(20))
