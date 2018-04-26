@@ -1,6 +1,20 @@
-# Centralize Logging for Ascent Platform
+# Ascent Platform Docker Build
 
-Implementation of the [Ascent Logging Design](https://github.com/department-of-veterans-affairs/ascent/wiki/Ascent-Logging:-Search-Visualize-and-Monitor) and [Platform Logging Design](https://github.com/department-of-veterans-affairs/ascent/wiki/Platform-Logging).
+This project includes docker build and deployment for the Ascent Platform
+
+### containers
+Holds all containers needed for ascent-platform-docker-build. Use the container/{container_name}/docker-compose_local directory for deploying locally. For example, to deploy the elasticsearch container:
+```
+cd containers/elasticsearch/docker-compose_local
+docker-compose up --build
+```
+If you want to deploy more than one container, you would need to use `-f` with the path of each docker-compose.yml files (not the recommended way). Instead, use the run-docker binary file in the run-docker directory (see below).
+
+### run-docker
+Contains the golang code and binary for run-docker, which consolidates all of the `docker-compose -f ...` commands into a single command line application. Do `run-docker/run-docker` from the ascent-platform-docker-build dir to see all of the options or see the [README](https://github.com/department-of-veterans-affairs/ascent-platform/tree/development/ascent-platform-docker-build/run-docker) in the run-docker directory for more details.
+
+### swarm
+Contains all of the docker-compose files necessary for deploying a stack to a swarm.
 
 ## Deployment
 
@@ -12,14 +26,16 @@ The following tools will need to be installed before you can successfully deploy
 To deploy our logging stack locally, run the following command in your terminal:
 
 ```bash
-docker-compose -f docker-compose.logging.yml -f docker-compose.logging.override.yml up --build -d
+cd ascent-platform-docker-build/run-docker
+./run-docker start logging
 ```
+See README in the run-docker folder for more details and options
 
 ### Swarm Deployment
 To deploy our logging stack to a Docker Swarm, run the following command in your terminal:
 
 ```bash
-docker stack deploy -c docker-compose.logging.yml logging
+docker stack deploy -c swarm/docker-compose/docker-compose.logging.yml logging
 ```
 ## Usage
 The Kibana UI should be available at [http://localhost:5601](http://localhost:5601). The default credentials are:<br/>

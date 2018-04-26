@@ -2,6 +2,14 @@
 
 Ascent Platform Repository is a suite of Project POM files that provides application services with parent and starter dependencies for the new platform. 
 
+**ascent-platform-docker-build: Ascent Platform Docker Build**
+
+This project includes docker build and deployment for the Ascent Platform components.
+
+**ascent-platform-parent: Ascent Platform Starter Projects**
+
+This project includes ascent starter libraries for cache, logger, security, swagger, rest interfaces.
+
 ## Overview of core platform services ##
 **ascent-discovery: Discovery Service**
 
