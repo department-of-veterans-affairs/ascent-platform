@@ -18,6 +18,7 @@ import org.springframework.jms.core.ProducerCallback;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.stereotype.Service;
 
+import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
 @Service
@@ -38,6 +39,8 @@ public class SqsServiceImpl implements SqsService {
 	@Override
 	@ManagedOperation
 	public ResponseEntity<String> sendMessage(Message message) {
+		Defense.notNull(message, "Message can't be null");
+		
 		logger.info("Handling request: '{}'", message);
 		logger.info("jmsOperations: '{}'", jmsOperations);
 
@@ -58,6 +61,7 @@ public class SqsServiceImpl implements SqsService {
 	 * Creates a TextMessage
 	 */
 	public TextMessage createTextMessage(String message) {
+		Defense.notNull(message, "Message can't be null");
 		try {
 			return connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
 					.createTextMessage(message);

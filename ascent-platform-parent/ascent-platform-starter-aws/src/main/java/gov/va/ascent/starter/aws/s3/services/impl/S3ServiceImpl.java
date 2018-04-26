@@ -38,6 +38,7 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.s3.transfer.model.UploadResult;
 
+import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
 
@@ -68,6 +69,9 @@ public class S3ServiceImpl implements S3Service {
      */
 	@Override
 	public ResponseEntity<byte[]> downloadFile(String bucketName, String keyName) throws IOException {
+		
+		Defense.notNull(bucketName, "Bucket Name can't be null");
+		Defense.notNull(keyName, "Key Name can't be null");
 		
 		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
         S3Object s3Object = s3client.getObject(getObjectRequest);
@@ -100,6 +104,10 @@ public class S3ServiceImpl implements S3Service {
      */
 	@Override
 	public ResponseEntity<List<UploadResult>> uploadMultiPart(String bucketName, MultipartFile[] multipartFiles) { 
+		
+		Defense.notNull(bucketName, "Bucket Name can't be null");
+		Defense.notNull(multipartFiles, "MultipartFile can't be null");
+		
 		List<UploadResult> putObjectResults = new ArrayList<>();
 
 		Arrays.stream(multipartFiles).filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
@@ -128,6 +136,9 @@ public class S3ServiceImpl implements S3Service {
      */
 	@Override
 	public ResponseEntity<UploadResult> uploadMultiPartSingle(String bucketName, MultipartFile multipartFile, Map<String, String> propertyMap) {
+		Defense.notNull(bucketName, "Bucket Name can't be null");
+		Defense.notNull(multipartFile, "MultipartFile can't be null");
+		
 		UploadResult putObjectResult = new UploadResult();
 
         try {
@@ -153,6 +164,10 @@ public class S3ServiceImpl implements S3Service {
 	@Override
 	public ResponseEntity<UploadResult> uploadByteArray(String bucketName, byte[] byteData, String fileName,
 			Map<String, String> propertyMap) {
+		
+		Defense.notNull(bucketName, "Bucket Name can't be null");
+		Defense.notNull(byteData, "byte[] can't be null");
+		Defense.notNull(fileName, "File Name can't be null");
 
 		UploadResult putObjectResult = upload(bucketName, fileName, new ByteArrayInputStream(byteData), propertyMap);
 
@@ -213,6 +228,10 @@ public class S3ServiceImpl implements S3Service {
      */
 	@Override
 	public ResponseEntity<UploadResult> uploadFile(String bucketName, String keyName, String uploadFilePath) {
+		Defense.notNull(bucketName, "Bucket Name can't be null");
+		Defense.notNull(keyName, "Key Name can't be null");
+		Defense.notNull(uploadFilePath, "Upload File Path can't be null");
+		
 		UploadResult putObjectResult = new UploadResult();
 
 		Map<String, String> propertyMap = new HashMap<>();
@@ -238,6 +257,10 @@ public class S3ServiceImpl implements S3Service {
 	 */
 	@Override
 	public void copyFileFromSourceToTargetBucket(String sourceBucketName, String targetBucketName, String key) {
+		Defense.notNull(sourceBucketName, "Source Bucket Name can't be null");
+		Defense.notNull(targetBucketName, "Target Bucket Name can't be null");
+		Defense.notNull(key, "Key can't be null");
+		
         try {
             // Copying object
             CopyObjectRequest copyObjRequest = new CopyObjectRequest(
@@ -269,6 +292,10 @@ public class S3ServiceImpl implements S3Service {
 	 * Copy the DLQ Message to S3 DLQ Bucket.
 	 */
 	public void moveMessageToS3(String dlqBucketName, String key, String message) {
+		Defense.notNull(dlqBucketName, "DLQ Bucket Name can't be null");
+		Defense.notNull(key, "Key can't be null");
+		Defense.notNull(message, "Message Content can't be null");
+		
 		logger.info("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
 		s3client.putObject(dlqBucketName, key, message);
 	}
