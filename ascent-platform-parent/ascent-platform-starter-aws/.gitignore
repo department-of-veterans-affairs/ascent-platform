@@ -25,12 +25,3 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-
-### Log Files ###
-**/*.log
-
-### Eclipse ###
-.metadata
-/ascent-platform-starters/ascent-platform-starter/nbproject/
-/ascent-platform-starters/ascent-platform-starter-cache/nbproject/
-/ascent-platform-parent/ascent-platform-starter-aws/nbproject/

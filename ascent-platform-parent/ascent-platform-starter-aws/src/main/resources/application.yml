@@ -1,0 +1,33 @@
+## S3 and SQS Configurations for Ascent
+#ascent:
+#  aws:
+#    localstack-config:
+#      s3:
+#       endpoint: http://localhost:4572/
+#     services:
+#      # name: Service Name
+#      # port:  port
+#      - 
+#        name: s3
+#        port: 4572 #port
+#      - 
+#        name: sqs
+#        port: 4576 #port
+#    access_key_id: ${AWS_ACCESS_KEY}
+#    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+#  s3:
+#    bucket: ${AWS_S3_BUCKET_NAME}
+#    region: ${AWS_REGION:us-west-2}
+#    target:
+#      bucket: ${AWS_S3_TARGET_BUCKET_NAME}
+#    dlq:
+#      bucket: ${AWS_S3_DLQ_BUCKET_NAME}
+#  sqs:
+#    region: ${AWS_SQS_REGION:us-west-2}
+#    endpoint: ${AWS_SQS_ENDPOINT}
+#    dlqendpoint: ${AWS_SQS_DLQ_ENDPOINT}
+#    dlqRetriesCount: 2
+#    numberOfMessagesToPrefetch: ${AMAZON_SQS_NUMBER_OF_MESSAGES_TO_PREFETCH:5}
+
+#cloud.aws.stack.auto: false
+#cloud.aws.region.static: ${AWS_REGION:us-west-2}

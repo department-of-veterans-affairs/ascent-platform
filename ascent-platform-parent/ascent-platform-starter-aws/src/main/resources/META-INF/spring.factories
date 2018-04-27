@@ -1,0 +1,9 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstackApplication,\
+gov.va.ascent.starter.aws.autoconfigure.AscentS3AutoConfiguration,\
+gov.va.ascent.starter.aws.autoconfigure.AscentSqsAutoConfiguration
+
+
+
+
