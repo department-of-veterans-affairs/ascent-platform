@@ -3,7 +3,7 @@ version: "3"
 services:
   sonarqube:
     build: .
-    image: localhost:5000/ascent/sonarqube:latest
+    image: ascent/sonarqube:latest
     ports:
       - "9000:9000"
     networks:
@@ -30,8 +30,8 @@ services:
 
   db:
     hostname: db
-    build: ./database
-    image: localhost:5000/ascnet/sonar-db:latest
+    build: ../sonarqube-database/database
+    image: localhost:5000/ascent/sonar-db:latest
     environment:
       - VAULT_TOKEN=vaultroot
       - VAULT_ADDR=http://vault:8200

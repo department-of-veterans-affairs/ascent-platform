@@ -22,3 +22,4 @@ logging:
   - ../containers/fluentd
 sonarqube:
   - ../containers/sonarqube
+  - ../containers/sonarqube-database
