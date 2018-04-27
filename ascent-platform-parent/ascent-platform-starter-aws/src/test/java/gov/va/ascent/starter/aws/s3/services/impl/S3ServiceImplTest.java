@@ -123,7 +123,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
-		ResponseEntity<List<UploadResult>> bytesArray = s3Service.uploadMultiPart(TEST_BUCKET_NAME, multipartFiles);
+		ResponseEntity<List<UploadResult>> bytesArray = s3Service.uploadMultiPartFiles(TEST_BUCKET_NAME, multipartFiles);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -138,7 +138,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -166,7 +166,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenThrow(new AmazonServiceException("Error occurred"));
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -180,7 +180,7 @@ public class S3ServiceImplTest {
 		Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenThrow(new AmazonClientException("Error occurred"));
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
@@ -195,7 +195,7 @@ public class S3ServiceImplTest {
 		when(transferManager.upload(any())).thenReturn(upload);
 		when(upload.waitForUploadResult()).thenThrow(new InterruptedException());
 		// doThrow(IOException.class).when(upload).waitForUploadResult();
-		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartSingle(TEST_BUCKET_NAME, mockFile, propertyMap);
+		ResponseEntity<UploadResult> bytesArray = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 

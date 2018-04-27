@@ -86,6 +86,8 @@ public class AscentEmbeddedAwsLocalstackApplication {
 			LOGGER.info("AWS localstack already running, not trying to re-start: {} ", localstackDocker.getLocalStackContainer());
 			return;
 		} else if (localstackDocker !=null) {
+			// clean the localstack
+			cleanAwsLocalStack();
 			localstackDocker.setExternalHostName(externalHostName);
 			localstackDocker.setPullNewImage(pullNewImage);
 			localstackDocker.setRandomizePorts(randomizePorts);
@@ -157,21 +159,28 @@ public class AscentEmbeddedAwsLocalstackApplication {
 			LOGGER.info("stopping localstack: {} ", localstackDocker.getLocalStackContainer());
 			localstackDocker.stop();
 			LOGGER.info("stopped localstack");
-
-			// clean up docker containers
-			DockerExe newDockerExe = new DockerExe();
-			String listContainerIds = newDockerExe.execute(Arrays.asList("ps","--no-trunc","-aq","--filter","ancestor=localstack/localstack"));
-			LOGGER.info("containers to be cleaned: {} ", listContainerIds);
-			if (StringUtils.isNotEmpty(listContainerIds)) {
-				try {
-					String[] splitArray = listContainerIds.split("\\s+");
-					for (String containerId : splitArray) {
-						String output = newDockerExe.execute(Arrays.asList("rm","-f", containerId));
-						LOGGER.info("docker remove command output: {} ", output);
-					}
-				} catch (PatternSyntaxException ex) {
-					LOGGER.warn("PatternSyntaxException During Splitting: {}", ex);
+		}
+		// clean the localstack
+		cleanAwsLocalStack();
+	}
+	
+	/**
+	 * clean AWS Localstack containers
+	 */
+	private void cleanAwsLocalStack() {
+		// clean up docker containers
+		DockerExe newDockerExe = new DockerExe();
+		String listContainerIds = newDockerExe.execute(Arrays.asList("ps","--no-trunc","-aq","--filter","ancestor=localstack/localstack"));
+		LOGGER.info("containers to be cleaned: {} ", listContainerIds);
+		if (StringUtils.isNotEmpty(listContainerIds)) {
+			try {
+				String[] splitArray = listContainerIds.split("\\s+");
+				for (String containerId : splitArray) {
+					String output = newDockerExe.execute(Arrays.asList("rm","-f", containerId));
+					LOGGER.info("docker remove command output: {} ", output);
 				}
+			} catch (PatternSyntaxException ex) {
+				LOGGER.warn("PatternSyntaxException During Splitting: {}", ex);
 			}
 		}
 	}
