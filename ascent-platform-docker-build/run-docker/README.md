@@ -26,6 +26,14 @@ cd ascent-platform-docker-build/run-docker
 - There are also localint, logging, and sonarqube profiles to start and stop. See `./run-docker` and it will print out a help menu. `./run-docker start --help` for help menu for the start command, and `./run-docker start all --help` for extra options, also
 
 ##### Troubleshooting
+- E: You don't have enough free space in /var/cache/apt/archives/.
+
+You'll have this issue if you have too many images/containers store in your cache for docker. To fix, run the following:
+```
+ docker rmi $(docker images -q)
+ docker rm -v $(docker ps -qa)
+```
+
 - exec format issues
 <br />If you're having exec format issues with the run-docker binary, you will need to have go rebuild according to your architecture. Just Run
 <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`env GOOS=[YOUR_OS_HERE] GOARCH=[YOUR_ARCH_TYPE_HERE] go build`
