@@ -64,7 +64,7 @@ public class AscentEmbeddedRedisServer {
             redisServer = RedisServer.builder().port(properties.getRedisConfig().getPort())
                     // .redisExecProvider(customRedisExec) //com.github.kstyrc (not com.orange.redis-embedded)
                     .setting("maxmemory 128M") // maxheap 128M
-                    .setting("bind 127.0.0.1") // force bind to localhost to avoid firewall pop-ups
+                    .setting("bind localhost") // force bind to localhost to avoid firewall pop-ups
                     .build();
             redisServer.start();
         } catch (Exception exc) {
