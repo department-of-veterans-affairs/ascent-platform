@@ -2,6 +2,7 @@ package gov.va.ascent.starter.aws.sqs.services.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -25,11 +26,14 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.ProducerCallback;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
 
@@ -54,6 +58,8 @@ public class SqsServiceImplTest {
 	@Before
 	public void setUp() throws Exception {
 		prepareSqsMock();
+        final Logger logger = (Logger) LoggerFactory.getLogger(SqsServiceImpl.class);
+        logger.setLevel(Level.DEBUG);
 	}
 	
 	@Test
@@ -110,7 +116,15 @@ public class SqsServiceImplTest {
 		when(connectionFactory.createConnection()).thenReturn(connection);
 		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
 		when(mockSession.createTextMessage(anyString())).thenReturn(mockTextMessage);
-
-	     
+	}
+	
+	@Test
+	public void testCreateTextMessageWithException() throws JMSException {
+		Session mockSession = mock(Session.class);
+		when(connectionFactory.createConnection()).thenReturn(connection);
+		when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(mockSession);
+		when(mockSession.createTextMessage(anyString())).thenThrow(JMSException.class);
+		TextMessage textMessage = sqsService.createTextMessage("Test-Message");
+		assertNull(textMessage);
 	}
 }
