@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -26,7 +26,7 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 
-@ConfigurationProperties(prefix = "ascent.s3")
+@Configuration
 public class S3Config {
 	private Logger logger = LoggerFactory.getLogger(S3Config.class);
 	
@@ -35,7 +35,8 @@ public class S3Config {
 
 	@Value("${ascent.aws.secret_access_key}")
 	private String awsKey;
-
+	
+	@Value("${ascent.s3.region}")
 	private String region;
 	
 	@Value("${ascent.aws.localstack-config.s3.endpoint}")
