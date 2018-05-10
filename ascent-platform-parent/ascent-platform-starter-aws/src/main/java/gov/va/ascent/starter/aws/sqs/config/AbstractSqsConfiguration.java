@@ -27,6 +27,7 @@ import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
 import cloud.localstack.docker.LocalstackDockerTestRunner;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstackApplication;
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
@@ -34,6 +35,10 @@ import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 public abstract class AbstractSqsConfiguration {
 	@Autowired
     Environment environment;
+	
+	@SuppressWarnings("unused")
+	@Autowired(required=false)
+	private AscentEmbeddedAwsLocalstackApplication ascentEmbeddedAwsLocalstack;
 	
 	@Bean
 	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
