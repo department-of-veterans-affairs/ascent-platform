@@ -1,7 +1,7 @@
 # See https://github.com/hashicorp/envconsul for config documentation
 
 vault {
-  renew_token   = false
+  renew_token   = true
   unwrap_token = false
 
   retry {
