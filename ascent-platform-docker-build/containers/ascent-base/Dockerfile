@@ -16,6 +16,10 @@ RUN curl -s -L -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
+# jq command line JSON parser
+RUN curl -s -L -o /usr/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64; \
+    chmod 755 /usr/bin/jq
+
 COPY envconsul-config.hcl $ENVCONSUL_CONFIG
 COPY run-wrapper.sh /run-wrapper.sh
 
