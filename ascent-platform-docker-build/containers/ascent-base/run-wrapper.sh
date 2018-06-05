@@ -4,8 +4,12 @@ set -e
 CLIENT_KEYSTORE="$JAVA_HOME/jre/lib/security/client.jks"
 CLIENT_KEYSTORE_PASS=$(openssl rand -base64 14)
 
+if [[ -z $JAVA_OPTS ]]; then
+    JAVA_OPTS="-Xms128m -Xmx512m"
+fi
+
 if [[ -z $CMD ]]; then
-    CMD="java -Xms64m -Xmx256m -jar $JAR_FILE"
+    CMD="java $JAVA_OPTS -jar $JAR_FILE"
 fi
 
 if [[ -z $APP_NAME ]]; then
