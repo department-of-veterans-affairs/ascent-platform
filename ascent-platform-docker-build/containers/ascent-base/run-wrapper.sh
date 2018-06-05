@@ -1,4 +1,5 @@
 #! /bin/bash
+set -e
 
 if [[ -z $CMD ]]; then
     CMD="java -Xms64m -Xmx256m -jar $JAR_FILE"
@@ -6,6 +7,7 @@ fi
 
 if [[ -z $APP_NAME ]]; then
     echo 'APP_NAME environment variable must be set when launching the container. This is needed to build the client SSL certificate keystore.'
+    exit 1
 fi
 
 export INSTANCE_HOST_NAME=$(hostname)
@@ -20,7 +22,7 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
     mkdir /usr/local/share/ca-certificates/ascent
     echo "Downloading Vault CA certificate from $VAULT_ADDR/v1/pki/ca/pem"
     curl -L -s --insecure $VAULT_ADDR/v1/pki/ca/pem > /usr/local/share/ca-certificates/ascent/vault-ca.crt
-    echo 'Update CAs'
+    echo 'Updating CAs...'
     update-ca-certificates
     keytool -importcert -alias vault -keystore $JAVA_HOME/jre/lib/security/cacerts -noprompt -storepass changeit -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
     
@@ -32,16 +34,18 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
     done
 
     #Build the client keystore
-    CLIENT_KEYSTORE_PASS='changeit'
-    keytool -genkey -alias app -keystore $JAVA_HOME/jre/lib/security/client.jks -storepass $CLIENT_KEYSTORE_PASS
+    echo 'Creating client keystore...'
+    CLIENT_KEYSTORE_PASS=$(openssl rand -base64 14)
+    keytool -genkey -alias app -keystore $JAVA_HOME/jre/lib/security/client.jks -storepass $CLIENT_KEYSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $CLIENT_KEYSTORE_PASS
     keytool -delete -alias app -keystore $JAVA_HOME/jre/lib/security/client.jks -storepass $CLIENT_KEYSTORE_PASS
     CLIENT_CERTS=$(curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/client/$APP_NAME | jq -r '.data.keys[]')
     for cert in $CLIENT_CERTS; do
+        echo "Loading certificate for $cert"
         curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/client/$APP_NAME/$cert | jq -r '.data.certificate' > $TMPDIR/$APP_NAME-$cert.crt
         curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/client/$APP_NAME/$cert | jq -r '.data.private_key' > $TMPDIR/$APP_NAME-$cert.key
         
-        openssl pkcs12 -export -out $TMPDIR/$APP_NAME-$cert.p12 -inkey $TMPDIR/$APP_NAME-$cert.key -in $TMPDIR/$APP_NAME-$cert.crt
-        keytool -importkeystore -srckeystore $TMPDIR/$APP_NAME-$cert.p12 -srcstoretype PKCS12 -destkeystore $JAVA_HOME/jre/lib/security/client.jks -deststoretype JKS -destkeypass $CLIENT_KEYSTORE_PASS
+        echo "$CLIENT_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/$APP_NAME-$cert.p12 -inkey $TMPDIR/$APP_NAME-$cert.key -in $TMPDIR/$APP_NAME-$cert.crt -password stdin -name $cert
+        keytool -importkeystore -srckeystore $TMPDIR/$APP_NAME-$cert.p12 -srcstoretype PKCS12 -destkeystore $JAVA_HOME/jre/lib/security/client.jks -deststoretype JKS -deststorepass $CLIENT_KEYSTORE_PASS -srcstorepass $CLIENT_KEYSTORE_PASS -alias $cert -destalias $cert
     done
 
     #Launch the app in another shell to keep secrets secure
