@@ -9,8 +9,7 @@ if [[ -z $CMD ]]; then
 fi
 
 if [[ -z $APP_NAME ]]; then
-    echo 'APP_NAME environment variable must be set when launching the container. This is needed to build the client SSL certificate keystore.'
-    exit 1
+    APP_NAME=${JAR_FILE/%.jar/}
 fi
 
 export INSTANCE_HOST_NAME=$(hostname)
@@ -30,19 +29,24 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
     keytool -importcert -alias vault -keystore $JAVA_HOME/jre/lib/security/cacerts -noprompt -storepass changeit -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
     
     #Build the trusted keystore
-    CA_CERTS=$(curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/trusted | jq -r '.data.keys[]')
-    for cert in $CA_CERTS; do
-        curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/trusted/$cert | jq -r '.data.certificate' > $TMPDIR/$cert.crt
-        keytool -importcert -alias $cert -keystore $JAVA_HOME/jre/lib/security/cacerts -noprompt -storepass changeit -file $TMPDIR/$cert.crt
-    done
+    if curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/ssl/trusted > /dev/null 2>&1; then
+        CA_CERTS=$(curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/trusted | jq -r '.data.keys[]')
+        for cert in $CA_CERTS; do
+            echo "Loading trusted certificate for $cert"
+            curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/trusted/$cert | jq -r '.data.certificate' > $TMPDIR/$cert.crt
+            keytool -importcert -alias $cert -keystore $JAVA_HOME/jre/lib/security/cacerts -noprompt -storepass changeit -file $TMPDIR/$cert.crt
+        done
+    else
+        echo 'No trusted certificates to load.'
+    fi
 
     #Build the client keystore
-    echo 'Creating client keystore...'
+    echo "Creating client keystore for $APP_NAME..."
     keytool -genkey -alias app -keystore $CLIENT_KEYSTORE -storepass $CLIENT_KEYSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $CLIENT_KEYSTORE_PASS
     keytool -delete -alias app -keystore $CLIENT_KEYSTORE -storepass $CLIENT_KEYSTORE_PASS
 
     #Check to see if there are any client certificates for this app
-    if curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/ssl/client/$APP_NAME; then
+    if curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/ssl/client/$APP_NAME > /dev/null 2>&1; then
         CLIENT_CERTS=$(curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/client/$APP_NAME | jq -r '.data.keys[]')
         for cert in $CLIENT_CERTS; do
             echo "Loading certificate for $cert"
