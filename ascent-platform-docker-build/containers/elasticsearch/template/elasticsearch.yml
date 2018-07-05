@@ -13,3 +13,4 @@ discovery.zen.minimum_master_nodes: ${MIN_MASTER_NODES}
 # See https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration-memory.html#mlockall
 bootstrap.memory_lock: true
 discovery.zen.ping.unicast.hosts: elasticsearch
+xpack.security.enabled: false
