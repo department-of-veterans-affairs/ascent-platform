@@ -13,10 +13,6 @@ RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/e
     chmod +x /usr/local/bin/envconsul; \
     rm -f envconsul_0.7.1_linux_amd64.tgz
 
-RUN apt-get update -y
-RUN apt-get install -y jq
-RUN apt-get install -y python-pip
-RUN pip install mysql-connector-python-rf
 ADD run-wrapper.sh /opt/sonarqube/run-wrapper.sh
 
 ADD template /opt/sonarqube/template
