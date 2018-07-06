@@ -7,6 +7,7 @@ import gov.va.ascent.security.handler.JwtAuthenticationSuccessHandler;
 import gov.va.ascent.security.jwt.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
@@ -159,7 +160,7 @@ public class AscentSecurityAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "ascent.security.jwt", name = "enabled", matchIfMissing = true)
+    @ConditionalOnExpression("${ascent.security.jwt.enabled:true} && ${ascent.security.jwt.generate.enabled:true}")
     public TokenResource tokenResource(){
         return new TokenResource();
     }

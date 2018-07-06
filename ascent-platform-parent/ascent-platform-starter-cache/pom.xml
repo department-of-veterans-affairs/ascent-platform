@@ -4,7 +4,7 @@
   <parent>
       <groupId>gov.va.ascent</groupId>
       <artifactId>ascent-platform-parent</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.6-SNAPSHOT</version>
   </parent>
   
   <artifactId>ascent-platform-starter-cache</artifactId>
@@ -41,6 +41,11 @@
       	<artifactId>spring-boot-configuration-processor</artifactId>
       	<optional>true</optional>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+   	  </dependency>
   </dependencies>
   
   <build>
