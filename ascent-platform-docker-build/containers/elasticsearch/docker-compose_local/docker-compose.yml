@@ -2,18 +2,24 @@ version: "3.3"
 services:
     #https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-cli-run-prod-mode
     elasticsearch:
-        image: ascent/ascent-elasticsearch
-        build:
-            context: ../../elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:5.5.0
         environment:
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-            - REPLICA_AMOUNT=1
-            - MIN_MASTER_NODES=1
-            - SECURE_CONNECT=false
-            - VAULT_TOKEN=vaultroot
-            - VAULT_ADDR=http://vault:8200
+          - cluster.name=docker-cluster
+          - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+          - bootstrap.memory_lock=true
+          - xpack.security.enabled=false
+          - discovery.type=single-node
+        ulimits:
+            nproc: 655350
+            nofile: 655350
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+          - esdata1:/usr/share/elasticsearch/data
         ports:
-            - 9200:9200
+          - 9200:9200
+        command: /bin/bash /usr/share/elasticsearch/bin/es-docker && tail -f /dev/null
         networks:
             logging:
                 aliases:
@@ -21,14 +27,12 @@ services:
             ascentnet:
                 aliases:
                     - elastic.internal.vets-api.gov
-        ulimits:
-            nproc: 655350
-            nofile: 655350
-            memlock:
-                soft: -1
-                hard: -1
 networks:
   logging:
     driver: bridge
   ascentnet:
     driver: bridge
+
+volumes:
+  esdata1:
+    driver: local
