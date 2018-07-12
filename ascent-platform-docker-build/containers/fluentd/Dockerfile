@@ -3,10 +3,8 @@ FROM fluent/fluentd:v1.0-debian
 LABEL gov.va.ascent.component="logging"
 
 # Default environment variables for runnning locally
-ENV ES_PASSWORD=changeme
-ENV ES_USER=elastic
-ENV ES_HOST=elastic.internal.vets-api.gov
 ENV ES_PORT=9200
+ENV ES_HOST=elastic.internal.vets-api.gov
 
 USER root
 
