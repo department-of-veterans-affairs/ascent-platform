@@ -2,8 +2,6 @@ FROM docker.elastic.co/kibana/kibana:5.5.0
 
 LABEL gov.va.ascent.component="logging"
 
-ENV ELASTICSEARCH_PASSWORD changeme
-
 # Change ownership and permissions
 USER root
 
