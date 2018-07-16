@@ -1,13 +1,12 @@
 version: "3.3"
 services:
     kibana:
-        image: ascent/ascent-kibana
-        build:
-            context: ../../kibana
+        image: docker.elastic.co/kibana/kibana:6.0.0
         environment:
-            - SECURE_CONNECT=false
-            - VAULT_TOKEN=vaultroot
-            - VAULT_ADDR=http://vault:8200
+            - elasticsearch.url=http://elastic.internal.vets-api.gov:9200
+            - xpack.security.enabled=false
+            - xpack.monitoring.ui.container.elasticsearch.enabled=false
+            - server.host="0.0.0.0/0"
         ports:
             - 5601:5601
         networks:
