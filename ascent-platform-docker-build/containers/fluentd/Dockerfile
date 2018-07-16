@@ -2,43 +2,15 @@ FROM fluent/fluentd:v1.0-debian
 
 LABEL gov.va.ascent.component="logging"
 
-ENV ES_PASSWORD=changeme
+ENV ES_PORT=9200
+ENV ES_HOST=elastic.internal.vets-api.gov
 
 USER root
 
 #Install ElasticSearch plugin
 RUN ["gem", "install", "fluent-plugin-elasticsearch", "--no-rdoc", "--no-ri", "--version", "1.9.5"]
 
-# Install curl to install envconsul and consul
-RUN apt-get -q update -y
-RUN apt-get -q install -y curl
-
-WORKDIR /tmp
-
-# Install consul-template to populate secret data into files on disk
-RUN curl -sL -o consul-template_0.19.0_linux_amd64.tgz https://releases.hashicorp.com/consul-template/0.19.0/consul-template_0.19.0_linux_amd64.tgz; \
-    tar -xzf consul-template_0.19.0_linux_amd64.tgz; \
-    mv consul-template /usr/local/bin/consul-template; \
-    chmod +x /usr/local/bin/consul-template; \
-    rm -f consul-template_0.19.0_linux_amd64.tgz
-
-# Install envconsul for retreiving secrets into ENV variables available only to the executed process
-RUN curl -sL -o envconsul_0.7.1_linux_amd64.tgz https://releases.hashicorp.com/envconsul/0.7.1/envconsul_0.7.1_linux_amd64.tgz; \
-    tar -xzf envconsul_0.7.1_linux_amd64.tgz; \
-    mv envconsul /usr/local/bin/envconsul; \
-    chmod +x /usr/local/bin/envconsul; \
-    rm -f envconsul_0.7.1_linux_amd64.tgz
-
 WORKDIR /fluentd/etc
 
 #Add our custom configurations
 ADD conf /fluentd/etc
-
-COPY template/ template/
-COPY run-wrapper.sh run-wrapper.sh
-COPY set-trusted-ca.sh set-trusted-ca.sh
-
-RUN chmod 750 run-wrapper.sh set-trusted-ca.sh
-RUN chmod -R 777 /usr/local/share/ca-certificates
-
-ENTRYPOINT ["/bin/bash", "run-wrapper.sh"]

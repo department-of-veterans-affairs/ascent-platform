@@ -4,10 +4,6 @@ services:
       image: ascent/fluentd
       build:
           context: ../../fluentd
-      environment:
-          - SECURE_CONNECT=false
-          - VAULT_TOKEN=vaultroot
-          - VAULT_ADDR=http://vault:8200
       ports:
           - 24224:24224
       networks:
