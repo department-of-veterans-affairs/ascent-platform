@@ -7,6 +7,6 @@ https://github.com/department-of-veterans-affairs/ascent-jsr303keygen-maven-plug
 https://github.com/department-of-veterans-affairs/ascent-platform.git
 https://github.com/department-of-veterans-affairs/ascent-discovery.git
 https://github.com/department-of-veterans-affairs/ascent-config.git
-https://github.com/department-of-veterans-affairs/ascent-gateway.git 
+https://github.com/department-of-veterans-affairs/ascent-gateway.git
 https://github.com/department-of-veterans-affairs/ascent-dashboard.git
 https://github.com/department-of-veterans-affairs/ascent-zipkin.git

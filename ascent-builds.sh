@@ -34,29 +34,37 @@ do
 
 	name=${name%.git}
 	echo $name
-	# if the directory does not exist, clone the repos and run maven
+	
+	# if the directory does not exist, clone the repo
 	if [ ! -d "../$name" ]; then
 		git clone $project ../$name
     fi
     
     cd ../$name
 	
-	latesttag=$(git ls-remote --tags $project | awk '{print $2}' | grep -v '{}' | awk -F"/" '{print $3}' | tail -n 1)
-	echo $latesttag
+	# prune local git tags that don't exist on remote
+	git tag -l | xargs git tag -d && git fetch -t
 	
+	# get the latest tag
+	latesttag=$(git describe --tags $(git rev-list --tags --max-count=1))
+	
+	# if the latest tag isn't emptym checkout and build it locally
 	if [[ ! -z $latesttag ]]; then
 		git checkout $latesttag
+		git pull
 		echo "Building the project $name for $project"
 		mvn clean install -DskipTests=true
 	fi
 	
+	# checkout development branch and build
 	git checkout development
 	git pull
-	echo "\nBuilding the project $name for $project\n"
+	echo "Building the project $name for $project"
 	mvn clean install -DskipTests=true
-
-	
-	git checkout development
 	
 	cd $cwd
+	
 done
+
+# clean up docker images
+docker rmi $(docker image ls | grep 'none' | awk '{print $3}')
