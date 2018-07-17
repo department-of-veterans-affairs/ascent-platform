@@ -1,7 +1,6 @@
 all: 
   - ../containers/vault
   - ../containers/elasticsearch
-  - ../containers/es-config
   - ../containers/fluentd
   - ../containers/kibana
   - ../containers/redis-sentinel
@@ -18,7 +17,6 @@ localint:
 logging:
   - ../containers/elasticsearch
   - ../containers/kibana
-  - ../containers/es-config
   - ../containers/fluentd
 sonarqube:
   - ../containers/sonarqube

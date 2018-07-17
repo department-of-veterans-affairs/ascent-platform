@@ -6,8 +6,8 @@ services:
             context: ../../kibana
         environment:
             - SECURE_CONNECT=false
-            - VAULT_TOKEN=vaultroot
-            - VAULT_ADDR=http://vault:8200
+            #- VAULT_TOKEN=vaultroot
+            #- VAULT_ADDR=http://vault:8200
         ports:
             - 5601:5601
         networks:
