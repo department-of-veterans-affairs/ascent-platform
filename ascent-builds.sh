@@ -35,13 +35,28 @@ do
 	name=${name%.git}
 	echo $name
 	# if the directory does not exist, clone the repos and run maven
-	if [ ! -d "name" ]; then
+	if [ ! -d "../$name" ]; then
 		git clone $project ../$name
-		cd ../$name
-		git checkout development
-		git pull
-		echo "\nBuilding the project $name for $project\n"
+    fi
+    
+    cd ../$name
+	
+	latesttag=$(git ls-remote --tags $project | awk '{print $2}' | grep -v '{}' | awk -F"/" '{print $3}' | tail -n 1)
+	echo $latesttag
+	
+	if [[ ! -z $latesttag ]]; then
+		git checkout $latesttag
+		echo "Building the project $name for $project"
 		mvn clean install -DskipTests=true
-		cd $cwd
 	fi
+	
+	git checkout development
+	git pull
+	echo "\nBuilding the project $name for $project\n"
+	mvn clean install -DskipTests=true
+
+	
+	git checkout development
+	
+	cd $cwd
 done
