@@ -51,7 +51,6 @@ do
 	# if the latest tag isn't emptym checkout and build it locally
 	if [[ ! -z $latesttag ]]; then
 		git checkout $latesttag
-		git pull
 		echo "Building the project $name for $project"
 		mvn clean install -DskipTests=true
 	fi
