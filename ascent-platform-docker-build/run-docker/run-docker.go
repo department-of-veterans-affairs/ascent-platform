@@ -642,16 +642,8 @@ func main() {
               }
             } else {
               if c.Bool("build") {
-                log.Printf("\n\n PULLING VAULT")
-                dockerPullContainer("all", "vault")
-                log.Printf("\n\n STARTING VAULT")
-                dockerContainerUp("all", "vault")
                 dockerBuildContainer("logging", container)
               } else {
-                log.Printf("\n\n PULLING VAULT")
-                dockerPullContainer("all", "vault")
-                log.Printf("\n\n STARTING VAULT")
-                dockerContainerUp("all", "vault")
                 dockerPullContainer("logging", container)
                 dockerContainerUp("logging", container)
               }
