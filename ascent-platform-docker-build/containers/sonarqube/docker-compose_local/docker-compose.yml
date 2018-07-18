@@ -9,7 +9,9 @@ services:
     networks:
       - sonarnet
     environment:
-      - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
+      - LANGUAGE=java
+      - PROFILE_NAME=ASCENT
       - SONARQUBE_JDBC_USER=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
       - BASE_URL=http://127.0.0.1:9000
@@ -20,24 +22,20 @@ services:
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
 
   db:
-    hostname: db
-    image: ascent/ascent-sonar-db
-    build: ../../sonarqube/database
-    volumes:
-      - mysql_log:/var/log/mysql
-      - mysql_lib:/var/lib/mysql
-    command:
-      - '--user=mysql --pxc-strict-mode=PERMISSIVE'
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_DATABASE=sonar
-      - CLUSTER_NAME=sonarcluster
-      - MYSQL_ROOT_PASSWORD=defaultpassword
-      - MYSQL_USER=sonar
-      - MYSQL_PASSWORD=sonar
+    image: postgres:9.6.5-alpine
     networks:
       - sonarnet
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    deploy:
+      placement:
+        constraints: [node.role == worker]
+    volumes:
+      - postgresql:/var/lib/postgresql
+      # This needs explicit mapping due to https://github.com/docker-library/postgres/blob/4e48e3228a30763913ece952c611e5e9b95c8759/Dockerfile.template#L52
+      - postgresql_data:/var/lib/postgresql/data
+
 networks:
   sonarnet:
     driver: bridge
@@ -46,5 +44,5 @@ volumes:
   sonarqube_data:
   sonarqube_extensions:
   sonarqube_bundled-plugins:
-  mysql_log:
-  mysql_lib:
+  postgresql:
+  postgresql_data:
