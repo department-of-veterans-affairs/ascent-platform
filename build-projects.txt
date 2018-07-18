@@ -1,5 +1,12 @@
-https://github.com/department-of-veterans-affairs/ascent-discovery.git 
-https://github.com/department-of-veterans-affairs/ascent-config.git 
-https://github.com/department-of-veterans-affairs/ascent-gateway.git 
-https://github.com/department-of-veterans-affairs/ascent-dashboard.git 
+https://github.com/department-of-veterans-affairs/ascent-fortify-build-utils.git
+https://github.com/department-of-veterans-affairs/ascent-libraries-parent.git
+https://github.com/department-of-veterans-affairs/ascent-framework.git
+https://github.com/department-of-veterans-affairs/ascent-security.git
+https://github.com/department-of-veterans-affairs/ascent-test-framework.git
+https://github.com/department-of-veterans-affairs/ascent-jsr303keygen-maven-plugin.git
+https://github.com/department-of-veterans-affairs/ascent-platform.git
+https://github.com/department-of-veterans-affairs/ascent-discovery.git
+https://github.com/department-of-veterans-affairs/ascent-config.git
+https://github.com/department-of-veterans-affairs/ascent-gateway.git
+https://github.com/department-of-veterans-affairs/ascent-dashboard.git
 https://github.com/department-of-veterans-affairs/ascent-zipkin.git
