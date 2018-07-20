@@ -19,13 +19,9 @@ if [[ $VAULT_TOKEN ]]; then
    # to match what's going to come from envconsul
    sed -i 's/USERNAME/USER/g' ./bin/run.sh 
   
-   # Wait for database to be available
-   $ENV_CONSUL_CMD ./provision/db_cluster_wait.sh
-    
    # Start Sonar
    $ENV_CONSUL_CMD ./bin/run.sh &
 else 
-   ./provision/db_cluster_wait.sh
    ./bin/run.sh &
 fi
 
