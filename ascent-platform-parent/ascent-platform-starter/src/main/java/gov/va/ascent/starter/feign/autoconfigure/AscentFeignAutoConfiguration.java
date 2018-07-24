@@ -23,7 +23,7 @@ import feign.hystrix.SetterFactory;
 
 @Configuration
 public class AscentFeignAutoConfiguration {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
 
 	private String groupKey = "defaultGroup";
@@ -32,30 +32,29 @@ public class AscentFeignAutoConfiguration {
 		return groupKey;
 	}
 
-	public void setGroupKey(String groupKey) {
+	public void setGroupKey(final String groupKey) {
 		this.groupKey = groupKey;
 	}
-	
-    @Bean
-    @ConditionalOnMissingBean
-    public TokenFeignRequestInterceptor tokenFeignRequestInterceptor(){
-        return new TokenFeignRequestInterceptor();
-    } 
-    
-    @Bean
+
+	@Bean
+	@ConditionalOnMissingBean
+	public TokenFeignRequestInterceptor tokenFeignRequestInterceptor() {
+		return new TokenFeignRequestInterceptor();
+	}
+
+	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	@ConditionalOnProperty(name = "feign.hystrix.enabled", matchIfMissing = true)
 	public Feign.Builder feignBuilder() {
-	  SetterFactory commandKeyIsRequestLine = (target, method) -> {
-		String commandKey =  Feign.configKey(target.type(), method);
-	    LOGGER.debug("Feign Hystrix Group Key: {}", groupKey);
-	    LOGGER.debug("Feign Hystrix Command Key: {}", commandKey);
-	    return HystrixCommand.Setter
-	      .withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
-	      .andCommandKey(HystrixCommandKey.Factory.asKey(commandKey));
-	  };
-	  return HystrixFeign.builder().setterFactory(commandKeyIsRequestLine).requestInterceptor(tokenFeignRequestInterceptor());
+		final SetterFactory commandKeyIsRequestLine = (target, method) -> {
+			final String commandKey = Feign.configKey(target.type(), method);
+			LOGGER.debug("Feign Hystrix Group Key: {}", groupKey);
+			LOGGER.debug("Feign Hystrix Command Key: {}", commandKey);
+			return HystrixCommand.Setter
+					.withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey))
+					.andCommandKey(HystrixCommandKey.Factory.asKey(commandKey));
+		};
+		return HystrixFeign.builder().setterFactory(commandKeyIsRequestLine).requestInterceptor(tokenFeignRequestInterceptor());
 	}
 
-}    
-
+}

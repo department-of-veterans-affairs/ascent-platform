@@ -41,11 +41,6 @@ public class SqsServiceImpl implements SqsService {
 	public ResponseEntity<String> sendMessage(Message message) {
 		Defense.notNull(message, "Message can't be null");
 		
-		if (logger.isDebugEnabled()) {
-			logger.debug("Handling Request: '{}'", message);
-			logger.debug("JmsOperations: '{}'", jmsOperations);
-		}
-
 		final String messageId = jmsOperations.execute(new ProducerCallback<String>() {
 			@Override
 			public String doInJms(Session session, MessageProducer producer) throws JMSException {

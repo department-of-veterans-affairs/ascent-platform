@@ -42,14 +42,13 @@ import gov.va.ascent.framework.log.LogUtil;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
-
 @Service
 public class S3ServiceImpl implements S3Service {
 
-	private Logger logger = LoggerFactory.getLogger(S3ServiceImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(S3ServiceImpl.class);
 
-	public static final String ERROR_MESSAGE = "Error Message: {}"; 
-	public static final String ERROR = "Error: {}"; 
+	public static final String ERROR_MESSAGE = "Error Message: {}";
+	public static final String ERROR = "Error: {}";
 	public static final String UPLOAD_RESULT = "UploadResult: {}";
 	public static final String BUCKET_NAME_NOTNULL_MESSAGE = "Bucket Name can't be null";
 	public static final String KEY_NOTNULL_MESSAGE = "Key of the object can't be null";
@@ -68,20 +67,21 @@ public class S3ServiceImpl implements S3Service {
 
 	/**
 	 * Upload a byte array to S3
+	 *
 	 * @param byteData
 	 * @param fileName
 	 * @param propertyMap
 	 * @return PutObjectResult returned from Amazon sdk
 	 */
 	@Override
-	public ResponseEntity<UploadResult> uploadByteArray(String bucketName, byte[] byteData, String fileName,
-			Map<String, String> propertyMap) {
+	public ResponseEntity<UploadResult> uploadByteArray(final String bucketName, final byte[] byteData, final String fileName,
+			final Map<String, String> propertyMap) {
 
 		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
 		Defense.notNull(byteData, "byte[] can't be null");
 		Defense.notNull(fileName, "File Name can't be null");
 
-		UploadResult putObjectResult = upload(bucketName, fileName, new ByteArrayInputStream(byteData), propertyMap);
+		final UploadResult putObjectResult = upload(bucketName, fileName, new ByteArrayInputStream(byteData), propertyMap);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
@@ -92,20 +92,26 @@ public class S3ServiceImpl implements S3Service {
 
 	/**
 	 * Upload a single multipart file to S3
+	 *
 	 * @param multipartFile multipart file
 	 * @return PutObjectResult returned from Amazon sdk
 	 */
 	@Override
-	public ResponseEntity<UploadResult> uploadMultiPartFile(String bucketName, MultipartFile multipartFile, Map<String, String> propertyMap) {
+	public ResponseEntity<UploadResult> uploadMultiPartFile(final String bucketName, final MultipartFile multipartFile,
+			final Map<String, String> propertyMap) {
 		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
 		Defense.notNull(multipartFile, MULTIPART_NOTNULL_MESSAGE);
 
 		UploadResult putObjectResult = null;
 
+		InputStream is = null;
 		try {
-			putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), propertyMap);
-		} catch (IOException e) {
+			is = multipartFile.getInputStream();
+			putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), is, propertyMap);
+		} catch (final IOException e) {
 			logger.error(ERROR_MESSAGE, e);
+		} finally {
+			IOUtils.closeQuietly(is);
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -115,31 +121,35 @@ public class S3ServiceImpl implements S3Service {
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 
-
 	/**
 	 * Upload a list of multipart files to S3
+	 *
 	 * @param multipartFiles list of multipart files
 	 * @return list of PutObjectResults returned from Amazon sdk
 	 */
 	@Override
-	public ResponseEntity<List<UploadResult>> uploadMultiPartFiles(String bucketName, MultipartFile[] multipartFiles) { 
+	public ResponseEntity<List<UploadResult>> uploadMultiPartFiles(final String bucketName, final MultipartFile[] multipartFiles) {
 
 		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
 		Defense.notNull(multipartFiles, MULTIPART_NOTNULL_MESSAGE);
 
-		List<UploadResult> putObjectResults = new ArrayList<>();
+		final List<UploadResult> putObjectResults = new ArrayList<>();
 
 		Arrays.stream(multipartFiles).filter(multipartFile -> !StringUtils.isEmpty(multipartFile.getOriginalFilename()))
-		.forEach(multipartFile -> {
-			try {
-				// Passing null temporarily. When this method is used, null needs to be replaced
-				// with document metadata.
-				putObjectResults
-				.add(upload(bucketName, multipartFile.getOriginalFilename(), multipartFile.getInputStream(), null));
-			} catch (IOException e) {
-				logger.error(ERROR_MESSAGE, e);
-			}
-		});
+				.forEach(multipartFile -> {
+					InputStream is = null;
+					try {
+						is = multipartFile.getInputStream();
+						// Passing null temporarily. When this method is used, null needs to be replaced
+						// with document metadata.
+						putObjectResults
+								.add(upload(bucketName, multipartFile.getOriginalFilename(), is, null));
+					} catch (final IOException e) {
+						logger.error(ERROR_MESSAGE, e);
+					} finally {
+						IOUtils.closeQuietly(is);
+					}
+				});
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResults));
@@ -150,57 +160,62 @@ public class S3ServiceImpl implements S3Service {
 
 	/**
 	 * Upload a file to S3
-	 * @param keyName 
-	 * @param uploadFilePath 
-	 * @return 
-	 * @return 
+	 *
+	 * @param keyName
+	 * @param uploadFilePath
+	 * @return
+	 * @return
 	 */
 	@Override
-	public ResponseEntity<UploadResult> uploadFile(String bucketName, String keyName, String uploadFilePath) {
+	public ResponseEntity<UploadResult> uploadFile(final String bucketName, final String keyName, final String uploadFilePath) {
 		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
 		Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
 		Defense.notNull(uploadFilePath, "Upload File Path can't be null");
 
 		UploadResult putObjectResult = new UploadResult();
 
-		Map<String, String> propertyMap = new HashMap<>();
+		final Map<String, String> propertyMap = new HashMap<>();
 
+		InputStream is = null;
 		try {
-			putObjectResult = upload(bucketName, keyName, resourceLoader.getResource(uploadFilePath).getInputStream(), propertyMap);
+			is = resourceLoader.getResource(uploadFilePath).getInputStream();
+			putObjectResult = upload(bucketName, keyName, is, propertyMap);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("===================== Upload File - Done! =====================");
 				logger.debug("UploadResult:    {}", putObjectResult);
 			}
 
-		} catch (IOException ioe) {
+		} catch (final IOException ioe) {
 			logger.error("Caught an IOException: ");
 			logger.error(ERROR_MESSAGE, ioe);
+		} finally {
+			IOUtils.closeQuietly(is);
 		}
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 
-
 	/**
 	 * Copy a file from one bucket to another bucket.
+	 *
 	 * @param key
 	 */
 	@Override
-	public void copyFileFromSourceToTargetBucket(String sourceBucketName, String targetBucketName, String key) {
+	public void copyFileFromSourceToTargetBucket(final String sourceBucketName, final String targetBucketName, final String key) {
 		Defense.notNull(sourceBucketName, "Source Bucket Name can't be null");
 		Defense.notNull(targetBucketName, "Target Bucket Name can't be null");
 		Defense.notNull(key, KEY_NOTNULL_MESSAGE);
 
 		try {
 			// Copying object
-			CopyObjectRequest copyObjRequest = new CopyObjectRequest(
+			final CopyObjectRequest copyObjRequest = new CopyObjectRequest(
 					sourceBucketName, key, targetBucketName, key);
 			logger.info("Copying object. {}", ReflectionToStringBuilder.toString(copyObjRequest));
 			s3client.copyObject(copyObjRequest);
 			// Deleting object from original source bucket
 			s3client.deleteObject(sourceBucketName, key);
 			logger.info("Deleting object. Bucket Name: {} Key : {}", sourceBucketName, key);
-		} catch (AmazonServiceException ase) {
+		} catch (final AmazonServiceException ase) {
 			LogUtil.logErrorWithBanner(logger, COPY_FAILED, ase.getMessage());
 			logger.error(ERROR, ase);
 			logger.error("Caught an AmazonServiceException, " + "which means your request made it "
@@ -210,7 +225,7 @@ public class S3ServiceImpl implements S3Service {
 			logger.error("AWS Error Code:   {}", ase.getErrorCode());
 			logger.error("Error Type:       {}", ase.getErrorType());
 			logger.error("Request ID:       {}", ase.getRequestId());
-		} catch (AmazonClientException ace) {
+		} catch (final AmazonClientException ace) {
 			LogUtil.logErrorWithBanner(logger, COPY_FAILED, ace.getMessage());
 			logger.error(ERROR, ace);
 			logger.error("Caught an AmazonClientException, " + "which means the client encountered "
@@ -224,7 +239,7 @@ public class S3ServiceImpl implements S3Service {
 	 * Copy the DLQ Message to S3 DLQ Bucket.
 	 */
 	@Override
-	public void moveMessageToS3(String dlqBucketName, String key, String message) {
+	public void moveMessageToS3(final String dlqBucketName, final String key, final String message) {
 		Defense.notNull(dlqBucketName, BUCKET_NAME_NOTNULL_MESSAGE);
 		Defense.notNull(key, KEY_NOTNULL_MESSAGE);
 		Defense.notNull(message, "Message Content can't be null");
@@ -232,37 +247,38 @@ public class S3ServiceImpl implements S3Service {
 		logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
 		s3client.putObject(dlqBucketName, key, message);
 	}
-	
+
 	/**
 	 * Retrieves a file from S3
+	 *
 	 * @param key key to the file i.e. /myfolder/myfile
 	 * @param bucket bucket name i.e. bucket-name
 	 * @return response entity
 	 * @throws IOException
 	 */
 	@Override
-	public ResponseEntity<byte[]> downloadFile(String bucketName, String keyName) throws IOException {
+	public ResponseEntity<byte[]> downloadFile(final String bucketName, final String keyName) throws IOException {
 
 		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
 		Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
 
-		GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
-		S3Object s3Object = s3client.getObject(getObjectRequest);
-		S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
+		final GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
+		final S3Object s3Object = s3client.getObject(getObjectRequest);
+		final S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
 
-		byte[] bytes = IOUtils.toByteArray(objectInputStream);
-		String fileName = URLEncoder.encode(keyName, "UTF-8").replaceAll("\\+", "%20");
+		final byte[] bytes = IOUtils.toByteArray(objectInputStream);
+		final String fileName = URLEncoder.encode(keyName, "UTF-8").replaceAll("\\+", "%20");
 
-		HttpHeaders httpHeaders = new HttpHeaders();
+		final HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		httpHeaders.setContentLength(bytes.length);
+		httpHeaders.setContentLength(bytes == null ? 0 : bytes.length);
 		httpHeaders.setContentDispositionFormData("attachment", fileName);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
 			logger.debug("S3Object: {}", ReflectionToStringBuilder.toString(s3Object));
 			logger.debug("File Name: {}", fileName);
-			if (bytes !=null) {
+			if (bytes != null) {
 				logger.debug("Bytes Length: {}", bytes.length);
 			}
 		}
@@ -272,24 +288,26 @@ public class S3ServiceImpl implements S3Service {
 
 	/**
 	 * Upload stream to S3
+	 *
 	 * @param uploadKey
-	 * @param inputStream 
+	 * @param inputStream
 	 * @return PutObjectResult returned from Amazon sdk
 	 */
-	private UploadResult upload(String bucketName, String uploadKey, InputStream inputStream, Map<String, String> propertyMap) {
-		ObjectMetadata objectMetadata = new ObjectMetadata();
+	private UploadResult upload(final String bucketName, final String uploadKey, final InputStream inputStream,
+			final Map<String, String> propertyMap) {
+		final ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setUserMetadata(propertyMap);
 
-		PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadKey, inputStream, objectMetadata);
+		final PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadKey, inputStream, objectMetadata);
 
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-		Upload upload = transferManager.upload(putObjectRequest);
+		final Upload upload = transferManager.upload(putObjectRequest);
 
 		UploadResult uploadResult = null;
 		try {
 			uploadResult = upload.waitForUploadResult();
 			logger.info("Upload completed, bucket={}, key={}", uploadResult.getBucketName(), uploadResult.getKey());
-		} catch (AmazonServiceException ase) {
+		} catch (final AmazonServiceException ase) {
 			LogUtil.logErrorWithBanner(logger, UPLOAD_FAILED, ase.getMessage());
 			logger.error(ERROR, ase);
 			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
@@ -298,17 +316,16 @@ public class S3ServiceImpl implements S3Service {
 			logger.error("AWS Error Code:   {}", ase.getErrorCode());
 			logger.error("Error Type:       {}", ase.getErrorType());
 			logger.error("Request ID:       {}", ase.getRequestId());
-		} catch (AmazonClientException ace) {
+		} catch (final AmazonClientException ace) {
 			LogUtil.logErrorWithBanner(logger, UPLOAD_FAILED, ace.getMessage());
 			logger.error(ERROR, ace);
 			logger.error("Caught an AmazonClientException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    " + ace.getMessage());
-		} catch (InterruptedException ie) { //NOSONAR
+		} catch (final InterruptedException ie) { // NOSONAR
 			LogUtil.logErrorWithBanner(logger, UPLOAD_FAILED, ie.getMessage());
 			logger.error("Caught an InterruptedException from PUT requests, rejected reasons:");
 			logger.error("Error Message:    " + ie.getMessage());
-		}
-		finally {
+		} finally {
 			IOUtils.closeQuietly(inputStream);
 		}
 
