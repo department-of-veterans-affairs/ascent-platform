@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>gov.va.ascent</groupId>
 		<artifactId>ascent-libraries-parent</artifactId>
-		<version>0.0.4</version>
+		<version>0.0.5</version>
 		<relativePath />  <!-- lookup parent from repository -->
 	</parent>
 
