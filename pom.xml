@@ -13,7 +13,7 @@
 	</parent>
 
 	<artifactId>ascent-platform</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>Reactor POM for Ascent Platform</description>
