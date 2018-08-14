@@ -45,6 +45,41 @@ import gov.va.ascent.starter.aws.s3.services.S3Service;
 @Service
 public class S3ServiceImpl implements S3Service {
 
+	/*
+	 * TODO
+	 *
+	 * Delete method
+	 * -------------
+	 * > Need to write one
+	 *
+	 * Upload methods
+	 * --------------
+	 * re https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html#object-metadata
+	 * > S3 Put headers are limited to a total of 8 KB, and all keys/values must be US-ASCII.
+	 * > The propertyMap (a "user-defined header") is limited to 2 KB total, and contributes to the total header size.
+	 * Can we fit all our CORP metadata in 2 KB? Will we have to zip + base64-encode it?
+	 * > S3 docs state regarding the Put request:
+	 * "... user-defined metadata names must begin with "x-amz-meta-" to distinguish them from other HTTP headers."
+	 * And it continues: "When you retrieve the object using the REST API, this prefix is returned."
+	 * The prefix should be added and stripped "behind the scenes" in this class so that total size calculations
+	 * (2 KB max) are correct.
+	 * > ANY of the above restrictions that are not met should result in rejection of the request.
+	 *
+	 * For crude example of zip in java, see:
+	 * https://www.javacodegeeks.com/2015/01/working-with-gzip-and-compressed-data.html
+	 *
+	 * Download method
+	 * ---------------
+	 * > Should be returning an Ascent POJO, not responseEntity
+	 * > Need to see if there are headers that should be stripped out of the response
+	 *
+	 * Copy and Move methods
+	 * ---------------------
+	 * > copy: does the header metadata get copied with the file?
+	 * > move: what purpose does this serve? Are we not going to have a JMS dead letter queue?
+	 *
+	 */
+
 	private final Logger logger = LoggerFactory.getLogger(S3ServiceImpl.class);
 
 	public static final String ERROR_MESSAGE = "Error Message: {}";
@@ -295,6 +330,7 @@ public class S3ServiceImpl implements S3Service {
 	 */
 	private UploadResult upload(final String bucketName, final String uploadKey, final InputStream inputStream,
 			final Map<String, String> propertyMap) {
+
 		final ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setUserMetadata(propertyMap);
 
