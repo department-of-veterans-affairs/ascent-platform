@@ -3,6 +3,8 @@ set -e
 
 CLIENT_KEYSTORE="$JAVA_HOME/jre/lib/security/client.jks"
 CLIENT_KEYSTORE_PASS=$(openssl rand -base64 14)
+SERVER_KEYSTORE="$JAVA_HOME/jre/lib/security/server.jks"
+SERVER_KEYSTORE_PASS=$(openssl rand -base64 14)
 
 if [[ -z $JAVA_OPTS ]]; then
     JAVA_OPTS="-Xms128m -Xmx512m"
@@ -13,7 +15,7 @@ if [[ -z $CMD ]]; then
 fi
 
 if [[ -z $APP_NAME ]]; then
-    APP_NAME=${JAR_FILE/%.jar/}
+    APP_NAME=`echo ${JAR_FILE/%.jar/} | sed 's/\///'`
 fi
 
 export INSTANCE_HOST_NAME=$(hostname)
@@ -33,6 +35,24 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
         echo 'Updating CAs...'
         update-ca-certificates
         keytool -importcert -alias vault -keystore $JAVA_HOME/jre/lib/security/cacerts -noprompt -storepass changeit -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
+
+        #Request a certificate for our application
+        echo "Requesting server certificate from Vault..."
+        #Creating template files to be populated by consul-template
+        cat > '/tmp/app.crt.tpl' <<EOF
+{{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
+{{ .Data.certificate }}{{ end }}
+EOF
+        cat > '/tmp/app.key.tpl' <<EOF
+{{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
+{{ .Data.private_key }}{{ end }}
+EOF
+        consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
+        echo "$SERVER_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/app.p12 -inkey $TMPDIR/app.key -in $TMPDIR/app.crt -password stdin -name $APP_NAME
+        echo "Creating server keystore for $APP_NAME..."
+        keytool -genkey -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $SERVER_KEYSTORE_PASS
+        keytool -delete -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS
+        keytool -importkeystore -srckeystore $TMPDIR/app.p12 -srcstoretype PKCS12 -destkeystore $SERVER_KEYSTORE -deststoretype JKS -deststorepass $SERVER_KEYSTORE_PASS -srcstorepass $SERVER_KEYSTORE_PASS -alias $APP_NAME -destalias $APP_NAME
     fi
     
     #Build the trusted keystore
@@ -68,7 +88,7 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
     fi
 
     #Launch the app in another shell to keep secrets secure
-    CMD="$CMD -Dpartner.client.keystore=$CLIENT_KEYSTORE -Dpartner.client.keystorePassword=$CLIENT_KEYSTORE_PASS"
+    CMD="$CMD -Dpartner.client.keystore=$CLIENT_KEYSTORE -Dpartner.client.keystorePassword=$CLIENT_KEYSTORE_PASS -Dplatform.server.keystore=$SERVER_KEYSTORE -Dplatform.server.keystorePassword=$SERVER_KEYSTORE_PASS"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr=$VAULT_ADDR $CMD
 else
     $CMD
