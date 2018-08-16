@@ -1,6 +1,7 @@
 FROM java:8
 
 ENV ENVCONSUL_CONFIG "/envconsul-config.hcl"
+ENV CONSUL_TEMPLATE_CONFIG "/consul-template-config.hcl"
 
 # Install consul-template to populate secret data into files on disk
 RUN curl -s -L -o consul-template_0.19.0_linux_amd64.tgz https://releases.hashicorp.com/consul-template/0.19.0/consul-template_0.19.0_linux_amd64.tgz; \
@@ -21,6 +22,7 @@ RUN curl -s -L -o /usr/bin/jq https://github.com/stedolan/jq/releases/download/j
     chmod 755 /usr/bin/jq
 
 COPY envconsul-config.hcl $ENVCONSUL_CONFIG
+COPY consul-template-config.hcl $CONSUL_TEMPLATE_CONFIG
 COPY run-wrapper.sh /run-wrapper.sh
 
 ENTRYPOINT /run-wrapper.sh
