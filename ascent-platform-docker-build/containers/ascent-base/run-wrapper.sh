@@ -5,6 +5,7 @@ CLIENT_KEYSTORE="$JAVA_HOME/jre/lib/security/client.jks"
 CLIENT_KEYSTORE_PASS=$(openssl rand -base64 14)
 SERVER_KEYSTORE="$JAVA_HOME/jre/lib/security/server.jks"
 SERVER_KEYSTORE_PASS=$(openssl rand -base64 14)
+TMPDIR=/tmp
 
 if [[ -z $JAVA_OPTS ]]; then
     JAVA_OPTS="-Xms128m -Xmx512m"
@@ -47,7 +48,8 @@ EOF
 {{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
 {{ .Data.private_key }}{{ end }}
 EOF
-        consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR"
+
+        consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -once
         echo "$SERVER_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/app.p12 -inkey $TMPDIR/app.key -in $TMPDIR/app.crt -password stdin -name $APP_NAME
         echo "Creating server keystore for $APP_NAME..."
         keytool -genkey -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $SERVER_KEYSTORE_PASS
