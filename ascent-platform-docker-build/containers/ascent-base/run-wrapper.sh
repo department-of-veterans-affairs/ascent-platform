@@ -1,9 +1,14 @@
 #! /bin/bash
 set -e
 
-CLIENT_KEYSTORE="$JAVA_HOME/jre/lib/security/client.jks"
+JKS_DIR='/app/certs'
+CLIENT_TRUSTSTORE="$JAVA_HOME/jre/lib/security/cacerts"
+CLIENT_TRUSTSTORE_PASS='changeit'
+CLIENT_KEYSTORE="$JKS_DIR/client.jks"
 CLIENT_KEYSTORE_PASS=$(openssl rand -base64 14)
-SERVER_KEYSTORE="$JAVA_HOME/jre/lib/security/server.jks"
+SERVER_TRUSTSTORE="$JKS_DIR/server-truststore.jks"
+SERVER_TRUSTSTORE_PASS=$(openssl rand -base64 14)
+SERVER_KEYSTORE="$JKS_DIR/server.jks"
 SERVER_KEYSTORE_PASS=$(openssl rand -base64 14)
 TMPDIR=/tmp
 
@@ -25,6 +30,8 @@ if [[ $VAULT_TOKEN_FILE ]]; then
     VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
 fi
 
+mkdir -p $JKS_DIR
+
 # If VAULT_TOKEN is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
 
@@ -35,7 +42,12 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
         curl -L -s --insecure $VAULT_ADDR/v1/pki/ca/pem > /usr/local/share/ca-certificates/ascent/vault-ca.crt
         echo 'Updating CAs...'
         update-ca-certificates
-        keytool -importcert -alias vault -keystore $JAVA_HOME/jre/lib/security/cacerts -noprompt -storepass changeit -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
+
+        #Store the Vault CA cert in both the client truststore and the server truststore
+        keytool -importcert -alias vault -keystore $CLIENT_TRUSTSTORE -noprompt -storepass $CLIENT_TRUSTSTORE_PASS -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
+        keytool -genkey -alias app -keystore $SERVER_TRUSTSTORE -storepass $SERVER_TRUSTSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $SERVER_TRUSTSTORE_PASS
+        keytool -delete -alias app -keystore $SERVER_TRUSTSTORE -storepass $SERVER_TRUSTSTORE_PASS
+        keytool -importcert -alias vault -keystore $SERVER_TRUSTSTORE -noprompt -storepass $SERVER_TRUSTSTORE_PASS -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
 
         #Request a certificate for our application
         echo "Requesting server certificate from Vault..."
@@ -57,7 +69,7 @@ EOF
         keytool -importkeystore -srckeystore $TMPDIR/app.p12 -srcstoretype PKCS12 -destkeystore $SERVER_KEYSTORE -deststoretype JKS -deststorepass $SERVER_KEYSTORE_PASS -srcstorepass $SERVER_KEYSTORE_PASS -alias $APP_NAME -destalias $APP_NAME
     fi
     
-    #Build the trusted keystore
+    #Build the client trusted keystore
     if curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/ssl/trusted > /dev/null 2>&1; then
         CA_CERTS=$(curl -L -s --insecure -X LIST -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/ssl/trusted | jq -r '.data.keys[]')
         for cert in $CA_CERTS; do
@@ -90,7 +102,7 @@ EOF
     fi
 
     #Launch the app in another shell to keep secrets secure
-    CMD="$CMD -Dpartner.client.keystore=$CLIENT_KEYSTORE -Dpartner.client.keystorePassword=$CLIENT_KEYSTORE_PASS -Dplatform.server.keystore=$SERVER_KEYSTORE -Dplatform.server.keystorePassword=$SERVER_KEYSTORE_PASS"
+    CMD="$CMD -Dpartner.client.keystore=$CLIENT_KEYSTORE -Dpartner.client.keystorePassword=$CLIENT_KEYSTORE_PASS -Dplatform.server.keystore=$SERVER_KEYSTORE -Dplatform.server.keystorePassword=$SERVER_KEYSTORE_PASS -Dplatform.server.truststore=$SERVER_TRUSTSTORE -Dplatform.server.truststorePassword=$SERVER_TRUSTSTORE_PASS"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr=$VAULT_ADDR $CMD
 else
     $CMD
