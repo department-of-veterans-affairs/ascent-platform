@@ -20,7 +20,6 @@ if [[ -z $CMD ]]; then
     CMD="java $JAVA_OPTS -jar $JAR_FILE"
 fi
 
-APP_NAME="ascent-gateway"
 if [[ -z $APP_NAME ]]; then
     APP_NAME=`echo ${JAR_FILE/%.jar/} | sed 's/\///'`
 fi
