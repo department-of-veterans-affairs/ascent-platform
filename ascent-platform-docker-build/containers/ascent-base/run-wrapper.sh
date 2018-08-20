@@ -58,9 +58,15 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
         #Check for an external certificate to use, otherwise request one from Vault
         if curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/$APP_NAME/ssl > /dev/null 2>&1; then
             echo "Retrieving existing server certificate from Vault"
-            SERVER_CERT=$(curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/$APP_NAME/ssl)
-            echo $SERVER_CERT | jq -r '.data.certificate' > $TMPDIR/app.crt
-            echo $SERVER_CERT | jq -r '.data.private_key' > $TMPDIR/app.key
+            #Creating template files to be populated by consul-template
+            cat > '/tmp/app.crt.tpl' <<EOF
+{{ with secret "secret/$APP_NAME/ssl" }}
+{{ .Data.certificate }}{{ end }}
+EOF
+            cat > '/tmp/app.key.tpl' <<EOF
+{{ with secret "secret/$APP_NAME/ssl" }}
+{{ .Data.private_key }}{{ end }}
+EOF
         else
             #Request a certificate for our application
             echo "Requesting server certificate from Vault..."
@@ -73,10 +79,9 @@ EOF
 {{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
 {{ .Data.private_key }}{{ end }}
 EOF
-
-            consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -once
         fi
-
+        # Use Consul Template to populate certificate files
+        consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -once
         # Store the application server certificate in the server keystore
         echo "$SERVER_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/app.p12 -inkey $TMPDIR/app.key -in $TMPDIR/app.crt -password stdin -name $APP_NAME
         keytool -importkeystore -srckeystore $TMPDIR/app.p12 -srcstoretype PKCS12 -destkeystore $SERVER_KEYSTORE -deststoretype JKS -deststorepass $SERVER_KEYSTORE_PASS -srcstorepass $SERVER_KEYSTORE_PASS -alias $APP_NAME -destalias $APP_NAME
