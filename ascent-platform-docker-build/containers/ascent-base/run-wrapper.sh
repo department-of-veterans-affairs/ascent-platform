@@ -20,6 +20,7 @@ if [[ -z $CMD ]]; then
     CMD="java $JAVA_OPTS -jar $JAR_FILE"
 fi
 
+APP_NAME="ascent-gateway"
 if [[ -z $APP_NAME ]]; then
     APP_NAME=`echo ${JAR_FILE/%.jar/} | sed 's/\///'`
 fi
@@ -49,23 +50,35 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
         keytool -delete -alias app -keystore $SERVER_TRUSTSTORE -storepass $SERVER_TRUSTSTORE_PASS
         keytool -importcert -alias vault -keystore $SERVER_TRUSTSTORE -noprompt -storepass $SERVER_TRUSTSTORE_PASS -file /usr/local/share/ca-certificates/ascent/vault-ca.crt
 
-        #Request a certificate for our application
-        echo "Requesting server certificate from Vault..."
-        #Creating template files to be populated by consul-template
-        cat > '/tmp/app.crt.tpl' <<EOF
+        #Create the server keystore
+        echo "Creating server keystore for $APP_NAME..."
+        keytool -genkey -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $SERVER_KEYSTORE_PASS
+        keytool -delete -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS
+
+        #Check for an external certificate to use, otherwise request one from Vault
+        if curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/$APP_NAME/ssl > /dev/null 2>&1; then
+            echo "Retrieving existing server certificate from Vault"
+            SERVER_CERT=$(curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/secret/$APP_NAME/ssl)
+            echo $SERVER_CERT | jq -r '.data.certificate' > $TMPDIR/app.crt
+            echo $SERVER_CERT | jq -r '.data.private_key' > $TMPDIR/app.key
+        else
+            #Request a certificate for our application
+            echo "Requesting server certificate from Vault..."
+            #Creating template files to be populated by consul-template
+            cat > '/tmp/app.crt.tpl' <<EOF
 {{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
 {{ .Data.certificate }}{{ end }}
 EOF
-        cat > '/tmp/app.key.tpl' <<EOF
+            cat > '/tmp/app.key.tpl' <<EOF
 {{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
 {{ .Data.private_key }}{{ end }}
 EOF
 
-        consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -once
+            consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -once
+        fi
+
+        # Store the application server certificate in the server keystore
         echo "$SERVER_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/app.p12 -inkey $TMPDIR/app.key -in $TMPDIR/app.crt -password stdin -name $APP_NAME
-        echo "Creating server keystore for $APP_NAME..."
-        keytool -genkey -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS -dname "CN=app.vetservices.gov, OU=OIT, O=VA, L=App, S=VA, C=US" -noprompt -keypass $SERVER_KEYSTORE_PASS
-        keytool -delete -alias app -keystore $SERVER_KEYSTORE -storepass $SERVER_KEYSTORE_PASS
         keytool -importkeystore -srckeystore $TMPDIR/app.p12 -srcstoretype PKCS12 -destkeystore $SERVER_KEYSTORE -deststoretype JKS -deststorepass $SERVER_KEYSTORE_PASS -srcstorepass $SERVER_KEYSTORE_PASS -alias $APP_NAME -destalias $APP_NAME
     fi
     
