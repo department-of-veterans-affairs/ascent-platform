@@ -83,9 +83,10 @@ fi
 
 # Configure PKI backend
 echo "Configuring Vault PKI backend..."
-vault mount pki 
+vault mount pki
+vault mount-tune -max-lease-ttl=8760h pki 
 vault write pki/root/generate/internal common_name=internal.vetservices.gov
-vault write pki/roles/vetservices allow_any_name=true
+vault write pki/roles/vetservices allow_any_name=true max_ttl=72h
 echo "Vault PKI Backend successfully configured."
 
 # docker healthcheck
