@@ -43,29 +43,28 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- 
+				ASCENT LIBRARY VERSIONS must be defined in the dependencies
+				section so they can update automatically
+			 -->
+			<dependency>
+				<groupId>gov.va.ascent</groupId>
+				<artifactId>ascent-framework</artifactId>
+				<version>0.0.8-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>gov.va.ascent</groupId>
+				<artifactId>ascent-security</artifactId>
+				<version>0.0.7-SNAPSHOT</version>
+			</dependency>
+			
+			<!-- spring cloud dependencies -->
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud-dependencies.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-			</dependency>
-			
-			<!-- 
-				ASCENT LIBRARY VERSIONS must be defined in the dependencies
-				section so they can update automatically
-			 -->
-			
-			<!-- Ascent Libraries -->
-			<dependency>
-				<groupId>gov.va.ascent</groupId>
-				<artifactId>ascent-framework</artifactId>
-				<version>0.0.7</version>
-			</dependency>
-			<dependency>
-				<groupId>gov.va.ascent</groupId>
-				<artifactId>ascent-security</artifactId>
-				<version>0.0.6</version>
 			</dependency>
 			
 			<!-- Ascent starters -->
