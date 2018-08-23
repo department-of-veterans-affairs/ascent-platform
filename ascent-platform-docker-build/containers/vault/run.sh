@@ -81,6 +81,13 @@ else
   echo "$VAULT_POLICIES_FILE not found, skipping"
 fi
 
+# Configure PKI backend
+echo "Configuring Vault PKI backend..."
+vault mount pki 
+vault write pki/root/generate/internal common_name=internal.vetservices.gov
+vault write pki/roles/vetservices allow_any_name=true
+echo "Vault PKI Backend successfully configured."
+
 # docker healthcheck
 touch /opt/healthcheck
 
