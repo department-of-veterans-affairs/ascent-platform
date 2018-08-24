@@ -119,7 +119,8 @@ EOF
     fi
 
     #Launch the app in another shell to keep secrets secure
-    CMD="$CMD -Dpartner.client.keystore=$CLIENT_KEYSTORE -Dpartner.client.keystorePassword=$CLIENT_KEYSTORE_PASS -Dplatform.server.keystore=$SERVER_KEYSTORE -Dplatform.server.keystorePassword=$SERVER_KEYSTORE_PASS -Dplatform.server.truststore=$SERVER_TRUSTSTORE -Dplatform.server.truststorePassword=$SERVER_TRUSTSTORE_PASS"
+    CMD="java $JAVA_OPTS -jar -Dpartner.client.keystore=$CLIENT_KEYSTORE -Dpartner.client.keystorePassword=$CLIENT_KEYSTORE_PASS -Dserver.ssl.key-store=$SERVER_KEYSTORE -Dserver.ssl.key-store-password=$SERVER_KEYSTORE_PASS -Dserver.ssl.trust-store=$SERVER_TRUSTSTORE -Dserver.ssl.trust-store-password=$SERVER_TRUSTSTORE_PASS -Dserver.ssl.key-alias=$APP_NAME $JAR_FILE"
+    echo "Running Command: $CMD"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr=$VAULT_ADDR $CMD
 else
     $CMD
