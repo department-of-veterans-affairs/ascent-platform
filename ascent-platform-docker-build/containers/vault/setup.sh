@@ -7,6 +7,7 @@ apk add --no-cache jq || \
     
 mkdir -p /opt/
 mv /tmp/run.sh /opt/
+mv /tmp/config/secrets.json /opt/
 chmod a+x /opt/run.sh
 
 rm -rf /var/cache/apk/*
