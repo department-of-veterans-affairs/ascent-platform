@@ -36,6 +36,11 @@ mkdir -p $JKS_DIR
 # If VAULT_TOKEN is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
 
+    until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/sys/health); do
+        echo "Waiting for Vault to be available..."
+        sleep 10
+    done
+
     if curl -L -s --fail --insecure $VAULT_ADDR/v1/pki/ca/pem > /dev/null 2>&1; then
         #Install the Vault CA certificate
         mkdir /usr/local/share/ca-certificates/ascent
