@@ -84,8 +84,12 @@ fi
 # Configure PKI backend
 echo "Configuring Vault PKI backend..."
 vault mount pki
-vault mount-tune -max-lease-ttl=8760h pki 
-vault write pki/root/generate/internal common_name=internal.vetservices.gov
+vault mount-tune -max-lease-ttl=8760h pki
+mv /tmp/ca_payload.json .
+
+# Add our own static ca
+vault write pki/config/ca @ca_payload.json
+#vault write pki/root/generate/internal common_name=internal.vetservices.gov
 vault write pki/roles/vetservices allow_any_name=true max_ttl=72h
 echo "Vault PKI Backend successfully configured."
 
@@ -94,4 +98,3 @@ touch /opt/healthcheck
 
 # block forever
 tail -f /dev/null
-
