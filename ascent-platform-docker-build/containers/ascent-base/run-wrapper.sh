@@ -11,6 +11,8 @@ SERVER_TRUSTSTORE_PASS=$(openssl rand -base64 14)
 SERVER_KEYSTORE="$JKS_DIR/server.jks"
 SERVER_KEYSTORE_PASS=$(openssl rand -base64 14)
 TMPDIR=/tmp
+EXT_KEY_ALIAS="external"
+export INSTANCE_HOST_NAME=$(hostname)
 
 if [[ -z $JAVA_OPTS ]]; then
     JAVA_OPTS="-Xms128m -Xmx512m"
@@ -23,9 +25,7 @@ fi
 if [[ -z $APP_NAME ]]; then
     APP_NAME=`echo ${JAR_FILE/%.jar/} | sed 's/\///'`
 fi
-
 KEY_ALIAS="$APP_NAME"
-export INSTANCE_HOST_NAME=$(hostname)
 
 if [[ $VAULT_TOKEN_FILE ]]; then
     VAULT_TOKEN=$(cat $VAULT_TOKEN_FILE)
@@ -36,7 +36,7 @@ mkdir -p $JKS_DIR
 # If VAULT_TOKEN is set then run under envconsul to provide secrets in env vars to the process
 if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
 
-    until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/sys/health); do
+    until $(curl -XGET --insecure --fail --output /dev/null --silent -H "X-Vault-Token: $VAULT_TOKEN" $VAULT_ADDR/v1/pki/ca/pem); do
         echo "Waiting for Vault to be available..."
         sleep 10
     done
@@ -63,7 +63,7 @@ if [[ $VAULT_TOKEN && $VAULT_ADDR ]]; then
         #Check for an external certificate to use, otherwise request one from Vault
         if curl -L -s --insecure -X GET -H "X-Vault-Token: $VAULT_TOKEN" --fail $VAULT_ADDR/v1/secret/$APP_NAME/ssl > /dev/null 2>&1; then
             echo "Retrieving existing server certificate from Vault"
-            KEY_ALIAS="external"
+            KEY_ALIAS="$EXT_KEY_ALIAS"
             #Creating template files to be populated by consul-template
             cat > '/tmp/app.crt.tpl' <<EOF
 {{ with secret "secret/$APP_NAME/ssl" }}
@@ -77,8 +77,8 @@ EOF
             # Use Consul Template to populate certificate files
             consul-template -config="$CONSUL_TEMPLATE_CONFIG" -vault-addr="$VAULT_ADDR" -once
             # Store the application server certificate in the server keystore
-            echo "$SERVER_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/app.p12 -inkey $TMPDIR/app.key -in $TMPDIR/app.crt -password stdin -name $KEY_ALIAS
-            keytool -importkeystore -srckeystore $TMPDIR/app.p12 -srcstoretype PKCS12 -destkeystore $SERVER_KEYSTORE -deststoretype JKS -deststorepass $SERVER_KEYSTORE_PASS -srcstorepass $SERVER_KEYSTORE_PASS -alias $KEY_ALIAS -destalias $KEY_ALIAS
+            echo "$SERVER_KEYSTORE_PASS" | openssl pkcs12 -export -out $TMPDIR/app.p12 -inkey $TMPDIR/app.key -in $TMPDIR/app.crt -password stdin -name $EXT_KEY_ALIAS
+            keytool -importkeystore -srckeystore $TMPDIR/app.p12 -srcstoretype PKCS12 -destkeystore $SERVER_KEYSTORE -deststoretype JKS -deststorepass $SERVER_KEYSTORE_PASS -srcstorepass $SERVER_KEYSTORE_PASS -alias $EXT_KEY_ALIAS -destalias $EXT_KEY_ALIAS
         fi
 
         #Request a certificate for our application
@@ -135,6 +135,12 @@ EOF
         done
     else
         echo 'No client certificates to load.'
+    fi
+
+    #Determine which Key Alias to use. If IGNORE_EXT_CERT variable is set, we will ignore the existing
+    #certificate from Vault and use the generated internal cert.
+    if [[ $IGNORE_EXT_CERT ]]; then
+        KEY_ALIAS="$APP_NAME"
     fi
 
     #Launch the app in another shell to keep secrets secure
