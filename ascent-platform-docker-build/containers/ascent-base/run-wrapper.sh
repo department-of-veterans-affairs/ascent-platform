@@ -85,12 +85,12 @@ EOF
         echo "Generating certificate from Vault..."
         #Creating template files to be populated by consul-template
         cat > '/tmp/app.crt.tpl' <<EOF
-{{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
+{{ with secret "pki/issue/vetservices" "common_name=*.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME,$APP_NAME.internal.vetservices.gov" }}
 {{ .Data.certificate }}
 {{ .Data.issuing_ca }}{{ end }}
 EOF
         cat > '/tmp/app.key.tpl' <<EOF
-{{ with secret "pki/issue/vetservices" "common_name=$APP_NAME.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME" }}
+{{ with secret "pki/issue/vetservices" "common_name=*.internal.vetservices.gov" "alt_names=$INSTANCE_HOST_NAME,$APP_NAME.internal.vetservices.gov" }}
 {{ .Data.private_key }}{{ end }}
 EOF
 
