@@ -85,10 +85,17 @@ fi
 echo "Configuring Vault PKI backend..."
 vault mount pki
 vault mount-tune -max-lease-ttl=8760h pki
-mv /tmp/ca_payload.json .
 
 # Add our own static ca
-vault write pki/config/ca @ca_payload.json
+mv /tmp/keys/vault-ca.* .
+
+# Can't actually refer to the two files directly, because have to concatenate, put in \n for newlines, and they are both
+#    for one value in vault. See https://www.vaultproject.io/api/secret/pki/index.html#submit-ca-information
+cert=$(cat vault-ca.pem | awk '{printf "%s",$0} END {print ""}' | awk '{ sub(/BEGIN CERTIFICATE-----/, "BEGIN CERTIFICATE-----\\n"); print }' | awk '{ sub(/-----END/, "\\n-----END"); print }')
+key=$(cat vault-ca.key | awk '{printf "%s",$0} END {print ""}' | awk '{ sub(/BEGIN RSA PRIVATE KEY-----/, "BEGIN RSA PRIVATE KEY-----\\n"); print }' | awk '{ sub(/-----END/, "\\n-----END"); print }')
+pem_bundle=$(echo ${key}\\n${cert})
+echo "{ \"pem_bundle\" : \"$pem_bundle\"}" >> payload.json
+vault write pki/config/ca @payload.json
 vault write pki/roles/vetservices allow_any_name=true max_ttl=72h
 echo "Vault PKI Backend successfully configured."
 
