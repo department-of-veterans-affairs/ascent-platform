@@ -89,7 +89,6 @@ mv /tmp/ca_payload.json .
 
 # Add our own static ca
 vault write pki/config/ca @ca_payload.json
-#vault write pki/root/generate/internal common_name=internal.vetservices.gov
 vault write pki/roles/vetservices allow_any_name=true max_ttl=72h
 echo "Vault PKI Backend successfully configured."
 
