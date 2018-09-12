@@ -35,7 +35,7 @@
 			*** THE VERSION GIVEN HERE must be MANUALLY UPDATED when the
 			    actual artifact version changes. ***
 		-->
-		<ascent-test-framework.version>0.0.7-SNAPSHOT</ascent-test-framework.version>
+		<ascent-test-framework.version>0.0.7</ascent-test-framework.version>
 		
 		<!-- 3rd party library versions -->
 		<spring-cloud-dependencies.version>Dalston.SR5</spring-cloud-dependencies.version>
