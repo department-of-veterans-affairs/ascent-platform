@@ -52,7 +52,7 @@ do
 	if [[ ! -z $latesttag ]]; then
 		git checkout $latesttag
 		echo "Building the project $name for $project"
-		mvn clean install -DskipTests=true
+		mvn clean install -U -DskipTests=true
 	fi
 	
 	# checkout development branch and build
