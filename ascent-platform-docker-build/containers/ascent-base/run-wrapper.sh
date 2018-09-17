@@ -144,7 +144,7 @@ EOF
     fi
 
     #Launch the app in another shell to keep secrets secure
-    CMD="java $JAVA_OPTS -jar -Djavax.net.ssl.keyStore=$CLIENT_KEYSTORE -Djavax.net.ssl.keyStorePassword=$CLIENT_KEYSTORE_PASS -Djavax.net.ssl.trustStore=$CLIENT_TRUSTSTORE -Djavax.net.ssl.trustStorePassword=$CLIENT_TRUSTSTORE_PASSWORD -Dserver.ssl.key-store=$SERVER_KEYSTORE -Dserver.ssl.key-store-password=$SERVER_KEYSTORE_PASS -Dserver.ssl.trust-store=$SERVER_TRUSTSTORE -Dserver.ssl.trust-store-password=$SERVER_TRUSTSTORE_PASS -Dserver.ssl.key-alias=$KEY_ALIAS -Dcom.netflix.eureka.shouldSSLConnectionsUseSystemSocketFactory=true $JAR_FILE"
+    CMD="java $JAVA_OPTS -jar -Djavax.net.ssl.keyStore=$CLIENT_KEYSTORE -Djavax.net.ssl.keyStorePassword=$CLIENT_KEYSTORE_PASS -Djavax.net.ssl.trustStore=$CLIENT_TRUSTSTORE -Djavax.net.ssl.trustStorePassword=$CLIENT_TRUSTSTORE_PASS -Dserver.ssl.key-store=$SERVER_KEYSTORE -Dserver.ssl.key-store-password=$SERVER_KEYSTORE_PASS -Dserver.ssl.trust-store=$SERVER_TRUSTSTORE -Dserver.ssl.trust-store-password=$SERVER_TRUSTSTORE_PASS -Dserver.ssl.key-alias=$KEY_ALIAS -Dcom.netflix.eureka.shouldSSLConnectionsUseSystemSocketFactory=true $JAR_FILE"
     echo "Running Command: $CMD"
     envconsul -config="$ENVCONSUL_CONFIG" -vault-addr=$VAULT_ADDR $CMD
 else
