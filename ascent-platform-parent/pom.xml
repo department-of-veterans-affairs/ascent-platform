@@ -35,7 +35,7 @@
 			*** THE VERSION GIVEN HERE must be MANUALLY UPDATED when the
 			    actual artifact version changes. ***
 		-->
-		<ascent-test-framework.version>0.0.8-SNAPSHOT</ascent-test-framework.version>
+		<ascent-test-framework.version>0.0.8</ascent-test-framework.version>
 		
 		<!-- 3rd party library versions -->
 		<spring-cloud-dependencies.version>Dalston.SR5</spring-cloud-dependencies.version>
@@ -50,12 +50,12 @@
 			<dependency>
 				<groupId>gov.va.ascent</groupId>
 				<artifactId>ascent-framework</artifactId>
-				<version>0.0.9-SNAPSHOT</version>
+				<version>0.0.9</version>
 			</dependency>
 			<dependency>
 				<groupId>gov.va.ascent</groupId>
 				<artifactId>ascent-security</artifactId>
-				<version>0.0.8-SNAPSHOT</version>
+				<version>0.0.9</version>
 			</dependency>
 			
 			<!-- spring cloud dependencies -->
