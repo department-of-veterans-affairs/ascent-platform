@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
@@ -28,7 +27,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.util.CollectionUtils;
 
-import gov.va.ascent.framework.log.LogUtil;
+import gov.va.ascent.framework.log.AscentBanner;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.cache.autoconfigure.AscentCacheProperties.RedisExpires;
 import gov.va.ascent.starter.cache.server.AscentEmbeddedRedisServer;
 
@@ -42,7 +43,7 @@ import gov.va.ascent.starter.cache.server.AscentEmbeddedRedisServer;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 public class AscentCacheAutoConfiguration extends CachingConfigurerSupport {
 
-	static final Logger LOGGER = LoggerFactory.getLogger(AscentCacheAutoConfiguration.class);
+	static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentCacheAutoConfiguration.class);
 
 	/**
 	 * Cache properties
@@ -105,29 +106,29 @@ public class AscentCacheAutoConfiguration extends CachingConfigurerSupport {
 
 		@Override
 		public void handleCacheGetError(final RuntimeException exception, final Cache cache, final Object key) {
-			LogUtil.logErrorWithBanner(LOGGER, "Unable to get from cache " + cache.getName(), exception.getMessage());
+			LOGGER.error(AscentBanner.newBanner("Unable to get from cache " + cache.getName(), Level.ERROR), exception.getMessage());
 		}
 
 		@Override
 		public void handleCachePutError(final RuntimeException exception, final Cache cache, final Object key, final Object value) {
-			LogUtil.logErrorWithBanner(LOGGER, "Unable to put into cache " + cache.getName(), exception.getMessage());
+			LOGGER.error(AscentBanner.newBanner("Unable to put into cache " + cache.getName(), Level.ERROR), exception.getMessage());
 		}
 
 		@Override
 		public void handleCacheEvictError(final RuntimeException exception, final Cache cache, final Object key) {
-			LogUtil.logErrorWithBanner(LOGGER, "Unable to evict from cache " + cache.getName(), exception.getMessage());
+			LOGGER.error(AscentBanner.newBanner("Unable to evict from cache " + cache.getName(), Level.ERROR), exception.getMessage());
 		}
 
 		@Override
 		public void handleCacheClearError(final RuntimeException exception, final Cache cache) {
-			LogUtil.logErrorWithBanner(LOGGER, "Unable to clean cache " + cache.getName(), exception.getMessage());
+			LOGGER.error(AscentBanner.newBanner("Unable to clean cache " + cache.getName(), Level.ERROR), exception.getMessage());
 		}
 	}
 }
 
 class RedisCacheManagerCustomizer implements CacheManagerCustomizer<RedisCacheManager> {
 
-	static final Logger LOGGER = LoggerFactory.getLogger(RedisCacheManagerCustomizer.class);
+	static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(RedisCacheManagerCustomizer.class);
 
 	private final AscentCacheProperties ascentCacheProperties;
 

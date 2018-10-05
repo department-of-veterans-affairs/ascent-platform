@@ -14,8 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.EnvironmentTestUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -25,9 +23,10 @@ import cloud.localstack.DockerTestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.LocalstackDockerTestRunner;
 import cloud.localstack.docker.annotation.LocalstackDockerProperties;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.s3.config.S3Config;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
-
 
 /**
  * Created by akulkarni
@@ -37,15 +36,15 @@ import gov.va.ascent.starter.aws.s3.services.S3Service;
 @LocalstackDockerProperties(randomizePorts = true)
 public class TestIntegrationAscentStarterAWS {
 
-	private static Logger logger = LoggerFactory.getLogger(TestIntegrationAscentStarterAWS.class);
+	private static AscentLogger logger = AscentLoggerFactory.getLogger(TestIntegrationAscentStarterAWS.class);
 	private static final String TEST_BUCKET_NAME = "test-bucket";
 
 	private AnnotationConfigApplicationContext context;
-	
+
 	private boolean mockInitialized = false;
-	
+
 	private AmazonS3 amazonS3Client;
-	
+
 	@Mock
 	private S3Service s3Service;
 
@@ -62,13 +61,13 @@ public class TestIntegrationAscentStarterAWS {
 		org.junit.Assume.assumeTrue(StringUtils.isNotEmpty(output));
 		String profilesFromConsole = System.getProperty("spring.profiles.active", "");
 		org.junit.Assume.assumeFalse(profilesFromConsole.contains("jenkins"));
-		
+
 		// rest of setup.
 		if (!mockInitialized) {
-	        MockitoAnnotations.initMocks(this);
-	        mockInitialized = true;  
-	    }
-		
+			MockitoAnnotations.initMocks(this);
+			mockInitialized = true;
+		}
+
 		amazonS3Client = DockerTestUtils.getClientS3();
 		amazonS3Client.createBucket("test-bucket");
 	}
@@ -90,15 +89,15 @@ public class TestIntegrationAscentStarterAWS {
 		context.register(AscentS3AutoConfiguration.class, S3Config.class, amazonS3Client.getClass());
 		context.refresh();
 		assertNotNull(context);
-		
+
 		File file = File.createTempFile("localstack", "s3");
 		file.deleteOnExit();
 
-		try(FileOutputStream stream = new FileOutputStream(file)) {
+		try (FileOutputStream stream = new FileOutputStream(file)) {
 			String content = "HELLO WORLD!";
 			stream.write(content.getBytes());
 		}
-		
+
 		s3Service.uploadFile(TEST_BUCKET_NAME, "test", file.getAbsolutePath());
 	}
 

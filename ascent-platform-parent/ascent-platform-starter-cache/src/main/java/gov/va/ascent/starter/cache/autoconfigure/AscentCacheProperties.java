@@ -2,16 +2,17 @@ package gov.va.ascent.starter.cache.autoconfigure;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@ConfigurationProperties(prefix="ascent.cache")
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
+
+@ConfigurationProperties(prefix = "ascent.cache")
 @Configuration
 public class AscentCacheProperties {
 
-	static final Logger LOGGER = LoggerFactory.getLogger(AscentCacheProperties.class);
+	static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentCacheProperties.class);
 
 	private List<RedisExpires> expires;
 
@@ -39,7 +40,7 @@ public class AscentCacheProperties {
 	public Long getDefaultExpires() {
 		return this.defaultExpires;
 	}
-	
+
 	public RedisConfig getRedisConfig() {
 		return this.redisConfig;
 	}
@@ -98,4 +99,3 @@ public class AscentCacheProperties {
 	}
 
 }
-

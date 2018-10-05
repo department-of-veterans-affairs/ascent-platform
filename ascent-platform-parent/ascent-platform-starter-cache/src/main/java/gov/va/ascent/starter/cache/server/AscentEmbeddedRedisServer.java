@@ -8,12 +8,12 @@ import javax.annotation.PreDestroy;
 import javax.net.ServerSocketFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.cache.autoconfigure.AscentCacheProperties;
 import redis.embedded.RedisServer;
@@ -28,7 +28,7 @@ import redis.embedded.RedisServer;
 public class AscentEmbeddedRedisServer {
 
 	/** The Constant LOGGER. */
-	private static final Logger LOGGER = LoggerFactory.getLogger(AscentEmbeddedRedisServer.class);
+	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentEmbeddedRedisServer.class);
 
 	/**
 	 * Cache Properties Bean
@@ -47,7 +47,7 @@ public class AscentEmbeddedRedisServer {
 
 	/**
 	 * Start embedded redis server on context load
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@PostConstruct
