@@ -12,8 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +37,9 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.s3.transfer.model.UploadResult;
 
-import gov.va.ascent.framework.log.LogUtil;
+import gov.va.ascent.framework.log.AscentBanner;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
@@ -80,7 +81,9 @@ public class S3ServiceImpl implements S3Service {
 	 *
 	 */
 
-	private final Logger logger = LoggerFactory.getLogger(S3ServiceImpl.class);
+	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3ServiceImpl.class);
+
+	private final static String NEWLINE = System.lineSeparator();
 
 	public static final String ERROR_MESSAGE = "Error Message: {}";
 	public static final String ERROR = "Error: {}";
@@ -251,21 +254,19 @@ public class S3ServiceImpl implements S3Service {
 			s3client.deleteObject(sourceBucketName, key);
 			logger.info("Deleting object. Bucket Name: {} Key : {}", sourceBucketName, key);
 		} catch (final AmazonServiceException ase) {
-			LogUtil.logErrorWithBanner(logger, COPY_FAILED, ase.getMessage());
-			logger.error(ERROR, ase);
-			logger.error("Caught an AmazonServiceException, " + "which means your request made it "
-					+ "to Amazon S3, but was rejected with an error " + "response for some reason.");
-			logger.error("Error Message:    {}", ase.getMessage());
-			logger.error("HTTP Status Code: {}", ase.getStatusCode());
-			logger.error("AWS Error Code:   {}", ase.getErrorCode());
-			logger.error("Error Type:       {}", ase.getErrorType());
-			logger.error("Request ID:       {}", ase.getRequestId());
+			String message = "Caught an AmazonServiceException, " + "which means your request made it "
+					+ "to Amazon S3, but was rejected with an error response ."
+					+ NEWLINE + "Error Message:    {}" + ase.getMessage()
+					+ NEWLINE + "HTTP Status Code: {}" + ase.getStatusCode()
+					+ NEWLINE + "AWS Error Code:   {}" + ase.getErrorCode()
+					+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
+					+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
+			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ase);
 		} catch (final AmazonClientException ace) {
-			LogUtil.logErrorWithBanner(logger, COPY_FAILED, ace.getMessage());
-			logger.error(ERROR, ace);
-			logger.error("Caught an AmazonClientException, " + "which means the client encountered "
+			String message = "Caught an AmazonClientException, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
-					+ "such as not being able to access the network.");
+					+ "such as not being able to access the network.";
+			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ace);
 			logger.error(ERROR_MESSAGE, ace.getMessage());
 		}
 	}
@@ -344,23 +345,22 @@ public class S3ServiceImpl implements S3Service {
 			uploadResult = upload.waitForUploadResult();
 			logger.info("Upload completed, bucket={}, key={}", uploadResult.getBucketName(), uploadResult.getKey());
 		} catch (final AmazonServiceException ase) {
-			LogUtil.logErrorWithBanner(logger, UPLOAD_FAILED, ase.getMessage());
-			logger.error(ERROR, ase);
-			logger.error("Caught an AmazonServiceException from PUT requests, rejected reasons:");
-			logger.error("Error Message:    {}", ase.getMessage());
-			logger.error("HTTP Status Code: {}", ase.getStatusCode());
-			logger.error("AWS Error Code:   {}", ase.getErrorCode());
-			logger.error("Error Type:       {}", ase.getErrorType());
-			logger.error("Request ID:       {}", ase.getRequestId());
+			String message =
+					"Caught an AmazonServiceException from PUT requests, rejected reasons:"
+							+ NEWLINE + "Error Message:    {}" + ase.getMessage()
+							+ NEWLINE + "HTTP Status Code: {}" + ase.getStatusCode()
+							+ NEWLINE + "AWS Error Code:   {}" + ase.getErrorCode()
+							+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
+							+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
+			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ase);
 		} catch (final AmazonClientException ace) {
-			LogUtil.logErrorWithBanner(logger, UPLOAD_FAILED, ace.getMessage());
-			logger.error(ERROR, ace);
-			logger.error("Caught an AmazonClientException from PUT requests, rejected reasons:");
-			logger.error("Error Message:    " + ace.getMessage());
+			String message = "Caught an AmazonClientException from PUT requests, rejected reason:"
+					+ NEWLINE + "Error Message:    " + ace.getMessage();
+			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ace);
 		} catch (final InterruptedException ie) { // NOSONAR
-			LogUtil.logErrorWithBanner(logger, UPLOAD_FAILED, ie.getMessage());
-			logger.error("Caught an InterruptedException from PUT requests, rejected reasons:");
-			logger.error("Error Message:    " + ie.getMessage());
+			String message = "Caught an InterruptedException from PUT requests, rejected reasons:"
+					+ NEWLINE + "Error Message:    " + ie.getMessage();
+			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ie);
 		} finally {
 			IOUtils.closeQuietly(inputStream);
 		}

@@ -1,7 +1,5 @@
 package gov.va.ascent.starter.feign.autoconfigure;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,6 +14,8 @@ import com.netflix.hystrix.HystrixCommandKey;
 import feign.Feign;
 import feign.hystrix.HystrixFeign;
 import feign.hystrix.SetterFactory;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 
 /**
  * Created by rthota on 9/05/17.
@@ -24,7 +24,7 @@ import feign.hystrix.SetterFactory;
 @Configuration
 public class AscentFeignAutoConfiguration {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
+	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
 
 	private String groupKey = "defaultGroup";
 

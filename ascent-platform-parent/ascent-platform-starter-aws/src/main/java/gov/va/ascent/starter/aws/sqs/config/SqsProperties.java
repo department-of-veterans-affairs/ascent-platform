@@ -3,17 +3,16 @@ package gov.va.ascent.starter.aws.sqs.config;
 import java.net.URI;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 
 @ConfigurationProperties(prefix = "ascent.sqs")
 public class SqsProperties {
-	
-	private Logger logger = LoggerFactory.getLogger(SqsProperties.class);
+
+	private AscentLogger logger = AscentLoggerFactory.getLogger(SqsProperties.class);
 
 	private String region;
 	private String endpoint;
@@ -35,11 +34,11 @@ public class SqsProperties {
 	public String getQueueName() {
 		return parseQueueName(endpoint);
 	}
-	
+
 	public String getDLQQueueName() {
 		return parseQueueName(dlqendpoint);
 	}
-	
+
 	private String parseQueueName(String endpoint) {
 		URI endpointUri = URI.create(endpoint);
 		String path = endpointUri.getPath();
@@ -103,9 +102,8 @@ public class SqsProperties {
 		this.endpoint = endpoint;
 	}
 
-	
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getDlqendpoint() {
@@ -113,7 +111,7 @@ public class SqsProperties {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dlqendpoint
 	 */
 	public void setDlqendpoint(String dlqendpoint) {
@@ -121,7 +119,7 @@ public class SqsProperties {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public int getDlqRetriesCount() {
@@ -129,7 +127,7 @@ public class SqsProperties {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dlqRetriesCount
 	 */
 	public void setDlqRetriesCount(int dlqRetriesCount) {

@@ -29,7 +29,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -48,8 +48,8 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.amazonaws.services.s3.transfer.model.UploadResult;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,7 +78,7 @@ public class S3ServiceImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		final Logger logger = (Logger) LoggerFactory.getLogger(S3ServiceImpl.class);
+		final AscentLogger logger = AscentLoggerFactory.getLogger(S3ServiceImpl.class);
 		logger.setLevel(Level.DEBUG);
 	}
 

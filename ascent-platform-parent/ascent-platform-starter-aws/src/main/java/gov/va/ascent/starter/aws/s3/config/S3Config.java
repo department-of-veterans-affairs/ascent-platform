@@ -5,8 +5,6 @@ import static com.amazonaws.services.s3.internal.Constants.MB;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,10 +21,12 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+import gov.va.ascent.framework.log.AscentLogger;
+import gov.va.ascent.framework.log.AscentLoggerFactory;
 
 @Configuration
 public class S3Config {
-	private final Logger logger = LoggerFactory.getLogger(S3Config.class);
+	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3Config.class);
 
 	@Value("${ascent.aws.access_key_id}")
 	private String awsId;
