@@ -1,6 +1,5 @@
 package gov.va.ascent.starter.metrics.autoconfigure;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.metrics.export.prometheus.EnablePrometheusMetrics;
 
