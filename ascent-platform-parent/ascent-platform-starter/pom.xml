@@ -58,6 +58,16 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Metrics Support -->
+		<dependency>
+		 	<groupId>org.springframework.metrics</groupId>
+		  	<artifactId>spring-metrics</artifactId>
+		</dependency>
+		<!-- Prometheus Endpoint -->
+		<dependency>
+		  	<groupId>io.prometheus</groupId>
+		  	<artifactId>simpleclient_common</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
