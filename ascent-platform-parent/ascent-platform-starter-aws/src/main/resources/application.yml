@@ -1,33 +1,29 @@
-## S3 and SQS Configurations for Ascent
-#ascent:
-#  aws:
-#    localstack-config:
-#      s3:
-#       endpoint: http://localhost:4572/
-#     services:
-#      # name: Service Name
-#      # port:  port
-#      - 
-#        name: s3
-#        port: 4572 #port
-#      - 
-#        name: sqs
-#        port: 4576 #port
-#    access_key_id: ${AWS_ACCESS_KEY}
-#    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-#  s3:
-#    bucket: ${AWS_S3_BUCKET_NAME}
-#    region: ${AWS_REGION:us-west-2}
-#    target:
-#      bucket: ${AWS_S3_TARGET_BUCKET_NAME}
-#    dlq:
-#      bucket: ${AWS_S3_DLQ_BUCKET_NAME}
-#  sqs:
-#    region: ${AWS_SQS_REGION:us-west-2}
-#    endpoint: ${AWS_SQS_ENDPOINT}
-#    dlqendpoint: ${AWS_SQS_DLQ_ENDPOINT}
-#    dlqRetriesCount: 2
-#    numberOfMessagesToPrefetch: ${AMAZON_SQS_NUMBER_OF_MESSAGES_TO_PREFETCH:5}
+## S3 and SQS Configurations for Ascent   
+ascent:
+  aws:
+    localstack-config:
+      s3:
+        endpoint: http://localhost:4572/
+      services:
+        - name: s3
+          port: 4572
+        - name: sqs
+          port: 4576 
+    access_key_id: ${AWS_ACCESS_KEY:test-key}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY:test-secret}
+  s3:
+    bucket: ${AWS_S3_BUCKET_NAME:test-bucket}
+    region: ${AWS_REGION:us-east-1}
+    target:
+      bucket: ${AWS_S3_TARGET_BUCKET_NAME:test-s3-target-bucket}
+    dlq:
+      bucket: ${AWS_S3_DLQ_BUCKET_NAME:test-s3-dlq-bucket}
+  sqs:
+    region: ${AWS_SQS_REGION:us-west-2}
+    endpoint: ${AWS_SQS_ENDPOINT:https://sqs.us-west-2.amazonaws.com/180197991925/evssstandardqueue}
+    dlqendpoint: ${AWS_SQS_DLQ_ENDPOINT:https://sqs.us-west-2.amazonaws.com/180197991925/deadletterqueue}
+    dlqRetriesCount: 2
+    numberOfMessagesToPrefetch: ${AMAZON_SQS_NUMBER_OF_MESSAGES_TO_PREFETCH:5}
 
-#cloud.aws.stack.auto: false
-#cloud.aws.region.static: ${AWS_REGION:us-west-2}
+cloud.aws.stack.auto: false
+cloud.aws.region.static: ${AWS_REGION:us-west-2}
