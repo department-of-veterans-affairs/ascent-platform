@@ -50,6 +50,7 @@ import com.amazonaws.services.s3.transfer.model.UploadResult;
 
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
+import gov.va.ascent.starter.aws.exception.S3Exception;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -112,7 +113,7 @@ public class S3ServiceImplTest {
 				.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("testString".getBytes()), null));
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testUploadMultiPart() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
@@ -131,16 +132,54 @@ public class S3ServiceImplTest {
 		assertEquals(200, response.getStatusCodeValue());
 
 		doThrow(new IOException("Testing")).when(mockFileOne).getInputStream();
-		try {
-			response = s3Service.uploadMultiPartFiles(TEST_BUCKET_NAME, multipartFiles);
-			assertTrue(response.getBody().size() == 1);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			fail("Exception should not have got thrown to here.");
-		}
+		response = s3Service.uploadMultiPartFiles(TEST_BUCKET_NAME, multipartFiles);
+		
+	}
+	
+	@Test
+	public void testUploadMultiPartNoException() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+
+		final MockMultipartFile[] multipartFiles = new MockMultipartFile[2];
+		final MockMultipartFile mockFileOne = spy(new MockMultipartFile("data", "filename.txt", "text/plain", "one xml".getBytes()));
+		final MockMultipartFile mockFileTwo = new MockMultipartFile("data", "filename.txt", "text/plain", "two xml".getBytes());
+
+		multipartFiles[0] = mockFileOne;
+		multipartFiles[1] = mockFileTwo;
+
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		ResponseEntity<List<UploadResult>> response = s3Service.uploadMultiPartFiles(TEST_BUCKET_NAME, multipartFiles);
+		assertEquals(200, response.getStatusCodeValue());
+		
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testUploadMultiPartS3Exception() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+
+		final MockMultipartFile[] multipartFiles = new MockMultipartFile[2];
+		final MockMultipartFile mockFileOne = spy(new MockMultipartFile("data", "filename.txt", "text/plain", "one xml".getBytes()));
+		final MockMultipartFile mockFileTwo = new MockMultipartFile("data", "filename.txt", "text/plain", "two xml".getBytes());
+
+		multipartFiles[0] = mockFileOne;
+		multipartFiles[1] = mockFileTwo;
+
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		ResponseEntity<List<UploadResult>> response = s3Service.uploadMultiPartFiles(TEST_BUCKET_NAME, multipartFiles);
+		assertEquals(200, response.getStatusCodeValue());
+
+		doThrow(new IOException()).when(mockFileOne).getInputStream();
+		response = s3Service.uploadMultiPartFiles(TEST_BUCKET_NAME, multipartFiles);
+		
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testUploadMultiPartSingle() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
@@ -154,14 +193,25 @@ public class S3ServiceImplTest {
 		assertEquals(200, response.getStatusCodeValue());
 
 		doThrow(new IOException("Testing")).when(mockFile).getInputStream();
-		try {
-			response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
-			assertNull(response.getBody());
-		} catch (final Exception e) {
-			e.printStackTrace();
-			fail("Exception should not have got thrown to here.");
-		}
+		response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
 	}
+	
+	@Test(expected = S3Exception.class)
+	public void testUploadMultiPartSingleS3ExceptionNull() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+		final Map<String, String> propertyMap = new HashMap<String, String>();
+		propertyMap.put("documentName", "Sample Upload File");
+		final MockMultipartFile mockFile = spy(new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes()));
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		ResponseEntity<UploadResult> response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
+		assertEquals(200, response.getStatusCodeValue());
+		doThrow(new IOException()).when(mockFile).getInputStream();
+		response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
+	}
+	
 
 	@Test
 	public void testUploadByteArray() throws Exception {
@@ -177,7 +227,7 @@ public class S3ServiceImplTest {
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testUploadMultiPartSingle_AmazonServiceException() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
@@ -191,7 +241,7 @@ public class S3ServiceImplTest {
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testUploadMultiPartSingle_AmazonClientException() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
@@ -205,7 +255,7 @@ public class S3ServiceImplTest {
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testUploadMultiPartSingle_IOException() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
@@ -220,7 +270,7 @@ public class S3ServiceImplTest {
 		assertEquals(200, bytesArray.getStatusCodeValue());
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testuploadFile() throws Exception {
 		final Upload upload = mock(Upload.class);
 		when(transferManager.upload(any())).thenReturn(upload);
@@ -231,15 +281,80 @@ public class S3ServiceImplTest {
 		assertEquals(200, response.getStatusCodeValue());
 
 		when(mockResource.getInputStream()).thenThrow(new IOException("Testing"));
-		try {
-			response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
-			assertNull(response.getBody().getBucketName());
-		} catch (final Exception e) {
-			e.printStackTrace();
-			fail("Should not have thrown exception to here.");
-		}
+		response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testuploadFileS3ExceptionNull() throws Exception {
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		final Resource mockResource = mock(Resource.class);
+		when(resourceLoader.getResource(anyString())).thenReturn(mockResource);
+		ResponseEntity<UploadResult> response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+		assertEquals(200, response.getStatusCodeValue());
+
+		when(mockResource.getInputStream()).thenThrow(new IOException());
+		response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testuploadFileS3Exception() throws Exception {
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		final Resource mockResource = mock(Resource.class);
+		when(resourceLoader.getResource(anyString())).thenReturn(mockResource);
+		ResponseEntity<UploadResult> response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+		assertEquals(200, response.getStatusCodeValue());
+
+		when(mockResource.getInputStream()).thenThrow(new S3Exception());
+		response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
 	}
 
+	@Test(expected = S3Exception.class)
+	public void testuploadFileS3ExceptionMsg() throws Exception {
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		final Resource mockResource = mock(Resource.class);
+		when(resourceLoader.getResource(anyString())).thenReturn(mockResource);
+		ResponseEntity<UploadResult> response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+		assertEquals(200, response.getStatusCodeValue());
+
+		when(mockResource.getInputStream()).thenThrow(new S3Exception("Message"));
+		response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testuploadFileS3ExceptionThrowable() throws Exception {
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		final Resource mockResource = mock(Resource.class);
+		when(resourceLoader.getResource(anyString())).thenReturn(mockResource);
+		ResponseEntity<UploadResult> response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+		assertEquals(200, response.getStatusCodeValue());
+
+		when(mockResource.getInputStream()).thenThrow(new S3Exception(new Throwable()));
+		response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testuploadFileS3ExceptionThrowableMsg() throws Exception {
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		final Resource mockResource = mock(Resource.class);
+		when(resourceLoader.getResource(anyString())).thenReturn(mockResource);
+		ResponseEntity<UploadResult> response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+		assertEquals(200, response.getStatusCodeValue());
+
+		when(mockResource.getInputStream()).thenThrow(new S3Exception(new Throwable("Message",
+				new Throwable())));
+		response = s3Service.uploadFile(TEST_BUCKET_NAME, "testFile.txt", "testFile.txt");
+	}
+	
 	@Test
 	public void testCopyFileFromSourceToTargetBucket() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
