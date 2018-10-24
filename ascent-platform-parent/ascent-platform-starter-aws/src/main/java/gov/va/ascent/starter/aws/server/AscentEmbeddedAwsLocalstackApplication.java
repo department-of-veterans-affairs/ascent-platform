@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.util.CollectionUtils;
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -29,7 +28,6 @@ import com.amazonaws.services.sqs.model.QueueAttributeName;
 import cloud.localstack.DockerTestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.LocalstackDocker;
-import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
@@ -43,7 +41,7 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
  * @author akulkarni
  */
 @Configuration
-@Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
+// @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
 @EnableConfigurationProperties({ AscentAwsLocalstackProperties.class, SqsProperties.class })
 public class AscentEmbeddedAwsLocalstackApplication {
 
