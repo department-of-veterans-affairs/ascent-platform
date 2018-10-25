@@ -32,27 +32,23 @@ import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstackApplication;
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
 @EnableJms
-public class AbstractSqsConfiguration {
+public abstract class AbstractSqsConfiguration {
 	@Autowired
-    Environment environment;
-	
+	Environment environment;
+
 	@SuppressWarnings("unused")
-	@Autowired(required=false)
+	@Autowired(required = false)
 	private AscentEmbeddedAwsLocalstackApplication ascentEmbeddedAwsLocalstack;
-	
-	@Bean
-	public ConnectionFactory connectionFactory(final SqsProperties sqsProperties) {
-		return createStandardSQSConnectionFactory(sqsProperties);
-	}
+
+	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
 
 	@Bean
-	public DestinationResolver destinationResolver(SqsProperties sqsProperties) {
+	public DestinationResolver destinationResolver(final SqsProperties sqsProperties) {
 		return new StaticDestinationResolver(sqsProperties.getQueueName());
 	}
 
 	@Bean
-	public JmsTemplate jmsTemplate(
-			SqsProperties sqsProperties, ConnectionFactory connectionFactory) {
+	public JmsTemplate jmsTemplate(final SqsProperties sqsProperties, final ConnectionFactory connectionFactory) {
 
 		JmsTemplate jmsTemplate = new JmsTemplate(connectionFactory);
 		jmsTemplate.setDefaultDestinationName(sqsProperties.getQueueName());
@@ -61,70 +57,59 @@ public class AbstractSqsConfiguration {
 		return jmsTemplate;
 	}
 
-	protected SQSConnectionFactory createStandardSQSConnectionFactory(SqsProperties sqsProperties) {
+	protected SQSConnectionFactory createStandardSQSConnectionFactory(final SqsProperties sqsProperties) {
 		AmazonSQS sqsClient = createAmazonSQSClient(sqsProperties);
 
 		ProviderConfiguration providerConfiguration = new ProviderConfiguration();
-		sqsProperties.getNumberOfMessagesToPrefetch()
-		.ifPresent(providerConfiguration::setNumberOfMessagesToPrefetch);
+		sqsProperties.getNumberOfMessagesToPrefetch().ifPresent(providerConfiguration::setNumberOfMessagesToPrefetch);
 
 		return new SQSConnectionFactory(providerConfiguration, sqsClient);
 	}
 
-	private AmazonSQS createAmazonSQSClient(SqsProperties sqsProperties) {
+	private AmazonSQS createAmazonSQSClient(final SqsProperties sqsProperties) {
 
-	    EndpointConfiguration endpointConfiguration = getEndpointConfiguration(sqsProperties);
+		EndpointConfiguration endpointConfiguration = getEndpointConfiguration(sqsProperties);
 
-		AWSCredentialsProvider awsCredentialsProvider = createAwsCredentialsProvider(
-				sqsProperties.getAccessKey(),
-				sqsProperties.getSecretKey()
-				);
+		AWSCredentialsProvider awsCredentialsProvider =
+				createAwsCredentialsProvider(sqsProperties.getAccessKey(), sqsProperties.getSecretKey());
 
-		return AmazonSQSClientBuilder
-				.standard()
-				.withCredentials(awsCredentialsProvider)
-				.withEndpointConfiguration(endpointConfiguration)
-				.build();
+		return AmazonSQSClientBuilder.standard().withCredentials(awsCredentialsProvider)
+				.withEndpointConfiguration(endpointConfiguration).build();
 	}
 
-	private EndpointConfiguration getEndpointConfiguration(SqsProperties sqsProperties) {
-	    boolean isEmbeddedAws = false;
-	    EndpointConfiguration endpointConfiguration = null;
-	    
-	    Regions region = Regions.fromName(sqsProperties.getRegion());
+	private EndpointConfiguration getEndpointConfiguration(final SqsProperties sqsProperties) {
+		boolean isEmbeddedAws = false;
+		EndpointConfiguration endpointConfiguration = null;
 
-	    for (final String profileName : environment.getActiveProfiles()) {
-	      if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
-	        isEmbeddedAws = true;
-	      }
-	    }
-	    
-	    if (isEmbeddedAws) {
-	      endpointConfiguration = new EndpointConfiguration(
-	    		  LocalstackDockerTestRunner.getLocalstackDocker().getEndpointSQS(), region.getName());
-	    } else {
-	      endpointConfiguration = new EndpointConfiguration(
-	          sqsProperties.getEndpoint(), region.getName());
-	    }
-	    return endpointConfiguration;
-	  }
-	
-	private AWSCredentialsProvider createAwsCredentialsProvider(
-			String localAccessKey, String localSecretKey) {
+		Regions region = Regions.fromName(sqsProperties.getRegion());
 
-		AWSCredentialsProvider ec2ContainerCredentialsProvider =
-				new EC2ContainerCredentialsProviderWrapper();
+		for (final String profileName : environment.getActiveProfiles()) {
+			if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
+				isEmbeddedAws = true;
+			}
+		}
+
+		if (isEmbeddedAws) {
+			endpointConfiguration =
+					new EndpointConfiguration(LocalstackDockerTestRunner.getLocalstackDocker().getEndpointSQS(), region.getName());
+		} else {
+			endpointConfiguration = new EndpointConfiguration(sqsProperties.getEndpoint(), region.getName());
+		}
+		return endpointConfiguration;
+	}
+
+	private AWSCredentialsProvider createAwsCredentialsProvider(final String localAccessKey, final String localSecretKey) {
+
+		AWSCredentialsProvider ec2ContainerCredentialsProvider = new EC2ContainerCredentialsProviderWrapper();
 
 		if (StringUtils.isEmpty(localAccessKey) || StringUtils.isEmpty(localSecretKey)) {
 			return ec2ContainerCredentialsProvider;
 		}
 
 		AWSCredentialsProvider localAwsCredentialsProvider =
-				new AWSStaticCredentialsProvider(
-						new BasicAWSCredentials(localAccessKey, localSecretKey));
+				new AWSStaticCredentialsProvider(new BasicAWSCredentials(localAccessKey, localSecretKey));
 
-		return new AWSCredentialsProviderChain(
-				localAwsCredentialsProvider, ec2ContainerCredentialsProvider);
+		return new AWSCredentialsProviderChain(localAwsCredentialsProvider, ec2ContainerCredentialsProvider);
 	}
 
 }
