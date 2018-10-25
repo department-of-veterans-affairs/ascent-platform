@@ -32,7 +32,7 @@ import gov.va.ascent.starter.aws.server.AscentEmbeddedAwsLocalstackApplication;
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
 @EnableJms
-public abstract class AbstractSqsConfiguration {
+public class AbstractSqsConfiguration {
 	@Autowired
     Environment environment;
 	
@@ -41,7 +41,9 @@ public abstract class AbstractSqsConfiguration {
 	private AscentEmbeddedAwsLocalstackApplication ascentEmbeddedAwsLocalstack;
 	
 	@Bean
-	public abstract ConnectionFactory connectionFactory(SqsProperties sqsProperties);
+	public ConnectionFactory connectionFactory(final SqsProperties sqsProperties) {
+		return createStandardSQSConnectionFactory(sqsProperties);
+	}
 
 	@Bean
 	public DestinationResolver destinationResolver(SqsProperties sqsProperties) {
