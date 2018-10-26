@@ -158,9 +158,7 @@ public class S3ServiceImpl implements S3Service {
 			IOUtils.closeQuietly(is);
 		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(UPLOAD_RESULT, putObjectResult == null ? "" : ReflectionToStringBuilder.toString(putObjectResult));
-		}
+		logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
 
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
