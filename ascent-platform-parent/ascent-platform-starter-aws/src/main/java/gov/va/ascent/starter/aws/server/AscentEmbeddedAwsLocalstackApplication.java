@@ -36,9 +36,9 @@ import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
 import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 
 /**
- * This class will start and stop AWS localstack services, to be used for local envs. The profile embedded-aws needs to be
- * added in order for this bean to be created
- * The class is renamed to end with Application so that it could be disabled for test coverage violation.
+ * This class will start and stop AWS localstack services, to be used for local envs. The profile embedded-aws needs to be added in
+ * order for this bean to be created The class is renamed to end with Application so that it could be disabled for test coverage
+ * violation.
  * 
  * @author akulkarni
  */
@@ -83,7 +83,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 	 */
 	@PostConstruct
 	public void startAwsLocalStack() {
-		if (localstackDocker != null && localstackDocker.getLocalStackContainer() != null) {
+		if ((localstackDocker != null) && (localstackDocker.getLocalStackContainer() != null)) {
 			LOGGER.info("AWS localstack already running, not trying to re-start: {} ", localstackDocker.getLocalStackContainer());
 			return;
 		} else if (localstackDocker != null) {
@@ -135,8 +135,8 @@ public class AscentEmbeddedAwsLocalstackApplication {
 
 		String deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
 
-		GetQueueAttributesRequest getAttributesRequest = new GetQueueAttributesRequest(deadletterQueueUrl)
-				.withAttributeNames(QueueAttributeName.QueueArn);
+		GetQueueAttributesRequest getAttributesRequest =
+				new GetQueueAttributesRequest(deadletterQueueUrl).withAttributeNames(QueueAttributeName.QueueArn);
 		GetQueueAttributesResult queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
 
 		String redrivePolicy = "{\"maxReceiveCount\":\"1\", \"deadLetterTargetArn\":\""
@@ -158,7 +158,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 	@PreDestroy
 	public void stopAwsLocalStack() {
 		// stop the localstack
-		if (localstackDocker != null && localstackDocker.getLocalStackContainer() != null) {
+		if ((localstackDocker != null) && (localstackDocker.getLocalStackContainer() != null)) {
 			LOGGER.info("stopping localstack: {} ", localstackDocker.getLocalStackContainer());
 			localstackDocker.stop();
 			LOGGER.info("stopped localstack");
