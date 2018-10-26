@@ -41,6 +41,7 @@ import gov.va.ascent.framework.log.AscentBanner;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
+import gov.va.ascent.starter.aws.exception.S3Exception;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 
 @Service
@@ -83,8 +84,7 @@ public class S3ServiceImpl implements S3Service {
 
 	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3ServiceImpl.class);
 
-	private final static String NEWLINE = System.lineSeparator();
-
+	private static final String NEWLINE = System.lineSeparator();
 	public static final String ERROR_MESSAGE = "Error Message: {}";
 	public static final String ERROR = "Error: {}";
 	public static final String UPLOAD_RESULT = "UploadResult: {}";
@@ -92,6 +92,8 @@ public class S3ServiceImpl implements S3Service {
 	public static final String KEY_NOTNULL_MESSAGE = "Key of the object can't be null";
 	public static final String MULTIPART_NOTNULL_MESSAGE = "Multipart Request can't be null";
 	public static final String UPLOAD_FAILED = "Upload Failed";
+
+	private static final String IOEXCEPTION_UPLOAD_MESSAGE = "IO Exception " + UPLOAD_FAILED;
 	public static final String COPY_FAILED = "Copy Failed";
 
 	@Autowired
@@ -148,6 +150,10 @@ public class S3ServiceImpl implements S3Service {
 			putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), is, propertyMap);
 		} catch (final IOException e) {
 			logger.error(ERROR_MESSAGE, e);
+			if(e.getMessage() != null)
+				throw new S3Exception(e.getMessage());
+			else  
+				throw new S3Exception(IOEXCEPTION_UPLOAD_MESSAGE);
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
@@ -184,6 +190,10 @@ public class S3ServiceImpl implements S3Service {
 								.add(upload(bucketName, multipartFile.getOriginalFilename(), is, null));
 					} catch (final IOException e) {
 						logger.error(ERROR_MESSAGE, e);
+						if(e.getMessage() != null)
+							throw new S3Exception(e.getMessage());
+						else  
+							throw new S3Exception(IOEXCEPTION_UPLOAD_MESSAGE);
 					} finally {
 						IOUtils.closeQuietly(is);
 					}
@@ -224,9 +234,13 @@ public class S3ServiceImpl implements S3Service {
 				logger.debug("UploadResult:    {}", putObjectResult);
 			}
 
-		} catch (final IOException ioe) {
-			logger.error("Caught an IOException: ");
-			logger.error(ERROR_MESSAGE, ioe);
+		} catch (final IOException e) {
+			logger.error(ERROR_MESSAGE, e);
+			if(e.getMessage() != null)
+				throw new S3Exception(e.getMessage());
+			else  
+				throw new S3Exception(IOEXCEPTION_UPLOAD_MESSAGE);
+
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
@@ -338,10 +352,11 @@ public class S3ServiceImpl implements S3Service {
 		final PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadKey, inputStream, objectMetadata);
 
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-		final Upload upload = transferManager.upload(putObjectRequest);
-
+		Upload upload = null;
 		UploadResult uploadResult = null;
+		
 		try {
+			upload = transferManager.upload(putObjectRequest);
 			uploadResult = upload.waitForUploadResult();
 			logger.info("Upload completed, bucket={}, key={}", uploadResult.getBucketName(), uploadResult.getKey());
 		} catch (final AmazonServiceException ase) {
@@ -353,14 +368,20 @@ public class S3ServiceImpl implements S3Service {
 							+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
 							+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ase);
+			throw new S3Exception(ase.getMessage());
+			
 		} catch (final AmazonClientException ace) {
 			String message = "Caught an AmazonClientException from PUT requests, rejected reason:"
 					+ NEWLINE + "Error Message:    " + ace.getMessage();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ace);
+			throw new S3Exception(ace.getMessage());
+			
 		} catch (final InterruptedException ie) { // NOSONAR
 			String message = "Caught an InterruptedException from PUT requests, rejected reasons:"
 					+ NEWLINE + "Error Message:    " + ie.getMessage();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ie);
+			throw new S3Exception(ie.getMessage());
+			
 		} finally {
 			IOUtils.closeQuietly(inputStream);
 		}
