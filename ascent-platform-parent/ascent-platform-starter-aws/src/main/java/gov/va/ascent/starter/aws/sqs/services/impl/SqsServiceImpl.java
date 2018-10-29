@@ -19,12 +19,23 @@ import org.springframework.stereotype.Service;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
+import gov.va.ascent.starter.aws.exception.SqsException;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
 @Service
 public class SqsServiceImpl implements SqsService {
 
+	private static final String ERROR_MESSAGE = "Error Message: {}";
+
 	private AscentLogger logger = AscentLoggerFactory.getLogger(SqsServiceImpl.class);
+	
+	public static final String MESSAGE_TRANSFER_FAILED = "Message transfer Failed";
+	
+	public static final String MESSAGE_CREATE_FAILED = "Message creation Failed";
+	
+	private static final String SQS_EXCEPTION_MSG = "SQS Exception: ";
+	
+	private static final String SQS_JMS_EXCEPTION_MSG = "SQS JMS Exception: ";
 
 	@Resource
 	JmsOperations jmsOperations;
@@ -38,18 +49,32 @@ public class SqsServiceImpl implements SqsService {
 	@Override
 	@ManagedOperation
 	public ResponseEntity<String> sendMessage(Message message) {
-		Defense.notNull(message, "Message can't be null");
 
-		final String messageId = jmsOperations.execute(new ProducerCallback<String>() {
-			@Override
-			public String doInJms(Session session, MessageProducer producer) throws JMSException {
-				message.setJMSTimestamp(System.currentTimeMillis());
-				producer.send(message);
-				logger.info("Sent JMS message with payload='{}', id: '{}'", message, message.getJMSMessageID());
-				return message.getJMSMessageID();
-			}
-		});
-
+	    String messageId = null;
+		try {
+			Defense.notNull(message, "Message can't be null");
+			messageId = jmsOperations.execute(new ProducerCallback<String>() {
+				@Override
+				public String doInJms(Session session, MessageProducer producer) throws JMSException {
+					message.setJMSTimestamp(System.currentTimeMillis());
+					producer.send(message);
+					logger.info("Sent JMS message with payload='{}', id: '{}'", message, message.getJMSMessageID());
+					return message.getJMSMessageID();
+				}
+			});
+			
+		}catch(Exception e) {
+			logger.error(ERROR_MESSAGE, e);
+			if(e.getMessage() != null)
+				throw new SqsException(e.getMessage());
+			else  
+				throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_TRANSFER_FAILED);
+			
+		}
+		if(messageId == null) {
+			logger.error("Error Message: Message ID cannot be null after message has been sent");
+			throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_TRANSFER_FAILED + " - Message ID cannot be null");
+		}
 		return new ResponseEntity<>(messageId, HttpStatus.OK);
 	}
 
@@ -58,13 +83,28 @@ public class SqsServiceImpl implements SqsService {
 	 */
 	@Override
 	public TextMessage createTextMessage(String message) {
-		Defense.notNull(message, "Message can't be null");
+
 		try {
+			
+			Defense.notNull(message, "Message can't be null");
 			return connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
 					.createTextMessage(message);
+			
 		} catch (JMSException e) {
-			logger.error("Error Message: {}", e);
+			logger.error(ERROR_MESSAGE, e);		
+			if(e.getMessage() != null)
+				throw new SqsException(SQS_JMS_EXCEPTION_MSG + e.getMessage());
+			else  
+				throw new SqsException(SQS_JMS_EXCEPTION_MSG + MESSAGE_CREATE_FAILED);
+			
+		}catch(Exception e) {
+			logger.error(ERROR_MESSAGE, e);
+			if(e.getMessage() != null)
+				throw new SqsException(e.getMessage());
+			else  
+				throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_CREATE_FAILED);
+			
 		}
-		return null;
+	
 	}
 }

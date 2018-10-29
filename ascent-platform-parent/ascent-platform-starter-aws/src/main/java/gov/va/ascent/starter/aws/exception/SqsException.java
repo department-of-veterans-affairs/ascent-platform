@@ -6,14 +6,14 @@ import gov.va.ascent.framework.exception.AscentRuntimeException;
  * Generic base exception for Aws exceptions. Extend this class for specific
  * exceptions.
  */
-public class S3Exception extends AscentRuntimeException {
+public class SqsException extends AscentRuntimeException {
 
 	private static final long serialVersionUID = -1823081544248832886L;
 
 	/**
 	 * Instantiates a new exception.
 	 */
-	public S3Exception() {
+	public SqsException() {
 		super();
 	}
 
@@ -25,7 +25,7 @@ public class S3Exception extends AscentRuntimeException {
 	 * @param cause
 	 *            the cause
 	 */
-	public S3Exception(final String message, final Throwable cause) {
+	public SqsException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
@@ -35,7 +35,7 @@ public class S3Exception extends AscentRuntimeException {
 	 * @param message
 	 *            the message
 	 */
-	public S3Exception(final String message) {
+	public SqsException(final String message) {
 		super(message);
 	}
 
@@ -45,7 +45,7 @@ public class S3Exception extends AscentRuntimeException {
 	 * @param cause
 	 *            the cause
 	 */
-	public S3Exception(final Throwable cause) {
+	public SqsException(final Throwable cause) {
 		super(cause);
 	}
 
