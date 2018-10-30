@@ -275,12 +275,30 @@ public class S3ServiceImpl implements S3Service {
 					+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
 					+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ase);
+			if(ase.getMessage() != null)
+				throw new S3Exception(ase.getMessage());
+			else  
+				throw new S3Exception(COPY_FAILED);
+			
 		} catch (final AmazonClientException ace) {
 			String message = "Caught an AmazonClientException, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
 					+ "such as not being able to access the network.";
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ace);
-			logger.error(ERROR_MESSAGE, ace.getMessage());
+			if(ace.getMessage() != null)
+				throw new S3Exception(ace.getMessage());
+			else  
+				throw new S3Exception(COPY_FAILED);
+			
+		}catch (final Exception e) {
+			String message = "Caught an Exception, " + "which means the client encountered "
+					+ "an internal error while trying to " + " communicate with S3, "
+					+ "such as not being able to access the network.";
+			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, e);
+			if(e.getMessage() != null)
+				throw new S3Exception(e.getMessage());
+			else  
+				throw new S3Exception(COPY_FAILED);
 		}
 	}
 

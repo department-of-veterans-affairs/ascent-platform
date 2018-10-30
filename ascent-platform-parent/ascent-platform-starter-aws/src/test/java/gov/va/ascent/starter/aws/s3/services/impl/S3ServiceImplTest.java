@@ -386,7 +386,7 @@ public class S3ServiceImplTest {
 	public void testMoveMessageToS3_AmazonServiceException() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
-		when(mockS3Client.putObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
+		when(mockS3Client.putObject(anyObject())).thenThrow(new S3Exception("Error occurred"));
 		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
 	}
 }
