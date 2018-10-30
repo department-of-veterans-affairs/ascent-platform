@@ -82,18 +82,20 @@ public class S3ServiceImpl implements S3Service {
 	 *
 	 */
 
+	private static final String REQUEST_ID_MESSAGE = "Request ID:       {}";
+	private static final String ERROR_TYPE_MESSAGE = "Error Type:       {}";
+	private static final String AWS_ERROR_CODE_MESSAGE = "AWS Error Code:   {}";
+	private static final String HTTP_STATUS_CODE_MESSAGE = "HTTP Status Code: {}";
 	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3ServiceImpl.class);
-
 	private static final String NEWLINE = System.lineSeparator();
 	public static final String ERROR_MESSAGE = "Error Message: {}";
+	public static final String ERROR_MSG = "Error Message: ";
 	public static final String ERROR = "Error: {}";
 	public static final String UPLOAD_RESULT = "UploadResult: {}";
 	public static final String BUCKET_NAME_NOTNULL_MESSAGE = "Bucket Name can't be null";
 	public static final String KEY_NOTNULL_MESSAGE = "Key of the object can't be null";
 	public static final String MULTIPART_NOTNULL_MESSAGE = "Multipart Request can't be null";
 	public static final String UPLOAD_FAILED = "Upload Failed";
-
-	private static final String IOEXCEPTION_UPLOAD_MESSAGE = "IO Exception " + UPLOAD_FAILED;
 	public static final String COPY_FAILED = "Copy Failed";
 	public static final String MOVE_FAILED = "Move Failed";
 
@@ -140,21 +142,18 @@ public class S3ServiceImpl implements S3Service {
 	@Override
 	public ResponseEntity<UploadResult> uploadMultiPartFile(final String bucketName, final MultipartFile multipartFile,
 			final Map<String, String> propertyMap) {
-		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
-		Defense.notNull(multipartFile, MULTIPART_NOTNULL_MESSAGE);
 
 		UploadResult putObjectResult = null;
 
 		InputStream is = null;
 		try {
+			Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(multipartFile, MULTIPART_NOTNULL_MESSAGE);
 			is = multipartFile.getInputStream();
 			putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), is, propertyMap);
 		} catch (final IOException e) {
 			logger.error(ERROR_MESSAGE, e);
-			if(e.getMessage() != null)
-				throw new S3Exception(e.getMessage());
-			else  
-				throw new S3Exception(IOEXCEPTION_UPLOAD_MESSAGE);
+			throw new S3Exception(e);
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
@@ -189,10 +188,8 @@ public class S3ServiceImpl implements S3Service {
 								.add(upload(bucketName, multipartFile.getOriginalFilename(), is, null));
 					} catch (final IOException e) {
 						logger.error(ERROR_MESSAGE, e);
-						if(e.getMessage() != null)
-							throw new S3Exception(e.getMessage());
-						else  
-							throw new S3Exception(IOEXCEPTION_UPLOAD_MESSAGE);
+						throw new S3Exception(e);
+
 					} finally {
 						IOUtils.closeQuietly(is);
 					}
@@ -215,9 +212,6 @@ public class S3ServiceImpl implements S3Service {
 	 */
 	@Override
 	public ResponseEntity<UploadResult> uploadFile(final String bucketName, final String keyName, final String uploadFilePath) {
-		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
-		Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
-		Defense.notNull(uploadFilePath, "Upload File Path can't be null");
 
 		UploadResult putObjectResult = new UploadResult();
 
@@ -225,6 +219,10 @@ public class S3ServiceImpl implements S3Service {
 
 		InputStream is = null;
 		try {
+			Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
+			Defense.notNull(uploadFilePath, "Upload File Path can't be null");
+			
 			is = resourceLoader.getResource(uploadFilePath).getInputStream();
 			putObjectResult = upload(bucketName, keyName, is, propertyMap);
 
@@ -235,10 +233,7 @@ public class S3ServiceImpl implements S3Service {
 
 		} catch (final IOException e) {
 			logger.error(ERROR_MESSAGE, e);
-			if(e.getMessage() != null)
-				throw new S3Exception(e.getMessage());
-			else  
-				throw new S3Exception(IOEXCEPTION_UPLOAD_MESSAGE);
+			throw new S3Exception(e);
 
 		} finally {
 			IOUtils.closeQuietly(is);
@@ -253,11 +248,13 @@ public class S3ServiceImpl implements S3Service {
 	 */
 	@Override
 	public void copyFileFromSourceToTargetBucket(final String sourceBucketName, final String targetBucketName, final String key) {
-		Defense.notNull(sourceBucketName, "Source Bucket Name can't be null");
-		Defense.notNull(targetBucketName, "Target Bucket Name can't be null");
-		Defense.notNull(key, KEY_NOTNULL_MESSAGE);
+
 
 		try {
+			Defense.notNull(sourceBucketName, "Source Bucket Name can't be null");
+			Defense.notNull(targetBucketName, "Target Bucket Name can't be null");
+			Defense.notNull(key, KEY_NOTNULL_MESSAGE);
+			
 			// Copying object
 			final CopyObjectRequest copyObjRequest = new CopyObjectRequest(
 					sourceBucketName, key, targetBucketName, key);
@@ -269,36 +266,27 @@ public class S3ServiceImpl implements S3Service {
 		} catch (final AmazonServiceException ase) {
 			String message = "Caught an AmazonServiceException, " + "which means your request made it "
 					+ "to Amazon S3, but was rejected with an error response ."
-					+ NEWLINE + "Error Message:    {}" + ase.getMessage()
-					+ NEWLINE + "HTTP Status Code: {}" + ase.getStatusCode()
-					+ NEWLINE + "AWS Error Code:   {}" + ase.getErrorCode()
-					+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
-					+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
+					+ NEWLINE + ERROR_MESSAGE + ase.getMessage()
+					+ NEWLINE + HTTP_STATUS_CODE_MESSAGE + ase.getStatusCode()
+					+ NEWLINE + AWS_ERROR_CODE_MESSAGE + ase.getErrorCode()
+					+ NEWLINE + ERROR_TYPE_MESSAGE + ase.getErrorType()
+					+ NEWLINE + REQUEST_ID_MESSAGE + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ase);
-			if(ase.getMessage() != null)
-				throw new S3Exception(ase.getMessage());
-			else  
-				throw new S3Exception(COPY_FAILED);
+			throw new S3Exception(ase);
 			
 		} catch (final AmazonClientException ace) {
 			String message = "Caught an AmazonClientException, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
 					+ "such as not being able to access the network.";
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ace);
-			if(ace.getMessage() != null)
-				throw new S3Exception(ace.getMessage());
-			else  
-				throw new S3Exception(COPY_FAILED);
+            throw new S3Exception(ace);
 			
 		}catch (final Exception e) {
 			String message = "Caught an Exception, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
 					+ "such as not being able to access the network.";
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, e);
-			if(e.getMessage() != null)
-				throw new S3Exception(e.getMessage());
-			else  
-				throw new S3Exception(COPY_FAILED);
+            throw new S3Exception(e);
 		}
 	}
 
@@ -319,25 +307,25 @@ public class S3ServiceImpl implements S3Service {
 		}catch (final AmazonServiceException ase) {
 			String errorMessage =
 					"Caught an AmazonServiceException from PUT requests, rejected reasons:"
-							+ NEWLINE + "Error Message:    {}" + ase.getMessage()
-							+ NEWLINE + "HTTP Status Code: {}" + ase.getStatusCode()
-							+ NEWLINE + "AWS Error Code:   {}" + ase.getErrorCode()
-							+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
-							+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
+							+ NEWLINE + ERROR_MESSAGE + ase.getMessage()
+							+ NEWLINE + HTTP_STATUS_CODE_MESSAGE + ase.getStatusCode()
+							+ NEWLINE + AWS_ERROR_CODE_MESSAGE + ase.getErrorCode()
+							+ NEWLINE + ERROR_TYPE_MESSAGE + ase.getErrorType()
+							+ NEWLINE + REQUEST_ID_MESSAGE + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ase);
-			throw new S3Exception(ase.getMessage());
+			throw new S3Exception(ase);
 			
 		} catch (final AmazonClientException ace) {
 			String errorMessage = "Caught an AmazonClientException from PUT requests, rejected reason:"
-					+ NEWLINE + "Error Message:    " + ace.getMessage();
+					+ NEWLINE + ERROR_MSG + ace.getMessage();
 			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ace);
-			throw new S3Exception(ace.getMessage());
+			throw new S3Exception(ace);
 			
 		} catch (final Exception ie) { // NOSONAR
 			String errorMessage = "Caught an Exception from PUT requests, rejected reasons:"
-					+ NEWLINE + "Error Message:    " + ie.getMessage();
+					+ NEWLINE + ERROR_MSG + ie.getMessage();
 			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ie);
-			throw new S3Exception(ie.getMessage());
+			throw new S3Exception(ie);
 			
 		} 
 	}
@@ -406,25 +394,25 @@ public class S3ServiceImpl implements S3Service {
 		} catch (final AmazonServiceException ase) {
 			String message =
 					"Caught an AmazonServiceException from PUT requests, rejected reasons:"
-							+ NEWLINE + "Error Message:    {}" + ase.getMessage()
-							+ NEWLINE + "HTTP Status Code: {}" + ase.getStatusCode()
-							+ NEWLINE + "AWS Error Code:   {}" + ase.getErrorCode()
-							+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
-							+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
+							+ NEWLINE + ERROR_MESSAGE + ase.getMessage()
+							+ NEWLINE + HTTP_STATUS_CODE_MESSAGE + ase.getStatusCode()
+							+ NEWLINE + AWS_ERROR_CODE_MESSAGE + ase.getErrorCode()
+							+ NEWLINE + ERROR_TYPE_MESSAGE + ase.getErrorType()
+							+ NEWLINE + REQUEST_ID_MESSAGE + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ase);
-			throw new S3Exception(ase.getMessage());
+			throw new S3Exception(ase);
 			
 		} catch (final AmazonClientException ace) {
 			String message = "Caught an AmazonClientException from PUT requests, rejected reason:"
-					+ NEWLINE + "Error Message:    " + ace.getMessage();
+					+ NEWLINE + ERROR_MSG + ace.getMessage();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ace);
-			throw new S3Exception(ace.getMessage());
+			throw new S3Exception(ace);
 			
 		} catch (final InterruptedException ie) { // NOSONAR
 			String message = "Caught an InterruptedException from PUT requests, rejected reasons:"
-					+ NEWLINE + "Error Message:    " + ie.getMessage();
+					+ NEWLINE + ERROR_MSG + ie.getMessage();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ie);
-			throw new S3Exception(ie.getMessage());
+			throw new S3Exception(ie);
 			
 		} finally {
 			IOUtils.closeQuietly(inputStream);

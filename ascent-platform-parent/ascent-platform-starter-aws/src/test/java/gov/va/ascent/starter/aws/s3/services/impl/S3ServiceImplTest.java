@@ -62,7 +62,7 @@ public class S3ServiceImplTest {
 	private static final String TEST_TARGET_BUCKET = "test-target-bucket";
 	private static final String TEST_DLQ_BUCKET = "test-dlq-bucket";
 
-	//@Autowired
+	@Autowired
 	@InjectMocks
 	private  S3Service s3Service  = new S3ServiceImpl(); 
 
@@ -376,6 +376,15 @@ public class S3ServiceImplTest {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
 		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected = S3Exception.class)
+	public void testCopyFileFromSourceToTargetBucket_Exception() {
+		when(mockS3Client.copyObject(anyObject())).thenThrow(Exception.class);
+		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
+	}
+	
 
 	@Test
 	public void testMoveMessageToS3() {
@@ -384,9 +393,20 @@ public class S3ServiceImplTest {
 	
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_AmazonServiceException() throws Exception {
-		final List<Bucket> bucketList = prepareBucketList();
-		prepareS3Mock(bucketList);
-		when(mockS3Client.putObject(anyObject())).thenThrow(new S3Exception("Error occurred"));
+		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(new AmazonServiceException("Error occurred"));
+		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testMoveMessageToS3_AmazonClientException() throws Exception {
+		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(new AmazonClientException("Error occurred"));
+		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected = S3Exception.class)
+	public void testMoveMessageToS3_Exception() throws Exception {
+		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(Exception.class);
 		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
 	}
 }
