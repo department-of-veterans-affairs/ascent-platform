@@ -95,6 +95,7 @@ public class S3ServiceImpl implements S3Service {
 
 	private static final String IOEXCEPTION_UPLOAD_MESSAGE = "IO Exception " + UPLOAD_FAILED;
 	public static final String COPY_FAILED = "Copy Failed";
+	public static final String MOVE_FAILED = "Move Failed";
 
 	@Autowired
 	private AmazonS3 s3client;
@@ -288,12 +289,39 @@ public class S3ServiceImpl implements S3Service {
 	 */
 	@Override
 	public void moveMessageToS3(final String dlqBucketName, final String key, final String message) {
-		Defense.notNull(dlqBucketName, BUCKET_NAME_NOTNULL_MESSAGE);
-		Defense.notNull(key, KEY_NOTNULL_MESSAGE);
-		Defense.notNull(message, "Message Content can't be null");
+		
+		try {
+			Defense.notNull(dlqBucketName, BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(key, KEY_NOTNULL_MESSAGE);
+			Defense.notNull(message, "Message Content can't be null");
 
-		logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
-		s3client.putObject(dlqBucketName, key, message);
+			logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
+			s3client.putObject(dlqBucketName, key, message);
+
+		}catch (final AmazonServiceException ase) {
+			String errorMessage =
+					"Caught an AmazonServiceException from PUT requests, rejected reasons:"
+							+ NEWLINE + "Error Message:    {}" + ase.getMessage()
+							+ NEWLINE + "HTTP Status Code: {}" + ase.getStatusCode()
+							+ NEWLINE + "AWS Error Code:   {}" + ase.getErrorCode()
+							+ NEWLINE + "Error Type:       {}" + ase.getErrorType()
+							+ NEWLINE + "Request ID:       {}" + ase.getRequestId();
+			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ase);
+			throw new S3Exception(ase.getMessage());
+			
+		} catch (final AmazonClientException ace) {
+			String errorMessage = "Caught an AmazonClientException from PUT requests, rejected reason:"
+					+ NEWLINE + "Error Message:    " + ace.getMessage();
+			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ace);
+			throw new S3Exception(ace.getMessage());
+			
+		} catch (final Exception ie) { // NOSONAR
+			String errorMessage = "Caught an Exception from PUT requests, rejected reasons:"
+					+ NEWLINE + "Error Message:    " + ie.getMessage();
+			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ie);
+			throw new S3Exception(ie.getMessage());
+			
+		} 
 	}
 
 	/**

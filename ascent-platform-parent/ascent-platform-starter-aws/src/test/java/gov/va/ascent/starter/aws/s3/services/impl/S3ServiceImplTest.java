@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +62,9 @@ public class S3ServiceImplTest {
 	private static final String TEST_TARGET_BUCKET = "test-target-bucket";
 	private static final String TEST_DLQ_BUCKET = "test-dlq-bucket";
 
-	@Autowired
+	//@Autowired
 	@InjectMocks
-	private final S3Service s3Service = new S3ServiceImpl();
+	private  S3Service s3Service  = new S3ServiceImpl(); 
 
 	@Mock
 	private AmazonS3 mockS3Client;
@@ -81,6 +82,7 @@ public class S3ServiceImplTest {
 	public void setUp() throws Exception {
 		final AscentLogger logger = AscentLoggerFactory.getLogger(S3ServiceImpl.class);
 		logger.setLevel(Level.DEBUG);
+		MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -363,13 +365,13 @@ public class S3ServiceImplTest {
 		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testCopyFileFromSourceToTargetBucket_AmazonServiceException() {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonServiceException("Error occurred"));
 		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
 	}
 
-	@Test
+	@Test(expected = S3Exception.class)
 	public void testCopyFileFromSourceToTargetBucket_AmazonClientException() {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
 		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
@@ -377,6 +379,14 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void testMoveMessageToS3() {
+		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testMoveMessageToS3_AmazonServiceException() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+		when(mockS3Client.putObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
 		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
 	}
 }
