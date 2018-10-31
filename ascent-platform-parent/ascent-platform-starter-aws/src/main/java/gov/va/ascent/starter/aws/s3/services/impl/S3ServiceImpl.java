@@ -96,6 +96,7 @@ public class S3ServiceImpl implements S3Service {
 	public static final String KEY_NOTNULL_MESSAGE = "Key of the object can't be null";
 	public static final String MULTIPART_NOTNULL_MESSAGE = "Multipart Request can't be null";
 	public static final String UPLOAD_FAILED = "Upload Failed";
+	public static final String DOWNLOAD_FAILED = "Download Failed";
 	public static final String COPY_FAILED = "Copy Failed";
 	public static final String MOVE_FAILED = "Move Failed";
 
@@ -339,33 +340,41 @@ public class S3ServiceImpl implements S3Service {
 	 * @throws IOException
 	 */
 	@Override
-	public ResponseEntity<byte[]> downloadFile(final String bucketName, final String keyName) throws IOException {
+	public ResponseEntity<byte[]> downloadFile(final String bucketName, final String keyName)  {
 
-		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
-		Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
+		try {
+			Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
 
-		final GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
-		final S3Object s3Object = s3client.getObject(getObjectRequest);
-		final S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
+			final GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
+			final S3Object s3Object = s3client.getObject(getObjectRequest);
+			final S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
 
-		final byte[] bytes = IOUtils.toByteArray(objectInputStream);
-		final String fileName = URLEncoder.encode(keyName, "UTF-8").replaceAll("\\+", "%20");
+			final byte[] bytes = IOUtils.toByteArray(objectInputStream);
+			final String fileName = URLEncoder.encode(keyName, "UTF-8").replaceAll("\\+", "%20");
 
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		httpHeaders.setContentLength(bytes == null ? 0 : bytes.length);
-		httpHeaders.setContentDispositionFormData("attachment", fileName);
+			final HttpHeaders httpHeaders = new HttpHeaders();
+			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+			httpHeaders.setContentLength(bytes == null ? 0 : bytes.length);
+			httpHeaders.setContentDispositionFormData("attachment", fileName);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
-			logger.debug("S3Object: {}", ReflectionToStringBuilder.toString(s3Object));
-			logger.debug("File Name: {}", fileName);
-			if (bytes != null) {
-				logger.debug("Bytes Length: {}", bytes.length);
+			if (logger.isDebugEnabled()) {
+				logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
+				logger.debug("S3Object: {}", ReflectionToStringBuilder.toString(s3Object));
+				logger.debug("File Name: {}", fileName);
+				if (bytes != null) {
+					logger.debug("Bytes Length: {}", bytes.length);
+				}
 			}
+
+			return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+			
+		}catch(Exception e) {
+		
+			logger.error(AscentBanner.newBanner(DOWNLOAD_FAILED, Level.ERROR), e.getMessage(), e);
+			throw new S3Exception(e);
 		}
 
-		return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
 	}
 
 	/**

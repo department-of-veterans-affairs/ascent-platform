@@ -98,6 +98,16 @@ public class S3ServiceImplTest {
 		final ResponseEntity<byte[]> bytesArray = s3Service.downloadFile(TEST_BUCKET_NAME, "TEST-KEY");
 		assertNotNull(bytesArray);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test(expected = S3Exception.class)
+	public void testDownloadFile_Exception() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+		when(mockS3Client.getObject(any(GetObjectRequest.class))).thenThrow(Exception.class);
+		s3Service.downloadFile(TEST_BUCKET_NAME, "TEST-KEY");
+
+	}
 
 	private List<Bucket> prepareBucketList() {
 		final List<Bucket> bucketList = new ArrayList<Bucket>();
