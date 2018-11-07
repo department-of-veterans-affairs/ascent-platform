@@ -1,15 +1,12 @@
 package gov.va.ascent.starter.aws.s3.services;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.amazonaws.services.s3.transfer.model.UploadResult;
+import gov.va.ascent.starter.aws.s3.dto.UploadResultRequest;
+import gov.va.ascent.starter.aws.s3.dto.UploadResultResponse;
 
 public interface S3Service {
+
 	/**
 	 * Upload a byte array to S3
 	 * @param byteData
@@ -17,29 +14,7 @@ public interface S3Service {
 	 * @param propertyMap
 	 * @return
 	 */
-	public ResponseEntity<UploadResult> uploadByteArray(String bucketName, byte[] byteData, String fileName, Map<String, String> propertyMap);
-
-	/**
-	 * Upload a single multipart file to S3
-	 * @param multipartFile multipart file
-	 * @return ResponseEntity<UploadResult> returned from Amazon sdk
-	 */
-	public ResponseEntity<UploadResult> uploadMultiPartFile(String bucketName, MultipartFile multipartFile, Map<String, String> propertyMap);
-
-	/**
-	 * Upload a list of multipart files to S3
-	 * @param multipartFiles list of multipart files
-	 * @return ResponseEntity<List of UploadResult> returned from Amazon sdk
-	 */
-	public ResponseEntity<List<UploadResult>> uploadMultiPartFiles(String bucketName, MultipartFile[] multipartFiles);
-
-	/**
-	 * Upload a file to S3
-	 * @param keyName 
-	 * @param uploadFilePath 
-	 * @return 
-	 */
-	public ResponseEntity<UploadResult> uploadFile(String bucketName, String keyName, String uploadFilePath);
+	public UploadResultResponse uploadByteArray(UploadResultRequest uploadResultRequest);
 
 	/**
 	 * Copy a file from one bucket to another bucket.
