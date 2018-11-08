@@ -45,6 +45,10 @@ import com.amazonaws.services.s3.transfer.model.UploadResult;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.exception.S3Exception;
+import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
+import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultResponse;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
@@ -237,8 +241,11 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 
 		prepareS3Mock(bucketList);
-		final ResponseEntity<byte[]> bytesArray = s3Service.downloadFile(TEST_BUCKET_NAME, "TEST-KEY");
-		assertNotNull(bytesArray);
+		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
+		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
+		downloadResultRequest.setKeyName("TEST-KEY");
+		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
+		assertNotNull(response);
 	}
 	
 	@Test
@@ -248,8 +255,11 @@ public class S3ServiceImplTest {
 		prepareS3Mock(bucketList);
 		when(mockS3Object.getObjectContent())
 			.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("".getBytes()), null));
-		final ResponseEntity<byte[]> bytesArray = s3Service.downloadFile(TEST_BUCKET_NAME, "TEST-KEY");
-		assertNotNull(bytesArray);
+		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
+		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
+		downloadResultRequest.setKeyName("TEST-KEY");
+		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
+		assertNotNull(response);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -258,7 +268,10 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
 		when(mockS3Client.getObject(any(GetObjectRequest.class))).thenThrow(Exception.class);
-		s3Service.downloadFile(TEST_BUCKET_NAME, "TEST-KEY");
+		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
+		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
+		downloadResultRequest.setKeyName("TEST-KEY");
+		s3Service.downloadFile(downloadResultRequest);
 
 	}
 
@@ -286,51 +299,83 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 		prepareS3Mock(bucketList);
 		when(mockS3Client.copyObject(anyObject())).thenReturn(mock(CopyObjectResult.class));
-		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
+		CopyFileRequest copyFileRequest = new CopyFileRequest();
+		copyFileRequest.setKey("testFile.txt");
+		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
+		copyFileRequest.setSourceBucketName(TEST_BUCKET_NAME);
+		s3Service.copyFileFromSourceToTargetBucket(copyFileRequest);
 	}
 
 	@Test(expected = S3Exception.class)
 	public void testCopyFileFromSourceToTargetBucket_AmazonServiceException() {
+		CopyFileRequest copyFileRequest = new CopyFileRequest();
+		copyFileRequest.setKey("testFile.txt");
+		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
+		copyFileRequest.setSourceBucketName(TEST_BUCKET_NAME);
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonServiceException("Error occurred"));
-		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
+		s3Service.copyFileFromSourceToTargetBucket(copyFileRequest);
 	}
 
 	@Test(expected = S3Exception.class)
 	public void testCopyFileFromSourceToTargetBucket_AmazonClientException() {
+		CopyFileRequest copyFileRequest = new CopyFileRequest();
+		copyFileRequest.setKey("testFile.txt");
+		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
+		copyFileRequest.setSourceBucketName(TEST_BUCKET_NAME);
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
-		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
+		s3Service.copyFileFromSourceToTargetBucket(copyFileRequest);
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	@Test(expected = S3Exception.class)
 	public void testCopyFileFromSourceToTargetBucket_Exception() {
+		CopyFileRequest copyFileRequest = new CopyFileRequest();
+		copyFileRequest.setKey("testFile.txt");
+		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
+		copyFileRequest.setSourceBucketName(TEST_BUCKET_NAME);
 		when(mockS3Client.copyObject(anyObject())).thenThrow(Exception.class);
-		s3Service.copyFileFromSourceToTargetBucket(TEST_BUCKET_NAME, TEST_TARGET_BUCKET, "testFile.txt");
+		s3Service.copyFileFromSourceToTargetBucket(copyFileRequest);
 	}
 	
 
 	@Test
 	public void testMoveMessageToS3() {
-		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
+		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
+		moveMessageRequest.setKey("key");
+		moveMessageRequest.setMessage("messageBody");
+		s3Service.moveMessageToS3(moveMessageRequest);
 	}
 	
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_AmazonServiceException() throws Exception {
+		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
+		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
+		moveMessageRequest.setKey("key");
+		moveMessageRequest.setMessage("messageBody");
 		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(new AmazonServiceException("Error occurred"));
-		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+		s3Service.moveMessageToS3(moveMessageRequest);
 	}
 	
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_AmazonClientException() throws Exception {
+		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
+		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
+		moveMessageRequest.setKey("key");
+		moveMessageRequest.setMessage("messageBody");
 		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(new AmazonClientException("Error occurred"));
-		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+		s3Service.moveMessageToS3(moveMessageRequest);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_Exception() throws Exception {
+		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
+		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
+		moveMessageRequest.setKey("key");
+		moveMessageRequest.setMessage("messageBody");
 		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(Exception.class);
-		s3Service.moveMessageToS3(TEST_BUCKET_NAME, "key", "messageBody");
+		s3Service.moveMessageToS3(moveMessageRequest);
 	}
 }

@@ -34,6 +34,7 @@ import org.springframework.jms.core.ProducerCallback;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.exception.SqsException;
+import gov.va.ascent.starter.aws.s3.dto.SendMessageResponse;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,11 +69,10 @@ public class SqsServiceImplTest {
 
 	@Test
 	public void testSendMessageWithMessageObject() throws Exception {
-		ResponseEntity<String> response = sqsService.sendMessage(mockTextMessage);
+		SendMessageResponse response = sqsService.sendMessage(mockTextMessage);
 		assertNotNull(response);
 		assertNotNull(response.getStatusCode());
-		assertNotNull(response.getStatusCodeValue());
-		assertEquals(200, response.getStatusCodeValue());
+
 	}
 	
 	@Test(expected=SqsException.class)

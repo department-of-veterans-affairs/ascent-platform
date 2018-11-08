@@ -10,7 +10,6 @@ import javax.jms.TextMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.ProducerCallback;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -20,6 +19,7 @@ import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.exception.SqsException;
+import gov.va.ascent.starter.aws.s3.dto.SendMessageResponse;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
 @Service
@@ -48,9 +48,10 @@ public class SqsServiceImpl implements SqsService {
 	 */
 	@Override
 	@ManagedOperation
-	public ResponseEntity<String> sendMessage(Message message) {
+	public SendMessageResponse sendMessage(Message message) {
 
 	    String messageId = null;
+	    SendMessageResponse sendMessageResponse = new SendMessageResponse();
 		try {
 			Defense.notNull(message, "Message can't be null");
 			messageId = jmsOperations.execute(new ProducerCallback<String>() {
@@ -75,7 +76,9 @@ public class SqsServiceImpl implements SqsService {
 			logger.error("Error Message: Message ID cannot be null after message has been sent");
 			throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_TRANSFER_FAILED + " - Message ID cannot be null");
 		}
-		return new ResponseEntity<>(messageId, HttpStatus.OK);
+		sendMessageResponse.setMessageId(messageId);
+		sendMessageResponse.setStatusCode(HttpStatus.OK.toString());
+		return sendMessageResponse;
 	}
 
 	/**

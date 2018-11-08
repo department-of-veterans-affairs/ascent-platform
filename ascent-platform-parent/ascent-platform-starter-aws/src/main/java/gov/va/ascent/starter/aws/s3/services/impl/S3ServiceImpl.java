@@ -11,11 +11,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.AmazonClientException;
@@ -37,6 +33,10 @@ import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.exception.S3Exception;
+import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
+import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultResponse;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
@@ -106,9 +106,6 @@ public class S3ServiceImpl implements S3Service {
 	protected TransferManager transferManager;
 
 	@Autowired
-	private ResourceLoader resourceLoader;
-	
-	@Autowired
 	@Qualifier(UploadResultTransform.BEAN_NAME)
 	AbstractAwsS3Transformer<UploadResult, UploadResultResponse> uploadResultTransform;
 
@@ -145,22 +142,24 @@ public class S3ServiceImpl implements S3Service {
 	 * @param key
 	 */
 	@Override
-	public void copyFileFromSourceToTargetBucket(final String sourceBucketName, final String targetBucketName, final String key) {
+	public void copyFileFromSourceToTargetBucket(final CopyFileRequest copyFileRequest) {
 
 
 		try {
-			Defense.notNull(sourceBucketName, "Source Bucket Name can't be null");
-			Defense.notNull(targetBucketName, "Target Bucket Name can't be null");
-			Defense.notNull(key, KEY_NOTNULL_MESSAGE);
+			Defense.notNull(copyFileRequest.getSourceBucketName(), "Source Bucket Name can't be null");
+			Defense.notNull(copyFileRequest.getTargetBucketName(), "Target Bucket Name can't be null");
+			Defense.notNull(copyFileRequest.getKey(), KEY_NOTNULL_MESSAGE);
 			
 			// Copying object
 			final CopyObjectRequest copyObjRequest = new CopyObjectRequest(
-					sourceBucketName, key, targetBucketName, key);
+					copyFileRequest.getSourceBucketName(), copyFileRequest.getKey(), 
+					copyFileRequest.getTargetBucketName(), copyFileRequest.getKey());
 			logger.info("Copying object. {}", ReflectionToStringBuilder.toString(copyObjRequest));
 			s3client.copyObject(copyObjRequest);
 			// Deleting object from original source bucket
-			s3client.deleteObject(sourceBucketName, key);
-			logger.info("Deleting object. Bucket Name: {} Key : {}", sourceBucketName, key);
+			s3client.deleteObject(copyFileRequest.getSourceBucketName(), copyFileRequest.getKey());
+			logger.info("Deleting object. Bucket Name: {} Key : {}", 
+					copyFileRequest.getSourceBucketName(), copyFileRequest.getKey());
 		} catch (final AmazonServiceException ase) {
 			String message = "Caught an AmazonServiceException, " + "which means your request made it "
 					+ "to Amazon S3, but was rejected with an error response ."
@@ -192,15 +191,17 @@ public class S3ServiceImpl implements S3Service {
 	 * Copy the DLQ Message to S3 DLQ Bucket.
 	 */
 	@Override
-	public void moveMessageToS3(final String dlqBucketName, final String key, final String message) {
+	public void moveMessageToS3(final MoveMessageRequest moveResultRequest) {
 		
 		try {
-			Defense.notNull(dlqBucketName, BUCKET_NAME_NOTNULL_MESSAGE);
-			Defense.notNull(key, KEY_NOTNULL_MESSAGE);
-			Defense.notNull(message, "Message Content can't be null");
+			Defense.notNull(moveResultRequest.getDlqBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(moveResultRequest.getKey(), KEY_NOTNULL_MESSAGE);
+			Defense.notNull(moveResultRequest.getMessage(), "Message Content can't be null");
 
-			logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}", dlqBucketName, key);
-			s3client.putObject(dlqBucketName, key, message);
+			logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}", 
+					moveResultRequest.getDlqBucketName(), moveResultRequest.getKey());
+			s3client.putObject(moveResultRequest.getDlqBucketName(), moveResultRequest.getKey(), 
+					moveResultRequest.getMessage());
 
 		}catch (final AmazonServiceException ase) {
 			String errorMessage =
@@ -237,23 +238,24 @@ public class S3ServiceImpl implements S3Service {
 	 * @throws IOException
 	 */
 	@Override
-	public ResponseEntity<byte[]> downloadFile(final String bucketName, final String keyName)  {
+	public DownloadFileResponse downloadFile(final DownloadFileRequest downloadResultRequest)  {
 
 		try {
-			Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
-			Defense.notNull(keyName, KEY_NOTNULL_MESSAGE);
+			Defense.notNull(downloadResultRequest.getBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(downloadResultRequest.getKeyName(), KEY_NOTNULL_MESSAGE);
+			
+			DownloadFileResponse downloadResultResponse = new DownloadFileResponse();
 
-			final GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, keyName);
+			final GetObjectRequest getObjectRequest = new GetObjectRequest(
+					downloadResultRequest.getBucketName(), downloadResultRequest.getKeyName());
 			final S3Object s3Object = s3client.getObject(getObjectRequest);
 			final S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
 
 			final byte[] bytes = IOUtils.toByteArray(objectInputStream);
-			final String fileName = URLEncoder.encode(keyName, "UTF-8").replaceAll("\\+", "%20");
-
-			final HttpHeaders httpHeaders = new HttpHeaders();
-			httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-			httpHeaders.setContentLength(bytes == null ? 0 : bytes.length);
-			httpHeaders.setContentDispositionFormData("attachment", fileName);
+			final String fileName = URLEncoder.encode(downloadResultRequest.getKeyName(), "UTF-8").replaceAll("\\+", "%20");
+			downloadResultResponse.setFileByteArray(bytes);
+			downloadResultResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM.toString());
+			downloadResultResponse.setFileName(fileName);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
@@ -264,7 +266,7 @@ public class S3ServiceImpl implements S3Service {
 				}
 			}
 
-			return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+			return downloadResultResponse;
 			
 		}catch(Exception e) {
 		

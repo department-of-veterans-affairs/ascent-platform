@@ -2,8 +2,7 @@ package gov.va.ascent.starter.aws.sqs.services;
 
 import javax.jms.Message;
 import javax.jms.TextMessage;
-
-import org.springframework.http.ResponseEntity;
+import gov.va.ascent.starter.aws.s3.dto.SendMessageResponse;
 
 public interface SqsService {
 	
@@ -12,7 +11,7 @@ public interface SqsService {
 	 * @param message
 	 * @return returns a JMS ID
 	 */
-	public ResponseEntity<String> sendMessage(Message message);
+	public SendMessageResponse sendMessage(Message message);
     
 	/**
 	 * Create a TextMessage
