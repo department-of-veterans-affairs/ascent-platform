@@ -1,14 +1,16 @@
 package gov.va.ascent.starter.aws.transform.impl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-
 import com.amazonaws.services.s3.transfer.model.UploadResult;
-
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultResponse;
 import gov.va.ascent.starter.aws.transform.AbstractAwsS3Transformer;
+import gov.va.ascent.starter.aws.util.HystrixCommandConstants;
 
 
 /**
@@ -21,6 +23,9 @@ import gov.va.ascent.starter.aws.transform.AbstractAwsS3Transformer;
  */
 @Service(value = UploadResultTransform.BEAN_NAME)
 @Qualifier(UploadResultTransform.BEAN_NAME)
+@Scope("prototype")
+@RefreshScope
+@DefaultProperties(groupKey = HystrixCommandConstants.AWS_SERVICE_GROUP_KEY)
 public class UploadResultTransform extends AbstractAwsS3Transformer<UploadResult, UploadResultResponse> {
 
 	/** Constant for the logger for this class */
