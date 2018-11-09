@@ -28,13 +28,13 @@ public class SqsServiceImpl implements SqsService {
 	private static final String ERROR_MESSAGE = "Error Message: {}";
 
 	private AscentLogger logger = AscentLoggerFactory.getLogger(SqsServiceImpl.class);
-	
+
 	public static final String MESSAGE_TRANSFER_FAILED = "Message transfer Failed";
-	
+
 	public static final String MESSAGE_CREATE_FAILED = "Message creation Failed";
-	
+
 	private static final String SQS_EXCEPTION_MSG = "SQS Exception: ";
-	
+
 	private static final String SQS_JMS_EXCEPTION_MSG = "SQS JMS Exception: ";
 
 	@Resource
@@ -50,8 +50,8 @@ public class SqsServiceImpl implements SqsService {
 	@ManagedOperation
 	public SendMessageResponse sendMessage(Message message) {
 
-	    String messageId = null;
-	    SendMessageResponse sendMessageResponse = new SendMessageResponse();
+		String messageId = null;
+		SendMessageResponse sendMessageResponse = new SendMessageResponse();
 		try {
 			Defense.notNull(message, "Message can't be null");
 			messageId = jmsOperations.execute(new ProducerCallback<String>() {
@@ -63,16 +63,16 @@ public class SqsServiceImpl implements SqsService {
 					return message.getJMSMessageID();
 				}
 			});
-			
-		}catch(Exception e) {
+
+		} catch (Exception e) {
 			logger.error(ERROR_MESSAGE, e);
-			if(e.getMessage() != null)
+			if (e.getMessage() != null)
 				throw new SqsException(e.getMessage());
-			else  
+			else
 				throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_TRANSFER_FAILED);
-			
+
 		}
-		if(messageId == null) {
+		if (messageId == null) {
 			logger.error("Error Message: Message ID cannot be null after message has been sent");
 			throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_TRANSFER_FAILED + " - Message ID cannot be null");
 		}
@@ -88,26 +88,26 @@ public class SqsServiceImpl implements SqsService {
 	public TextMessage createTextMessage(String message) {
 
 		try {
-			
+
 			Defense.notNull(message, "Message can't be null");
 			return connectionFactory.createConnection().createSession(false, Session.AUTO_ACKNOWLEDGE)
 					.createTextMessage(message);
-			
+
 		} catch (JMSException e) {
-			logger.error(ERROR_MESSAGE, e);		
-			if(e.getMessage() != null)
-				throw new SqsException(SQS_JMS_EXCEPTION_MSG + e.getMessage());
-			else  
-				throw new SqsException(SQS_JMS_EXCEPTION_MSG + MESSAGE_CREATE_FAILED);
-			
-		}catch(Exception e) {
 			logger.error(ERROR_MESSAGE, e);
-			if(e.getMessage() != null)
+			if (e.getMessage() != null)
+				throw new SqsException(SQS_JMS_EXCEPTION_MSG + e.getMessage());
+			else
+				throw new SqsException(SQS_JMS_EXCEPTION_MSG + MESSAGE_CREATE_FAILED);
+
+		} catch (Exception e) {
+			logger.error(ERROR_MESSAGE, e);
+			if (e.getMessage() != null)
 				throw new SqsException(e.getMessage());
-			else  
+			else
 				throw new SqsException(SQS_EXCEPTION_MSG + MESSAGE_CREATE_FAILED);
-			
+
 		}
-	
+
 	}
 }

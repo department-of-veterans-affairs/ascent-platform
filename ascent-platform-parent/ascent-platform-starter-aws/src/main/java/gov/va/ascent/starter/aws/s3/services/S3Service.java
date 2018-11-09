@@ -13,6 +13,7 @@ public interface S3Service {
 
 	/**
 	 * Upload a byte array to S3
+	 * 
 	 * @param byteData
 	 * @param fileName
 	 * @param propertyMap
@@ -22,12 +23,14 @@ public interface S3Service {
 
 	/**
 	 * Copy a file from one bucket to another bucket.
+	 * 
 	 * @param key
 	 */
 	public void copyFileFromSourceToTargetBucket(CopyFileRequest copyFileRequest);
 
 	/**
 	 * Copy the DLQ Message to S3 DLQ Bucket.
+	 * 
 	 * @param key
 	 * @param message
 	 */
@@ -35,10 +38,11 @@ public interface S3Service {
 
 	/**
 	 * Retrieves a file from S3
+	 * 
 	 * @param key key to the file i.e. /{documentid}/{myfile}
 	 * @param bucket bucket name i.e. bucket-name
 	 * @return response entity
 	 * @throws IOException
 	 */
-	public DownloadFileResponse  downloadFile(DownloadFileRequest downloadResultRequest) throws IOException;
+	public DownloadFileResponse downloadFile(DownloadFileRequest downloadResultRequest) throws IOException;
 }

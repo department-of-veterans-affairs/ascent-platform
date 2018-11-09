@@ -5,11 +5,11 @@ import gov.va.ascent.framework.service.ServiceResponse;
 public class DownloadFileResponse extends ServiceResponse {
 
 	private static final long serialVersionUID = -2531179599395037607L;
-	
+
 	private byte[] fileByteArray;
-	
+
 	private String contentType;
-	
+
 	private String fileName;
 
 	/**
@@ -53,7 +53,5 @@ public class DownloadFileResponse extends ServiceResponse {
 	public void setFileByteArray(byte[] fileByteArray) {
 		this.fileByteArray = fileByteArray;
 	}
-	
-	
-    
+
 }

@@ -12,7 +12,6 @@ import gov.va.ascent.starter.aws.s3.dto.UploadResultResponse;
 import gov.va.ascent.starter.aws.transform.AbstractAwsS3Transformer;
 import gov.va.ascent.starter.aws.util.HystrixCommandConstants;
 
-
 /**
  * <p>
  * Implementation of the AwsTransformer interface
@@ -36,13 +35,13 @@ public class UploadResultTransform extends AbstractAwsS3Transformer<UploadResult
 
 	@Override
 	public UploadResultResponse transformToService(UploadResult toTransform) {
-		
+
 		UploadResultResponse uploadResultResponse = new UploadResultResponse();
 		uploadResultResponse.setBucketName(toTransform.getBucketName());
 		uploadResultResponse.seteTag(toTransform.getETag());
-        uploadResultResponse.setKey(toTransform.getKey());
-        uploadResultResponse.setVersionId(toTransform.getVersionId());
-		
+		uploadResultResponse.setKey(toTransform.getKey());
+		uploadResultResponse.setVersionId(toTransform.getVersionId());
+
 		return uploadResultResponse;
 	}
 
@@ -52,5 +51,4 @@ public class UploadResultTransform extends AbstractAwsS3Transformer<UploadResult
 				"Method not impelemented: UploadResult transformToAwsS3(UploadResultResponse toTransform)");
 	}
 
-	
 }

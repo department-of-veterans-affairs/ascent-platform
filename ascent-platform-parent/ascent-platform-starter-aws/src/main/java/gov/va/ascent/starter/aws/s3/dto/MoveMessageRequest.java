@@ -1,14 +1,14 @@
 package gov.va.ascent.starter.aws.s3.dto;
 
-/** 
+/**
  * @author srikanthvanapalli
  */
 public class MoveMessageRequest {
-	
+
 	private String dlqBucketName;
-	
-	private String key; 
-	
+
+	private String key;
+
 	private String message;
 
 	/**
@@ -52,7 +52,5 @@ public class MoveMessageRequest {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	
-	
+
 }

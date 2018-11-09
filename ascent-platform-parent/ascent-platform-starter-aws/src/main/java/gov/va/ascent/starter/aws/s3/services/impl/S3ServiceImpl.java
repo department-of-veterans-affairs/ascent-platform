@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.CopyObjectRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -100,9 +99,6 @@ public class S3ServiceImpl implements S3Service {
 	public static final String MOVE_FAILED = "Move Failed";
 
 	@Autowired
-	private AmazonS3 s3client;
-
-	@Autowired
 	protected TransferManager transferManager;
 
 	@Autowired
@@ -124,8 +120,8 @@ public class S3ServiceImpl implements S3Service {
 		Defense.notNull(uploadResultRequest.getByteData(), "byte[] can't be null");
 		Defense.notNull(uploadResultRequest.getFileName(), "File Name can't be null");
 
-		final UploadResultResponse putObjectResult = upload(uploadResultRequest.getBucketName(), 
-				uploadResultRequest.getFileName(), new ByteArrayInputStream(uploadResultRequest.getByteData()), 
+		final UploadResultResponse putObjectResult = upload(uploadResultRequest.getBucketName(),
+				uploadResultRequest.getFileName(), new ByteArrayInputStream(uploadResultRequest.getByteData()),
 				uploadResultRequest.getPropertyMap());
 
 		if (logger.isDebugEnabled()) {
@@ -135,7 +131,6 @@ public class S3ServiceImpl implements S3Service {
 		return putObjectResult;
 	}
 
-
 	/**
 	 * Copy a file from one bucket to another bucket.
 	 *
@@ -144,21 +139,20 @@ public class S3ServiceImpl implements S3Service {
 	@Override
 	public void copyFileFromSourceToTargetBucket(final CopyFileRequest copyFileRequest) {
 
-
 		try {
 			Defense.notNull(copyFileRequest.getSourceBucketName(), "Source Bucket Name can't be null");
 			Defense.notNull(copyFileRequest.getTargetBucketName(), "Target Bucket Name can't be null");
 			Defense.notNull(copyFileRequest.getKey(), KEY_NOTNULL_MESSAGE);
-			
+
 			// Copying object
 			final CopyObjectRequest copyObjRequest = new CopyObjectRequest(
-					copyFileRequest.getSourceBucketName(), copyFileRequest.getKey(), 
+					copyFileRequest.getSourceBucketName(), copyFileRequest.getKey(),
 					copyFileRequest.getTargetBucketName(), copyFileRequest.getKey());
 			logger.info("Copying object. {}", ReflectionToStringBuilder.toString(copyObjRequest));
-			s3client.copyObject(copyObjRequest);
+			transferManager.getAmazonS3Client().copyObject(copyObjRequest);
 			// Deleting object from original source bucket
-			s3client.deleteObject(copyFileRequest.getSourceBucketName(), copyFileRequest.getKey());
-			logger.info("Deleting object. Bucket Name: {} Key : {}", 
+			transferManager.getAmazonS3Client().deleteObject(copyFileRequest.getSourceBucketName(), copyFileRequest.getKey());
+			logger.info("Deleting object. Bucket Name: {} Key : {}",
 					copyFileRequest.getSourceBucketName(), copyFileRequest.getKey());
 		} catch (final AmazonServiceException ase) {
 			String message = "Caught an AmazonServiceException, " + "which means your request made it "
@@ -170,20 +164,20 @@ public class S3ServiceImpl implements S3Service {
 					+ NEWLINE + REQUEST_ID_MESSAGE + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ase);
 			throw new S3Exception(ase);
-			
+
 		} catch (final AmazonClientException ace) {
 			String message = "Caught an AmazonClientException, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
 					+ "such as not being able to access the network.";
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, ace);
-            throw new S3Exception(ace);
-			
-		}catch (final Exception e) {
+			throw new S3Exception(ace);
+
+		} catch (final Exception e) {
 			String message = "Caught an Exception, " + "which means the client encountered "
 					+ "an internal error while trying to " + " communicate with S3, "
 					+ "such as not being able to access the network.";
 			logger.error(AscentBanner.newBanner(COPY_FAILED, Level.ERROR), message, e);
-            throw new S3Exception(e);
+			throw new S3Exception(e);
 		}
 	}
 
@@ -192,18 +186,18 @@ public class S3ServiceImpl implements S3Service {
 	 */
 	@Override
 	public void moveMessageToS3(final MoveMessageRequest moveResultRequest) {
-		
+
 		try {
 			Defense.notNull(moveResultRequest.getDlqBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);
 			Defense.notNull(moveResultRequest.getKey(), KEY_NOTNULL_MESSAGE);
 			Defense.notNull(moveResultRequest.getMessage(), "Message Content can't be null");
 
-			logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}", 
+			logger.debug("Moving Message to S3. DLQ Bucket Name: {} Key: {}",
 					moveResultRequest.getDlqBucketName(), moveResultRequest.getKey());
-			s3client.putObject(moveResultRequest.getDlqBucketName(), moveResultRequest.getKey(), 
+			transferManager.getAmazonS3Client().putObject(moveResultRequest.getDlqBucketName(), moveResultRequest.getKey(),
 					moveResultRequest.getMessage());
 
-		}catch (final AmazonServiceException ase) {
+		} catch (final AmazonServiceException ase) {
 			String errorMessage =
 					"Caught an AmazonServiceException from PUT requests, rejected reasons:"
 							+ NEWLINE + ERROR_MESSAGE + ase.getMessage()
@@ -213,20 +207,20 @@ public class S3ServiceImpl implements S3Service {
 							+ NEWLINE + REQUEST_ID_MESSAGE + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ase);
 			throw new S3Exception(ase);
-			
+
 		} catch (final AmazonClientException ace) {
 			String errorMessage = "Caught an AmazonClientException from PUT requests, rejected reason:"
 					+ NEWLINE + ERROR_MSG + ace.getMessage();
 			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ace);
 			throw new S3Exception(ace);
-			
+
 		} catch (final Exception ie) { // NOSONAR
 			String errorMessage = "Caught an Exception from PUT requests, rejected reasons:"
 					+ NEWLINE + ERROR_MSG + ie.getMessage();
 			logger.error(AscentBanner.newBanner(MOVE_FAILED, Level.ERROR), errorMessage, ie);
 			throw new S3Exception(ie);
-			
-		} 
+
+		}
 	}
 
 	/**
@@ -238,17 +232,17 @@ public class S3ServiceImpl implements S3Service {
 	 * @throws IOException
 	 */
 	@Override
-	public DownloadFileResponse downloadFile(final DownloadFileRequest downloadResultRequest)  {
+	public DownloadFileResponse downloadFile(final DownloadFileRequest downloadResultRequest) {
 
 		try {
 			Defense.notNull(downloadResultRequest.getBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);
 			Defense.notNull(downloadResultRequest.getKeyName(), KEY_NOTNULL_MESSAGE);
-			
+
 			DownloadFileResponse downloadResultResponse = new DownloadFileResponse();
 
 			final GetObjectRequest getObjectRequest = new GetObjectRequest(
 					downloadResultRequest.getBucketName(), downloadResultRequest.getKeyName());
-			final S3Object s3Object = s3client.getObject(getObjectRequest);
+			final S3Object s3Object = transferManager.getAmazonS3Client().getObject(getObjectRequest);
 			final S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
 
 			final byte[] bytes = IOUtils.toByteArray(objectInputStream);
@@ -267,9 +261,9 @@ public class S3ServiceImpl implements S3Service {
 			}
 
 			return downloadResultResponse;
-			
-		}catch(Exception e) {
-		
+
+		} catch (Exception e) {
+
 			logger.error(AscentBanner.newBanner(DOWNLOAD_FAILED, Level.ERROR), e.getMessage(), e);
 			throw new S3Exception(e);
 		}
@@ -294,7 +288,7 @@ public class S3ServiceImpl implements S3Service {
 		putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 		Upload upload = null;
 		UploadResultResponse uploadResultResponse = null;
-		
+
 		try {
 			upload = transferManager.upload(putObjectRequest);
 			uploadResultResponse = uploadResultTransform.transformToService(upload.waitForUploadResult());
@@ -309,19 +303,19 @@ public class S3ServiceImpl implements S3Service {
 							+ NEWLINE + REQUEST_ID_MESSAGE + ase.getRequestId();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ase);
 			throw new S3Exception(ase);
-			
+
 		} catch (final AmazonClientException ace) {
 			String message = "Caught an AmazonClientException from PUT requests, rejected reason:"
 					+ NEWLINE + ERROR_MSG + ace.getMessage();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ace);
 			throw new S3Exception(ace);
-			
+
 		} catch (final InterruptedException ie) { // NOSONAR
 			String message = "Caught an InterruptedException from PUT requests, rejected reasons:"
 					+ NEWLINE + ERROR_MSG + ie.getMessage();
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ie);
 			throw new S3Exception(ie);
-			
+
 		} finally {
 			IOUtils.closeQuietly(inputStream);
 		}

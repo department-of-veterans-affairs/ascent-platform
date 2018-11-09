@@ -1,14 +1,14 @@
 package gov.va.ascent.starter.aws.s3.dto;
 
-/** 
+/**
  * @author srikanthvanapalli
  */
 public class CopyFileRequest {
-	
+
 	private String sourceBucketName;
-	
+
 	private String targetBucketName;
-	
+
 	private String key;
 
 	/**
@@ -52,6 +52,5 @@ public class CopyFileRequest {
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
-	
+
 }

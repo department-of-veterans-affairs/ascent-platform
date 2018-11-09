@@ -7,17 +7,17 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 public class StaticDestinationResolver implements DestinationResolver {
 
-  private final String queueName;
+	private final String queueName;
 
-  public StaticDestinationResolver(String queueName) {
-    this.queueName = queueName;
-  }
+	public StaticDestinationResolver(String queueName) {
+		this.queueName = queueName;
+	}
 
-  @Override
-  public Destination resolveDestinationName(
-      Session session, String destinationName, boolean pubSubDomain) throws JMSException {
+	@Override
+	public Destination resolveDestinationName(
+			Session session, String destinationName, boolean pubSubDomain) throws JMSException {
 
-    return session.createQueue(queueName);
-  }
+		return session.createQueue(queueName);
+	}
 
 }

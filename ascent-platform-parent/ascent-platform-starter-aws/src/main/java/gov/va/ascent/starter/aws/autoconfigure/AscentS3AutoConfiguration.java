@@ -14,12 +14,12 @@ import gov.va.ascent.starter.aws.s3.services.impl.S3ServiceImpl;
  */
 
 @Configuration
-@Import({S3Config.class})
+@Import({ S3Config.class })
 public class AscentS3AutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public S3Service s3Service(){
+	public S3Service s3Service() {
 		return new S3ServiceImpl();
 	}
 

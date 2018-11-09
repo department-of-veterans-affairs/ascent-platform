@@ -5,10 +5,10 @@ import gov.va.ascent.framework.service.ServiceResponse;
 public class SendMessageResponse extends ServiceResponse {
 
 	private static final long serialVersionUID = -2531179599395037607L;
-	
-    private String statusCode;
-    
-    private String messageId;
+
+	private String statusCode;
+
+	private String messageId;
 
 	/**
 	 * @return the statusCode
@@ -37,7 +37,5 @@ public class SendMessageResponse extends ServiceResponse {
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
 	}
-    
-    
-    
+
 }

@@ -1,13 +1,12 @@
 package gov.va.ascent.starter.aws.s3.services.impl;
 
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,16 +25,17 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.ResponseEntity;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CopyObjectResult;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.transfer.TransferManager;
@@ -53,7 +53,6 @@ import gov.va.ascent.starter.aws.s3.dto.UploadResultRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultResponse;
 import gov.va.ascent.starter.aws.s3.services.S3Service;
 import gov.va.ascent.starter.aws.transform.AbstractAwsS3Transformer;
-import gov.va.ascent.starter.aws.transform.impl.UploadResultTransformTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class S3ServiceImplTest {
@@ -65,10 +64,10 @@ public class S3ServiceImplTest {
 
 	@Autowired
 	@InjectMocks
-	private  S3Service s3Service  = new S3ServiceImpl(); 
+	private S3Service s3Service = new S3ServiceImpl();
 
-	@Mock
-	private AmazonS3 mockS3Client;
+//	@Mock
+//	private AmazonS3 mockS3Client;
 
 	@Mock
 	S3Object mockS3Object;
@@ -78,7 +77,7 @@ public class S3ServiceImplTest {
 
 	@Mock
 	private ResourceLoader resourceLoader;
-	
+
 	@Mock
 	AbstractAwsS3Transformer<UploadResult, UploadResultResponse> uploadResultTransform;
 
@@ -86,9 +85,21 @@ public class S3ServiceImplTest {
 	public void setUp() throws Exception {
 		final AscentLogger logger = AscentLoggerFactory.getLogger(S3ServiceImpl.class);
 		logger.setLevel(Level.DEBUG);
+
+		System.setProperty("aws.accessKeyId", "anyValue");
+		System.setProperty("aws.secretKey", "anyValue");
+
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
+//	private AmazonS3 recreateS3client() {
+//		// mock the impl returned from S3Config, because cannot mock the AmazonS3 interface
+//		S3Config conf = new S3Config();
+//		AmazonS3 mockS3Client = Mockito.mock(ReflectionTestUtils.invokeMethod(conf, "s3client"));
+//		when(transferManager.getAmazonS3Client()).thenReturn(mockS3Client);
+//		return mockS3Client;
+//	}
+
 	@Test
 	public void testUploadByteArray() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
@@ -119,7 +130,7 @@ public class S3ServiceImplTest {
 				s3Service.uploadByteArray(uploadResultRequest);
 		assertNotNull(uploadResultResponse);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testuploadFileAmazonClientException() throws Exception {
 		final Upload upload = mock(Upload.class);
@@ -138,7 +149,7 @@ public class S3ServiceImplTest {
 				new AmazonClientException("AmazonClientException"));
 		s3Service.uploadByteArray(uploadResultRequest);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testuploadFileAmazonServiceException() throws Exception {
 		final Upload upload = mock(Upload.class);
@@ -157,7 +168,7 @@ public class S3ServiceImplTest {
 				new AmazonServiceException("AmazonServiceException"));
 		s3Service.uploadByteArray(uploadResultRequest);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testuploadFileInterruptedException() throws Exception {
 		final Upload upload = mock(Upload.class);
@@ -175,7 +186,7 @@ public class S3ServiceImplTest {
 				new S3Exception());
 		s3Service.uploadByteArray(uploadResultRequest);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testuploadFileS3ExceptionThrowable() throws Exception {
 		final Upload upload = mock(Upload.class);
@@ -192,7 +203,7 @@ public class S3ServiceImplTest {
 		when(mockResource.getInputStream()).thenThrow(new S3Exception(new Throwable()));
 		s3Service.uploadByteArray(uploadResultRequest);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testuploadFileS3ExceptionMsg() throws Exception {
 		final Upload upload = mock(Upload.class);
@@ -209,8 +220,7 @@ public class S3ServiceImplTest {
 		when(mockResource.getInputStream()).thenThrow(new S3Exception("msg"));
 		s3Service.uploadByteArray(uploadResultRequest);
 	}
-	
-	
+
 	@Test(expected = S3Exception.class)
 	public void testuploadFileS3ExceptionThrowableMsg() throws Exception {
 		final Upload upload = mock(Upload.class);
@@ -229,11 +239,10 @@ public class S3ServiceImplTest {
 				new Throwable()));
 		s3Service.uploadByteArray(uploadResultRequest);
 	}
-	
-	
+
 	@Test
 	public void testFields() throws Exception {
-		Assert.assertEquals(mockS3Client, FieldUtils.readField(s3Service, "s3client", true));
+		Assert.assertEquals(transferManager, FieldUtils.readField(s3Service, "transferManager", true));
 	}
 
 	@Test
@@ -247,26 +256,26 @@ public class S3ServiceImplTest {
 		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
 		assertNotNull(response);
 	}
-	
+
 	@Test
 	public void testDownloadFileNullBytes() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
 
 		prepareS3Mock(bucketList);
 		when(mockS3Object.getObjectContent())
-			.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("".getBytes()), null));
+				.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("".getBytes()), null));
 		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
 		assertNotNull(response);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test(expected = S3Exception.class)
 	public void testDownloadFile_Exception() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
-		prepareS3Mock(bucketList);
+		AmazonS3 mockS3Client = prepareS3Mock(bucketList);
 		when(mockS3Client.getObject(any(GetObjectRequest.class))).thenThrow(Exception.class);
 		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
@@ -283,21 +292,27 @@ public class S3ServiceImplTest {
 		return bucketList;
 	}
 
-	private void prepareS3Mock(final List<Bucket> bucketList) throws Exception {
-		Mockito.when(mockS3Client.listBuckets()).thenReturn(bucketList);
-		Mockito.when(mockS3Client.getRegionName()).thenReturn(TEST_REGION);
-		Mockito.when(mockS3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Object);
+	private AmazonS3 prepareS3Mock(List<Bucket> bucketList) throws Exception {
+		// mock the impl returned from S3Config, because cannot mock the AmazonS3 interface
+//		AmazonS3 mockS3Client = Mockito.mock(AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(TEST_REGION)).build());
+		AmazonS3Client mockS3Client = Mockito.mock(AmazonS3Client.class);
+
+		// set client getters
+		when(mockS3Client.listBuckets()).thenReturn(bucketList);
+		when(mockS3Client.getRegionName()).thenReturn(TEST_REGION);
+		when(mockS3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Object);
+		when(mockS3Client.putObject(any(String.class), any(String.class), any(String.class))).thenReturn(new PutObjectResult());
 		when(mockS3Object.getObjectContent())
 				.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("testString".getBytes()), null));
+
+		when(transferManager.getAmazonS3Client()).thenReturn(mockS3Client);
+		return mockS3Client;
 	}
 
-
-
-	
 	@Test
 	public void testCopyFileFromSourceToTargetBucket() throws Exception {
 		final List<Bucket> bucketList = prepareBucketList();
-		prepareS3Mock(bucketList);
+		AmazonS3 mockS3Client = prepareS3Mock(bucketList);
 		when(mockS3Client.copyObject(anyObject())).thenReturn(mock(CopyObjectResult.class));
 		CopyFileRequest copyFileRequest = new CopyFileRequest();
 		copyFileRequest.setKey("testFile.txt");
@@ -307,7 +322,8 @@ public class S3ServiceImplTest {
 	}
 
 	@Test(expected = S3Exception.class)
-	public void testCopyFileFromSourceToTargetBucket_AmazonServiceException() {
+	public void testCopyFileFromSourceToTargetBucket_AmazonServiceException() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		CopyFileRequest copyFileRequest = new CopyFileRequest();
 		copyFileRequest.setKey("testFile.txt");
 		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
@@ -317,7 +333,8 @@ public class S3ServiceImplTest {
 	}
 
 	@Test(expected = S3Exception.class)
-	public void testCopyFileFromSourceToTargetBucket_AmazonClientException() {
+	public void testCopyFileFromSourceToTargetBucket_AmazonClientException() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		CopyFileRequest copyFileRequest = new CopyFileRequest();
 		copyFileRequest.setKey("testFile.txt");
 		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
@@ -325,11 +342,11 @@ public class S3ServiceImplTest {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(new AmazonClientException("Error occurred"));
 		s3Service.copyFileFromSourceToTargetBucket(copyFileRequest);
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Test(expected = S3Exception.class)
-	public void testCopyFileFromSourceToTargetBucket_Exception() {
+	public void testCopyFileFromSourceToTargetBucket_Exception() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		CopyFileRequest copyFileRequest = new CopyFileRequest();
 		copyFileRequest.setKey("testFile.txt");
 		copyFileRequest.setTargetBucketName(TEST_TARGET_BUCKET);
@@ -337,19 +354,20 @@ public class S3ServiceImplTest {
 		when(mockS3Client.copyObject(anyObject())).thenThrow(Exception.class);
 		s3Service.copyFileFromSourceToTargetBucket(copyFileRequest);
 	}
-	
 
 	@Test
-	public void testMoveMessageToS3() {
+	public void testMoveMessageToS3() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
 		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
 		moveMessageRequest.setKey("key");
 		moveMessageRequest.setMessage("messageBody");
 		s3Service.moveMessageToS3(moveMessageRequest);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_AmazonServiceException() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
 		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
 		moveMessageRequest.setKey("key");
@@ -357,9 +375,10 @@ public class S3ServiceImplTest {
 		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(new AmazonServiceException("Error occurred"));
 		s3Service.moveMessageToS3(moveMessageRequest);
 	}
-	
+
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_AmazonClientException() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
 		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
 		moveMessageRequest.setKey("key");
@@ -367,10 +386,11 @@ public class S3ServiceImplTest {
 		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(new AmazonClientException("Error occurred"));
 		s3Service.moveMessageToS3(moveMessageRequest);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test(expected = S3Exception.class)
 	public void testMoveMessageToS3_Exception() throws Exception {
+		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
 		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
 		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
 		moveMessageRequest.setKey("key");

@@ -9,7 +9,6 @@ public abstract class AbstractAwsS3Transformer<A extends Object, S extends Servi
 	/** Constant for the logger for this class */
 	public static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AbstractAwsS3Transformer.class);
 
-	
 	/**
 	 * Transform an {@link Object} to an {@link ServiceTransferObjectMarker}
 	 *
