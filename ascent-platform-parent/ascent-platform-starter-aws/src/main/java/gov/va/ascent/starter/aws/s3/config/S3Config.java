@@ -31,18 +31,15 @@ import gov.va.ascent.framework.log.AscentLoggerFactory;
 public class S3Config {
 	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3Config.class);
 
-	@Value("${ascent.aws.access_key_id}")
-	private String awsId;
+	private String awsId = "test-key"; 
 
-	@Value("${ascent.aws.secret_access_key}")
-	private String awsKey;
+	private String awsKey = "test-secret";
+
+	private String endpoint = "http://localhost:4572/";
 
 	@Value("${ascent.s3.region}")
 	private String region;
-
-	@Value("${ascent.aws.localstack-config.s3.endpoint}")
-	private String endpoint;
-
+	
 	@Autowired
 	Environment environment;
 

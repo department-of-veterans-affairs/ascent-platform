@@ -18,14 +18,10 @@ public class SqsProperties {
 	private String endpoint;
 	private String dlqendpoint;
 	private int dlqRetriesCount;
-
-	@Value("${ascent.aws.access_key_id}")
-	private String accessKey;
-
-	@Value("${ascent.aws.secret_access_key}")
-	private String secretKey;
-
 	private Integer numberOfMessagesToPrefetch;
+	
+	private String accessKey = "test-key"; 
+	private String secretKey = "test-secret"; 
 
 	public Optional<Integer> getNumberOfMessagesToPrefetch() {
 		return Optional.ofNullable(numberOfMessagesToPrefetch);
