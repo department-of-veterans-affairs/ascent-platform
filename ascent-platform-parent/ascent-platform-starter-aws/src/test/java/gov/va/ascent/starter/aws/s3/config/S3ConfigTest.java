@@ -38,10 +38,8 @@ public class S3ConfigTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ReflectionTestUtils.setField(s3Config, "awsId", TEST_AWS_ID);
-		ReflectionTestUtils.setField(s3Config, "awsKey", TEST_AWS_KEY);
+
 		ReflectionTestUtils.setField(s3Config, "region", TEST_AWS_REGION);
-		ReflectionTestUtils.setField(s3Config, "endpoint", TEST_END_POINT);
 
 		final AscentLogger logger = AscentLoggerFactory.getLogger(S3Config.class);
 		logger.setLevel(Level.DEBUG);
@@ -49,8 +47,6 @@ public class S3ConfigTest {
 
 	@Test
 	public void testFields() throws Exception {
-		Assert.assertEquals(TEST_AWS_ID, FieldUtils.readField(s3Config, "awsId", true));
-		Assert.assertEquals(TEST_AWS_KEY, FieldUtils.readField(s3Config, "awsKey", true));
 		Assert.assertEquals(TEST_AWS_REGION, FieldUtils.readField(s3Config, "region", true));
 	}
 

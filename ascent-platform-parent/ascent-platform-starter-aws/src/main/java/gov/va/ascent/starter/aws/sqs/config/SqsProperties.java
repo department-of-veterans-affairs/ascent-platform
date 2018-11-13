@@ -2,12 +2,11 @@ package gov.va.ascent.starter.aws.sqs.config;
 
 import java.net.URI;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
+import gov.va.ascent.starter.aws.config.BaseConfig;
 
 @ConfigurationProperties(prefix = "ascent.sqs")
 public class SqsProperties {
@@ -20,8 +19,8 @@ public class SqsProperties {
 	private int dlqRetriesCount;
 	private Integer numberOfMessagesToPrefetch;
 	
-	private String accessKey = "test-key"; 
-	private String secretKey = "test-secret"; 
+	private String accessKey = BaseConfig.AWS_ID; 
+	private String secretKey = BaseConfig.AWS_KEY; 
 
 	public Optional<Integer> getNumberOfMessagesToPrefetch() {
 		return Optional.ofNullable(numberOfMessagesToPrefetch);

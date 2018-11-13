@@ -23,6 +23,7 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
+import gov.va.ascent.starter.aws.config.BaseConfig;
 
 /**
  * Configuration for amazon S3 service access.
@@ -30,12 +31,6 @@ import gov.va.ascent.framework.log.AscentLoggerFactory;
 @Configuration
 public class S3Config {
 	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3Config.class);
-
-	private String awsId = "test-key"; 
-
-	private String awsKey = "test-secret";
-
-	private String endpoint = "http://localhost:4572/";
 
 	@Value("${ascent.s3.region}")
 	private String region;
@@ -53,15 +48,15 @@ public class S3Config {
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				final AmazonS3ClientBuilder s3ClientBuider = AmazonS3ClientBuilder.standard()
-						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsId, awsKey)));
-				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(endpoint, region));
+						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(BaseConfig.AWS_ID, BaseConfig.AWS_KEY)));
+				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(BaseConfig.AWS_LOCALHOST_ENDPOINT, region));
 				s3ClientBuider.setPathStyleAccessEnabled(true);
 				return s3ClientBuider.build();
 			}
 		}
 
 		// otherwise, get a real client
-		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
+		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(BaseConfig.AWS_ID, BaseConfig.AWS_KEY);
 		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 	}
