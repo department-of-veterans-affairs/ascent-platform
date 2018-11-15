@@ -23,43 +23,52 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
+import gov.va.ascent.starter.aws.config.BaseConfig;
 
+/**
+ * Configuration for amazon S3 service access.
+ */
 @Configuration
 public class S3Config {
 	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3Config.class);
 
-	@Value("${ascent.aws.access_key_id}")
-	private String awsId;
-
-	@Value("${ascent.aws.secret_access_key}")
-	private String awsKey;
-
 	@Value("${ascent.s3.region}")
 	private String region;
-
-	@Value("${ascent.aws.localstack-config.s3.endpoint}")
-	private String endpoint;
-
+	
 	@Autowired
 	Environment environment;
 
-	@Bean
-	public AmazonS3 s3client() {
+	/**
+	 * Creates a client object for accessing S3 service.
+	 * <p>
+	 * Side note, this does not need to be a spring bean, and should be accessed from the transferManager.
+	 */
+	protected AmazonS3 s3client() {
+		// get the localstack implementation if running under a "embedded aws" profile
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				final AmazonS3ClientBuilder s3ClientBuider = AmazonS3ClientBuilder.standard()
-						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(awsId, awsKey)));
-				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(endpoint, region));
+						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(BaseConfig.AWS_ID, BaseConfig.AWS_KEY)));
+				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(BaseConfig.AWS_LOCALHOST_ENDPOINT, region));
 				s3ClientBuider.setPathStyleAccessEnabled(true);
 				return s3ClientBuider.build();
 			}
 		}
 
-		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(awsId, awsKey);
+		// otherwise, get a real client
+		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(BaseConfig.AWS_ID, BaseConfig.AWS_KEY);
 		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 	}
 
+	/**
+	 * Create a S3 transfer manager for handling transfers between a client and the service.
+	 * Get the s3client from this object.
+	 * <p>
+	 * For use only in service IMPL classes and their delegates.
+	 *
+	 * @return TransferManager
+	 */
 	@Bean
 	public TransferManager transferManager() {
 

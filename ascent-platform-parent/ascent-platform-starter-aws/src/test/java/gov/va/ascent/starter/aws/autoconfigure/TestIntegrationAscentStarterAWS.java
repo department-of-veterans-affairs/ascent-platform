@@ -98,7 +98,6 @@ public class TestIntegrationAscentStarterAWS {
 			stream.write(content.getBytes());
 		}
 
-		s3Service.uploadFile(TEST_BUCKET_NAME, "test", file.getAbsolutePath());
 	}
 
 }

@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class StandardSqsConfiguration extends AbstractSqsConfiguration {
 
-  @Bean
-  @Override
-  public ConnectionFactory connectionFactory(SqsProperties sqsProperties) {
-    return createStandardSQSConnectionFactory(sqsProperties);
-  }
+	@Bean
+	@Override
+	public ConnectionFactory connectionFactory(SqsProperties sqsProperties) {
+		return createStandardSQSConnectionFactory(sqsProperties);
+	}
 
 }

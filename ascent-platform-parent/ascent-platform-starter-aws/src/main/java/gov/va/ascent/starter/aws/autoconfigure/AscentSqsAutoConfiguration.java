@@ -11,21 +11,20 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 import gov.va.ascent.starter.aws.sqs.config.StandardSqsConfiguration;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 import gov.va.ascent.starter.aws.sqs.services.impl.SqsServiceImpl;
+
 /**
  * Created by akulkarni on 2/1/18.
  */
 
 @Configuration
 @EnableConfigurationProperties(SqsProperties.class)
-@Import({AbstractSqsConfiguration.class, StandardSqsConfiguration.class})
+@Import({ AbstractSqsConfiguration.class, StandardSqsConfiguration.class })
 public class AscentSqsAutoConfiguration {
-	
+
 	@Bean
 	@ConditionalOnMissingBean
-	public SqsService sqsService(){
+	public SqsService sqsService() {
 		return new SqsServiceImpl();
 	}
-	
+
 }
-
-
