@@ -25,10 +25,9 @@ import gov.va.ascent.framework.log.AscentLoggerFactory;
 @RunWith(MockitoJUnitRunner.class)
 public class S3ConfigTest {
 
-	private static final String TEST_AWS_ID = "test-id";
-	private static final String TEST_AWS_KEY = "test-key";
+
 	private static final String TEST_AWS_REGION = "us-east-1";
-	private static final String TEST_END_POINT = "http://localhost:4572/evsstestbucket/";
+
 
 	@InjectMocks
 	S3Config s3Config = new S3Config();

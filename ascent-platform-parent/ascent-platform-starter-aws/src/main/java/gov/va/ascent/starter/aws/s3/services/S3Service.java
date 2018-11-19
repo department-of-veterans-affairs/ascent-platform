@@ -3,6 +3,7 @@ package gov.va.ascent.starter.aws.s3.services;
 import java.io.IOException;
 
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
 import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
@@ -45,4 +46,13 @@ public interface S3Service {
 	 * @throws IOException
 	 */
 	public DownloadFileResponse downloadFile(DownloadFileRequest downloadResultRequest) throws IOException;
+
+	/**
+	 * Deletes a file from S3
+	 * 
+	 * @param deleteFileRequest
+	 * @return void
+	 * @throws IOException
+	 */
+	public void deleteFile(DeleteFileRequest deleteFileRequest);
 }

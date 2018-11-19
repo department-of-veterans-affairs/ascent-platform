@@ -33,6 +33,7 @@ import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.exception.S3Exception;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
 import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
@@ -92,11 +93,13 @@ public class S3ServiceImpl implements S3Service {
 	public static final String UPLOAD_RESULT = "UploadResult: {}";
 	public static final String BUCKET_NAME_NOTNULL_MESSAGE = "Bucket Name can't be null";
 	public static final String KEY_NOTNULL_MESSAGE = "Key of the object can't be null";
+	public static final String REGION_NOTNULL_MESSAGE = "Region of the object can't be null";
 	public static final String MULTIPART_NOTNULL_MESSAGE = "Multipart Request can't be null";
 	public static final String UPLOAD_FAILED = "Upload Failed";
 	public static final String DOWNLOAD_FAILED = "Download Failed";
 	public static final String COPY_FAILED = "Copy Failed";
 	public static final String MOVE_FAILED = "Move Failed";
+	public static final String DELETE_FAILED = "Delete Failed";
 
 	@Autowired
 	protected TransferManager transferManager;
@@ -321,5 +324,30 @@ public class S3ServiceImpl implements S3Service {
 		}
 
 		return uploadResultResponse;
+	}
+	
+	/**
+	 * Deletes a file from S3
+	 *
+	 * @param deleteFileRequest
+	 * @return void
+	 */
+	@Override
+	public void deleteFile(final DeleteFileRequest deleteFileRequest) {
+
+		try {
+			Defense.notNull(deleteFileRequest.getBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(deleteFileRequest.getKeyName(), KEY_NOTNULL_MESSAGE);
+
+            transferManager.getAmazonS3Client().deleteObject(deleteFileRequest.getBucketName(),
+            		deleteFileRequest.getKeyName());
+
+		} catch (final Exception ie) { 
+			String message = "Caught an Exception from DELETE requests, rejected reasons:"
+					+ NEWLINE + ERROR_MSG + ie.getMessage();
+			logger.error(AscentBanner.newBanner(DELETE_FAILED, Level.ERROR), message, ie);
+			throw new S3Exception(ie);
+
+		} 
 	}
 }
