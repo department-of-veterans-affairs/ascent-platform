@@ -11,8 +11,11 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -132,6 +135,35 @@ public class S3ServiceImpl implements S3Service {
 		}
 
 		return putObjectResult;
+	}
+	
+	/**
+	 * Upload a single multipart file to S3
+	 *
+	 * @param multipartFile multipart file
+	 * @return PutObjectResult returned from Amazon sdk
+	 */
+	@Override
+	public ResponseEntity<UploadResultResponse> uploadMultiPartFile(final String bucketName, final MultipartFile multipartFile,
+			final Map<String, String> propertyMap) {
+		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
+		Defense.notNull(multipartFile, MULTIPART_NOTNULL_MESSAGE);
+		UploadResultResponse putObjectResult = null;
+ 		InputStream is = null;
+		try {
+			is = multipartFile.getInputStream();
+			putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), is, propertyMap);
+		} catch (final IOException e) {
+			logger.error(ERROR_MESSAGE, e);
+			if(e.getMessage() != null)
+				throw new S3Exception(e.getMessage());
+			else  
+				throw new S3Exception(UPLOAD_FAILED);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+ 		logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
+ 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 
 	/**

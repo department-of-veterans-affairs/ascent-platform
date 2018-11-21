@@ -1,6 +1,12 @@
 package gov.va.ascent.starter.aws.s3.services;
 
 import java.io.IOException;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.amazonaws.services.s3.transfer.model.UploadResult;
 
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
@@ -55,4 +61,15 @@ public interface S3Service {
 	 * @throws IOException
 	 */
 	public void deleteFile(DeleteFileRequest deleteFileRequest);
+	
+	/**
+	 * 
+	 * @param bucketName
+	 * @param multipartFile
+	 * @param propertyMap
+	 * @return
+	 */
+	public ResponseEntity<UploadResultResponse> uploadMultiPartFile(final String bucketName, final MultipartFile multipartFile,
+			final Map<String, String> propertyMap);
+	
 }

@@ -44,7 +44,7 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
  */
 @Configuration
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
-@EnableConfigurationProperties({ AscentAwsLocalstackProperties.class, SqsProperties.class })
+@EnableConfigurationProperties({ SqsProperties.class })
 public class AscentEmbeddedAwsLocalstackApplication {
 
 	/** The Constant LOGGER. */
