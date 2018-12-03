@@ -2,12 +2,8 @@ package gov.va.ascent.starter.aws.s3.services;
 
 import java.io.IOException;
 import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.amazonaws.services.s3.transfer.model.UploadResult;
-
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
