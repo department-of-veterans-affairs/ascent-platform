@@ -3,11 +3,12 @@ package gov.va.ascent.starter.aws.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 
-@Configuration
+@ConfigurationProperties(prefix = "ascent.sqs")
 public class AscentAwsLocalstackProperties {
 
 	static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentAwsLocalstackProperties.class);
