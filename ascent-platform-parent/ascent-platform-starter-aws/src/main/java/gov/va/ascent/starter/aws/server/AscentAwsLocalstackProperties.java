@@ -8,13 +8,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 
+// NOSONAR for localstack only
 @ConfigurationProperties(prefix = "ascent.sqs")
 public class AscentAwsLocalstackProperties {
 
 	static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentAwsLocalstackProperties.class);
 	
 	@SuppressWarnings("serial")
-	private List<Services> services = new ArrayList<Services>() {{
+	private List<Services> services = new ArrayList<Services>() {{ // NOSONAR for localstack only
         add(new Services("s3",4572));
         add(new Services("sqs",4576));
     }};
