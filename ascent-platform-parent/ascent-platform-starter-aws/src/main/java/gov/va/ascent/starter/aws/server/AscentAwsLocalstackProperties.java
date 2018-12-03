@@ -28,7 +28,7 @@ public class AscentAwsLocalstackProperties {
 	}
 
 	/** Inner class with Services specific config properties */
-	public static class Services {
+	public class Services {
 
 		/** AWS Service name */
 		private String name;
