@@ -19,8 +19,8 @@ public class SqsProperties {
 	private int dlqRetriesCount;
 	private Integer numberOfMessagesToPrefetch;
 	
-	private String accessKey = BaseConfig.AWS_ID; 
-	private String secretKey = BaseConfig.AWS_KEY; 
+	private String accessKey = BaseConfig.AWS_LOCALSTACK_ID; 
+	private String secretKey = BaseConfig.AWS_LOCALSTACK_KEY; 
 
 	public Optional<Integer> getNumberOfMessagesToPrefetch() {
 		return Optional.ofNullable(numberOfMessagesToPrefetch);

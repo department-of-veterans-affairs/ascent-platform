@@ -22,8 +22,8 @@ public class BaseConfigTest {
 
 	@Test
 	public void testFields() throws Exception {
-		Assert.assertEquals(TEST_AWS_ID, BaseConfig.AWS_ID);
-		Assert.assertEquals(TEST_AWS_KEY, BaseConfig.AWS_KEY);
+		Assert.assertEquals(TEST_AWS_ID, BaseConfig.AWS_LOCALSTACK_ID);
+		Assert.assertEquals(TEST_AWS_KEY, BaseConfig.AWS_LOCALSTACK_KEY);
 		Assert.assertEquals(TEST_AWS_LOCALHOST_ENDPOINT, BaseConfig.AWS_LOCALHOST_ENDPOINT);
 	}
 
