@@ -46,6 +46,7 @@ import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.exception.S3Exception;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
 import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
@@ -357,7 +358,7 @@ public class S3ServiceImplTest {
 
 	@Test
 	public void testMoveMessageToS3() throws Exception {
-		AmazonS3 mockS3Client = prepareS3Mock(prepareBucketList());
+		prepareS3Mock(prepareBucketList());
 		MoveMessageRequest moveMessageRequest = new MoveMessageRequest();
 		moveMessageRequest.setDlqBucketName(TEST_BUCKET_NAME);
 		moveMessageRequest.setKey("key");
@@ -398,4 +399,26 @@ public class S3ServiceImplTest {
 		when(mockS3Client.putObject(anyString(), anyString(), anyString())).thenThrow(Exception.class);
 		s3Service.moveMessageToS3(moveMessageRequest);
 	}
+	
+	@Test
+	public void testDeleteFile() throws Exception {
+		
+		prepareS3Mock(prepareBucketList());
+		DeleteFileRequest deleteFileRequest = new DeleteFileRequest();
+		deleteFileRequest.setBucketName(TEST_BUCKET_NAME);
+		deleteFileRequest.setKeyName("TEST-KEY");
+		s3Service.deleteFile(deleteFileRequest);
+	}
+	
+	@Test(expected=S3Exception.class)
+	public void testDeleteFile_Exception() throws Exception {
+				
+		prepareS3Mock(prepareBucketList());
+		DeleteFileRequest deleteFileRequest = new DeleteFileRequest();
+		deleteFileRequest.setBucketName(null);
+		deleteFileRequest.setKeyName("TEST-KEY");
+		s3Service.deleteFile(deleteFileRequest);
+	}
+
+	
 }

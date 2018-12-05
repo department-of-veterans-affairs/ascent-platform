@@ -11,8 +11,11 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -33,6 +36,7 @@ import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.exception.S3Exception;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
 import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
@@ -92,11 +96,13 @@ public class S3ServiceImpl implements S3Service {
 	public static final String UPLOAD_RESULT = "UploadResult: {}";
 	public static final String BUCKET_NAME_NOTNULL_MESSAGE = "Bucket Name can't be null";
 	public static final String KEY_NOTNULL_MESSAGE = "Key of the object can't be null";
+	public static final String REGION_NOTNULL_MESSAGE = "Region of the object can't be null";
 	public static final String MULTIPART_NOTNULL_MESSAGE = "Multipart Request can't be null";
 	public static final String UPLOAD_FAILED = "Upload Failed";
 	public static final String DOWNLOAD_FAILED = "Download Failed";
 	public static final String COPY_FAILED = "Copy Failed";
 	public static final String MOVE_FAILED = "Move Failed";
+	public static final String DELETE_FAILED = "Delete Failed";
 
 	@Autowired
 	protected TransferManager transferManager;
@@ -129,6 +135,37 @@ public class S3ServiceImpl implements S3Service {
 		}
 
 		return putObjectResult;
+	}
+
+	/**
+	 * Upload a single multipart file to S3
+	 *
+	 * @param multipartFile multipart file
+	 * @return PutObjectResult returned from Amazon sdk
+	 */
+	@Override
+	public ResponseEntity<UploadResultResponse> uploadMultiPartFile(final String bucketName, final MultipartFile multipartFile,
+			final Map<String, String> propertyMap) {
+		Defense.notNull(bucketName, BUCKET_NAME_NOTNULL_MESSAGE);
+		Defense.notNull(multipartFile, MULTIPART_NOTNULL_MESSAGE);
+		UploadResultResponse putObjectResult = null;
+		InputStream is = null;
+		try {
+			is = multipartFile.getInputStream();
+			putObjectResult = upload(bucketName, multipartFile.getOriginalFilename(), is, propertyMap);
+		} catch (final Exception e) {
+			logger.error(ERROR_MESSAGE, e);
+			if (e.getMessage() != null) {
+				throw new S3Exception(e.getMessage());
+			} else {
+				throw new S3Exception(UPLOAD_FAILED);
+			}
+
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+		logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
+		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 
 	/**
@@ -316,10 +353,41 @@ public class S3ServiceImpl implements S3Service {
 			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, ie);
 			throw new S3Exception(ie);
 
+		} catch (final Exception e) { // NOSONAR
+			String message = "Caught an unexpected Exception from PUT requests, rejected reasons:"
+					+ NEWLINE + ERROR_MSG + e.getMessage();
+			logger.error(AscentBanner.newBanner(UPLOAD_FAILED, Level.ERROR), message, e);
+			throw new S3Exception(e);
+
 		} finally {
 			IOUtils.closeQuietly(inputStream);
 		}
 
 		return uploadResultResponse;
+	}
+
+	/**
+	 * Deletes a file from S3
+	 *
+	 * @param deleteFileRequest
+	 * @return void
+	 */
+	@Override
+	public void deleteFile(final DeleteFileRequest deleteFileRequest) {
+
+		try {
+			Defense.notNull(deleteFileRequest.getBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);
+			Defense.notNull(deleteFileRequest.getKeyName(), KEY_NOTNULL_MESSAGE);
+
+			transferManager.getAmazonS3Client().deleteObject(deleteFileRequest.getBucketName(),
+					deleteFileRequest.getKeyName());
+
+		} catch (final Exception ie) {
+			String message = "Caught an Exception from DELETE requests, rejected reasons:"
+					+ NEWLINE + ERROR_MSG + ie.getMessage();
+			logger.error(AscentBanner.newBanner(DELETE_FAILED, Level.ERROR), message, ie);
+			throw new S3Exception(ie);
+
+		}
 	}
 }

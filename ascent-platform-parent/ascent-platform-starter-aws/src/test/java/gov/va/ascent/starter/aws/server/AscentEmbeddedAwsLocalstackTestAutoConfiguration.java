@@ -39,12 +39,12 @@ public class AscentEmbeddedAwsLocalstackTestAutoConfiguration {
 		AscentAwsLocalstackProperties ascentAwsLocalstackProperties = new AscentAwsLocalstackProperties();
 		List<Services> services = new ArrayList<>();
 		
-		Services service = new Services();
+		AscentAwsLocalstackProperties.Services service = new AscentAwsLocalstackProperties().new Services();
 		service.setName("s3");
 		service.setPort(4572);
 		services.add(service);
 		
-		service = new Services();
+		service = new AscentAwsLocalstackProperties().new Services();
 		service.setName("sqs");
 		service.setPort(4576);
 		services.add(service);

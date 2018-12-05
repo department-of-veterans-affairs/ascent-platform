@@ -34,7 +34,7 @@ public class S3Config {
 
 	@Value("${ascent.s3.region}")
 	private String region;
-	
+
 	@Autowired
 	Environment environment;
 
@@ -48,15 +48,17 @@ public class S3Config {
 		for (final String profileName : environment.getActiveProfiles()) {
 			if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				final AmazonS3ClientBuilder s3ClientBuider = AmazonS3ClientBuilder.standard()
-						.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(BaseConfig.AWS_ID, BaseConfig.AWS_KEY)));
+						.withCredentials(new AWSStaticCredentialsProvider(
+								new BasicAWSCredentials(BaseConfig.AWS_LOCALSTACK_ID, BaseConfig.AWS_LOCALSTACK_KEY)));
 				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(BaseConfig.AWS_LOCALHOST_ENDPOINT, region));
 				s3ClientBuider.setPathStyleAccessEnabled(true);
+
 				return s3ClientBuider.build();
 			}
 		}
 
 		// otherwise, get a real client
-		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(BaseConfig.AWS_ID, BaseConfig.AWS_KEY);
+		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(BaseConfig.AWS_LOCALSTACK_ID, BaseConfig.AWS_LOCALSTACK_KEY);
 		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 	}

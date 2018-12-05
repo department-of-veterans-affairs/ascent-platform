@@ -29,7 +29,7 @@ public class AscentAwsLocalstackPropertiesTest {
 	@Test
 	public final void testSetGetServices() {
 		final List<AscentAwsLocalstackProperties.Services> services = new ArrayList<>();
-		final AscentAwsLocalstackProperties.Services service = new AscentAwsLocalstackProperties.Services();
+		final AscentAwsLocalstackProperties.Services service = new AscentAwsLocalstackProperties().new Services();
 		service.setName(NAME);
 		service.setPort(PORT);
 		services.add(service);

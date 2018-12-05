@@ -3,17 +3,19 @@ package gov.va.ascent.starter.aws.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 
-@Configuration
+// NOSONAR for localstack only
+@ConfigurationProperties(prefix = "ascent.sqs")
 public class AscentAwsLocalstackProperties {
 
 	static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentAwsLocalstackProperties.class);
 	
 	@SuppressWarnings("serial")
-	private List<Services> services = new ArrayList<Services>() {{
+	private List<Services> services = new ArrayList<Services>() {{ // NOSONAR for localstack only
         add(new Services("s3",4572));
         add(new Services("sqs",4576));
     }};
@@ -27,7 +29,7 @@ public class AscentAwsLocalstackProperties {
 	}
 
 	/** Inner class with Services specific config properties */
-	public static class Services {
+	public class Services {
 
 		/** AWS Service name */
 		private String name;

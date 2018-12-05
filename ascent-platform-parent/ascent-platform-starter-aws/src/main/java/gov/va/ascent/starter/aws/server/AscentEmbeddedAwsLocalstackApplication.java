@@ -40,7 +40,7 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
  * order for this bean to be created The class is renamed to end with Application so that it could be disabled for test coverage
  * violation.
  * 
- * @author akulkarni
+ * @author akulkarnis
  */
 @Configuration
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
@@ -57,7 +57,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 	private static boolean randomizePorts = false;
 	private static Map<String, String> environmentVariables = new HashMap<>();
 
-	/**
+	/** 
 	 * Localstack Properties Bean
 	 */
 	@Autowired
