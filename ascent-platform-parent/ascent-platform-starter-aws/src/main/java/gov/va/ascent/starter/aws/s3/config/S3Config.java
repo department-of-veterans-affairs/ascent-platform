@@ -23,7 +23,7 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
-import gov.va.ascent.starter.aws.config.BaseConfig;
+import gov.va.ascent.starter.aws.config.ConfigConstants;
 
 /**
  * Configuration for amazon S3 service access.
@@ -49,8 +49,8 @@ public class S3Config {
 			if (profileName.equals(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)) {
 				final AmazonS3ClientBuilder s3ClientBuider = AmazonS3ClientBuilder.standard()
 						.withCredentials(new AWSStaticCredentialsProvider(
-								new BasicAWSCredentials(BaseConfig.AWS_LOCALSTACK_ID, BaseConfig.AWS_LOCALSTACK_KEY)));
-				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(BaseConfig.AWS_LOCALHOST_ENDPOINT, region));
+								new BasicAWSCredentials(ConfigConstants.AWS_LOCALSTACK_ID, ConfigConstants.AWS_LOCALSTACK_KEY)));
+				s3ClientBuider.setEndpointConfiguration(new EndpointConfiguration(ConfigConstants.AWS_LOCALHOST_ENDPOINT, region));
 				s3ClientBuider.setPathStyleAccessEnabled(true);
 
 				return s3ClientBuider.build();
@@ -58,7 +58,7 @@ public class S3Config {
 		}
 
 		// otherwise, get a real client
-		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(BaseConfig.AWS_LOCALSTACK_ID, BaseConfig.AWS_LOCALSTACK_KEY);
+		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(ConfigConstants.AWS_LOCALSTACK_ID, ConfigConstants.AWS_LOCALSTACK_KEY);
 		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
 				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
 	}

@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class BaseConfigTest {
+public class ConfigConstantsTest {
 
 
 	private static final String TEST_AWS_ID = "test-key";
@@ -22,9 +22,9 @@ public class BaseConfigTest {
 
 	@Test
 	public void testFields() throws Exception {
-		Assert.assertEquals(TEST_AWS_ID, BaseConfig.AWS_LOCALSTACK_ID);
-		Assert.assertEquals(TEST_AWS_KEY, BaseConfig.AWS_LOCALSTACK_KEY);
-		Assert.assertEquals(TEST_AWS_LOCALHOST_ENDPOINT, BaseConfig.AWS_LOCALHOST_ENDPOINT);
+		Assert.assertEquals(TEST_AWS_ID, ConfigConstants.AWS_LOCALSTACK_ID);
+		Assert.assertEquals(TEST_AWS_KEY, ConfigConstants.AWS_LOCALSTACK_KEY);
+		Assert.assertEquals(TEST_AWS_LOCALHOST_ENDPOINT, ConfigConstants.AWS_LOCALHOST_ENDPOINT);
 	}
 
 }

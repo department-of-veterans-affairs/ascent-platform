@@ -157,14 +157,11 @@ public class S3ServiceImpl implements S3Service {
 			logger.error(ERROR_MESSAGE, e);
 			if (e.getMessage() != null) {
 				throw new S3Exception(e.getMessage());
-			} else {
-				throw new S3Exception(UPLOAD_FAILED);
-			}
+			} 
 
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
-		logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
 		return new ResponseEntity<>(putObjectResult, HttpStatus.OK);
 	}
 
