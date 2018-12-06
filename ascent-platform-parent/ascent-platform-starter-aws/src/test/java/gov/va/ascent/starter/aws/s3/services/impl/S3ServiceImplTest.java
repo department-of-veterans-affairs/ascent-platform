@@ -1,13 +1,17 @@
 package gov.va.ascent.starter.aws.s3.services.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +31,8 @@ import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -45,6 +51,7 @@ import com.amazonaws.services.s3.transfer.model.UploadResult;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.exception.S3Exception;
+import gov.va.ascent.starter.aws.s3.dto.BaseDto;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
@@ -100,6 +107,51 @@ public class S3ServiceImplTest {
 //		when(transferManager.getAmazonS3Client()).thenReturn(mockS3Client);
 //		return mockS3Client;
 //	}
+	
+
+	@Test(expected = S3Exception.class)
+	public void testUploadMultiPartSingle() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+		final Map<String, String> propertyMap = new HashMap<String, String>();
+		propertyMap.put("documentName", "Sample Upload File");
+		final MockMultipartFile mockFile = spy(new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes()));
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		UploadResult uploadResult = new UploadResult();
+		uploadResult.setBucketName(TEST_BUCKET_NAME);
+		uploadResult.setETag("TEST-TAG");
+		uploadResult.setKey("TEST-KEY");
+		uploadResult.setVersionId("1222");
+		UploadResultResponse uploadResultResponse = new UploadResultResponse();
+		uploadResultResponse.setBucketName(TEST_BUCKET_NAME);
+		uploadResultResponse.setKey("TEST-KEY");
+		uploadResultResponse.setVersionId("1222");
+		when(upload.waitForUploadResult()).thenReturn(uploadResult);
+		when(uploadResultTransform.transformToService(uploadResult)).thenReturn(uploadResultResponse);
+		ResponseEntity<UploadResultResponse> response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
+		assertEquals(200, response.getStatusCodeValue());
+
+		doThrow(new IOException("Testing")).when(mockFile).getInputStream();
+		response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
+	}
+	
+	@Test(expected = S3Exception.class)
+	public void testUploadMultiPartSingleS3ExceptionNull() throws Exception {
+		final List<Bucket> bucketList = prepareBucketList();
+		prepareS3Mock(bucketList);
+		final Map<String, String> propertyMap = new HashMap<String, String>();
+		propertyMap.put("documentName", "Sample Upload File");
+		final MockMultipartFile mockFile = spy(new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes()));
+		final Upload upload = mock(Upload.class);
+		when(transferManager.upload(any())).thenReturn(upload);
+		when(upload.waitForUploadResult()).thenReturn(new UploadResult());
+		ResponseEntity<UploadResultResponse> response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
+		assertEquals(200, response.getStatusCodeValue());
+		doThrow(new IOException()).when(mockFile).getInputStream();
+		response = s3Service.uploadMultiPartFile(TEST_BUCKET_NAME, mockFile, propertyMap);
+	}
+	
 
 	@Test
 	public void testUploadByteArray() throws Exception {
@@ -251,7 +303,7 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 
 		prepareS3Mock(bucketList);
-		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
+		BaseDto downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
@@ -265,7 +317,7 @@ public class S3ServiceImplTest {
 		prepareS3Mock(bucketList);
 		when(mockS3Object.getObjectContent())
 				.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("".getBytes()), null));
-		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
+		BaseDto downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
@@ -278,7 +330,7 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 		AmazonS3 mockS3Client = prepareS3Mock(bucketList);
 		when(mockS3Client.getObject(any(GetObjectRequest.class))).thenThrow(Exception.class);
-		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
+		BaseDto downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		s3Service.downloadFile(downloadResultRequest);

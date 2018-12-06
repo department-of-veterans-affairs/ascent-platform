@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
-import gov.va.ascent.starter.aws.config.BaseConfig;
+import gov.va.ascent.starter.aws.config.ConfigConstants;
 
 @ConfigurationProperties(prefix = "ascent.sqs")
 public class SqsProperties {
@@ -19,8 +19,8 @@ public class SqsProperties {
 	private int dlqRetriesCount;
 	private Integer numberOfMessagesToPrefetch;
 	
-	private String accessKey = BaseConfig.AWS_LOCALSTACK_ID; 
-	private String secretKey = BaseConfig.AWS_LOCALSTACK_KEY; 
+	private String accessKey = ConfigConstants.AWS_LOCALSTACK_ID; 
+	private String secretKey = ConfigConstants.AWS_LOCALSTACK_KEY; 
 
 	public Optional<Integer> getNumberOfMessagesToPrefetch() {
 		return Optional.ofNullable(numberOfMessagesToPrefetch);

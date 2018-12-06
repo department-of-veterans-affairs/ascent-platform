@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+
+import gov.va.ascent.starter.aws.s3.dto.BaseDto;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
-import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
 import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultRequest;
@@ -47,7 +48,7 @@ public interface S3Service {
 	 * @return response entity
 	 * @throws IOException
 	 */
-	public DownloadFileResponse downloadFile(DownloadFileRequest downloadResultRequest) throws IOException;
+	public DownloadFileResponse downloadFile(BaseDto downloadResultRequest) throws IOException;
 
 	/**
 	 * Deletes a file from S3

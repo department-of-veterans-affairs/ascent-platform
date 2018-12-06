@@ -5,7 +5,7 @@ package gov.va.ascent.starter.aws.config;
  * @author srikanthvanapalli
  *
  */
-public class BaseConfig {
+public interface ConfigConstants {
 	
 	public static final String AWS_LOCALSTACK_ID = "test-key"; 
 
