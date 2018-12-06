@@ -35,9 +35,9 @@ import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.framework.util.Defense;
 import gov.va.ascent.starter.aws.exception.S3Exception;
-import gov.va.ascent.starter.aws.s3.dto.BaseDto;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
+import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileResponse;
 import gov.va.ascent.starter.aws.s3.dto.MoveMessageRequest;
 import gov.va.ascent.starter.aws.s3.dto.UploadResultRequest;
@@ -266,7 +266,7 @@ public class S3ServiceImpl implements S3Service {
 	 * @throws IOException
 	 */
 	@Override
-	public DownloadFileResponse downloadFile(final BaseDto downloadResultRequest) {
+	public DownloadFileResponse downloadFile(final DownloadFileRequest downloadResultRequest) {
 
 		try {
 			Defense.notNull(downloadResultRequest.getBucketName(), BUCKET_NAME_NOTNULL_MESSAGE);

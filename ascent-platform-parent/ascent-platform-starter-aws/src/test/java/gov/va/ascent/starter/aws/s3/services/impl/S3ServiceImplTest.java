@@ -51,7 +51,6 @@ import com.amazonaws.services.s3.transfer.model.UploadResult;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.exception.S3Exception;
-import gov.va.ascent.starter.aws.s3.dto.BaseDto;
 import gov.va.ascent.starter.aws.s3.dto.CopyFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DeleteFileRequest;
 import gov.va.ascent.starter.aws.s3.dto.DownloadFileRequest;
@@ -303,7 +302,7 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 
 		prepareS3Mock(bucketList);
-		BaseDto downloadResultRequest = new DownloadFileRequest();
+		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
@@ -317,7 +316,7 @@ public class S3ServiceImplTest {
 		prepareS3Mock(bucketList);
 		when(mockS3Object.getObjectContent())
 				.thenReturn(new S3ObjectInputStream(new ByteArrayInputStream("".getBytes()), null));
-		BaseDto downloadResultRequest = new DownloadFileRequest();
+		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		final DownloadFileResponse response = s3Service.downloadFile(downloadResultRequest);
@@ -330,7 +329,7 @@ public class S3ServiceImplTest {
 		final List<Bucket> bucketList = prepareBucketList();
 		AmazonS3 mockS3Client = prepareS3Mock(bucketList);
 		when(mockS3Client.getObject(any(GetObjectRequest.class))).thenThrow(Exception.class);
-		BaseDto downloadResultRequest = new DownloadFileRequest();
+		DownloadFileRequest downloadResultRequest = new DownloadFileRequest();
 		downloadResultRequest.setBucketName(TEST_BUCKET_NAME);
 		downloadResultRequest.setKeyName("TEST-KEY");
 		s3Service.downloadFile(downloadResultRequest);
