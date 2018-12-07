@@ -30,6 +30,7 @@ import cloud.localstack.DockerTestUtils;
 import cloud.localstack.docker.DockerExe;
 import cloud.localstack.docker.LocalstackDocker;
 import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
+import gov.va.ascent.framework.exception.AscentRuntimeException;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
@@ -49,6 +50,8 @@ public class AscentEmbeddedAwsLocalstackApplication {
 
 	/** The Constant LOGGER. */
 	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentEmbeddedAwsLocalstackApplication.class);
+
+	private static final int MAX_RETRIES = 30;
 
 	private static LocalstackDocker localstackDocker = LocalstackDocker.getLocalstackDocker();
 
@@ -127,35 +130,41 @@ public class AscentEmbeddedAwsLocalstackApplication {
 		AmazonS3 amazonS3Client = DockerTestUtils.getClientS3();
 
 		// retry the operation until the localstack responds
-		int maxTries = 30;
-		for (int i = 0; i < maxTries; i++) {
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				amazonS3Client.createBucket(sourcebucket);
 				break;
 			} catch (Exception e) {
-				if (e.getMessage().contains("Connection refused")
-						|| e.getMessage().contains("failed to respond")) {
-					LOGGER.warn("Attmept to access AWS Local Stack failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
-				} else {
-					throw e;
+				if (i == MAX_RETRIES - 1) {
+					throw new AscentRuntimeException("AWS Local Stack (S3 createBucket " + sourcebucket
+							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
 				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createBucket(" + sourcebucket + ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
 			}
 		}
 		// retry the operation until the localstack responds
-		maxTries = 30;
-		for (int i = 0; i < maxTries; i++) {
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
 				amazonS3Client.createBucket(targetbucket);
 				break;
 			} catch (Exception e) {
-				if (e.getMessage().contains("Connection refused")
-						|| e.getMessage().contains("failed to respond")) {
-					LOGGER.warn("Attmept to access AWS Local Stack failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
-				} else {
-					throw e;
+				if (i == MAX_RETRIES - 1) {
+					throw new AscentRuntimeException("AWS Local Stack (S3 createBucket " + targetbucket
+							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
 				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createBucket(" + targetbucket + ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
 			}
 		}
 	}
@@ -163,37 +172,82 @@ public class AscentEmbeddedAwsLocalstackApplication {
 	private void createQueues() {
 		AmazonSQS client = DockerTestUtils.getClientSQS();
 
+		String deadletterQueueUrl = null;
+		GetQueueAttributesResult queueAttributesResult = null;
+
 		// retry the operation until the localstack responds
-		int maxTries = 30;
-		for (int i = 0; i < maxTries; i++) {
+		for (int i = 0; i < MAX_RETRIES; i++) {
 			try {
-				String deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
+				deadletterQueueUrl = client.createQueue(sqsProperties.getDLQQueueName()).getQueueUrl();
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+					throw new AscentRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getDLQQueueName()
+							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getDLQQueueName()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
 
-				GetQueueAttributesRequest getAttributesRequest =
-						new GetQueueAttributesRequest(deadletterQueueUrl).withAttributeNames(QueueAttributeName.QueueArn);
-				GetQueueAttributesResult queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
+		GetQueueAttributesRequest getAttributesRequest =
+				new GetQueueAttributesRequest(deadletterQueueUrl).withAttributeNames(QueueAttributeName.QueueArn);
 
-				String redrivePolicy = "{\"maxReceiveCount\":\"1\", \"deadLetterTargetArn\":\""
-						+ queueAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
+				queueAttributesResult = client.getQueueAttributes(getAttributesRequest);
+				break;
+			} catch (Exception e) {
+				if (i == MAX_RETRIES - 1) {
+					throw new AscentRuntimeException(
+							"AWS Local Stack (SQS Get DLQ Attributes) failed to initialize after " + MAX_RETRIES + " tries.");
+				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.getQueueAttributes(..) failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
+			}
+		}
 
-				Map<String, String> attributeMap = new HashMap<>();
-				attributeMap.put("DelaySeconds", "0");
-				attributeMap.put("MaximumMessageSize", "262144");
-				attributeMap.put("MessageRetentionPeriod", "1209600");
-				attributeMap.put("ReceiveMessageWaitTimeSeconds", "20");
-				attributeMap.put("VisibilityTimeout", "30");
-				attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
+		String redrivePolicy = "{\"maxReceiveCount\":\"1\", \"deadLetterTargetArn\":\""
+				+ queueAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
 
+		Map<String, String> attributeMap = new HashMap<>();
+		attributeMap.put("DelaySeconds", "0");
+		attributeMap.put("MaximumMessageSize", "262144");
+		attributeMap.put("MessageRetentionPeriod", "1209600");
+		attributeMap.put("ReceiveMessageWaitTimeSeconds", "20");
+		attributeMap.put("VisibilityTimeout", "30");
+		attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
+
+		// retry the operation until the localstack responds
+		for (int i = 0; i < MAX_RETRIES; i++) {
+			try {
 				client.createQueue(new CreateQueueRequest(sqsProperties.getQueueName()).withAttributes(attributeMap));
 				break;
 			} catch (Exception e) {
-				if (e.getMessage().contains("Connection refused")
-						|| e.getMessage().contains("failed to respond")) {
-					LOGGER.warn("Attmept to access AWS Local Stack failed on try # " + (i + 1)
-							+ ", waiting for AWS localstack to finish initializing.");
-				} else {
-					throw e;
+				if (i == MAX_RETRIES - 1) {
+					throw new AscentRuntimeException("AWS Local Stack (SQS create " + sqsProperties.getQueueName()
+							+ ") failed to initialize after " + MAX_RETRIES + " tries.");
 				}
+				LOGGER.warn("Attempt to access AWS Local Stack client.createQueue(" + sqsProperties.getQueueName()
+						+ ") failed on try # " + (i + 1)
+						+ ", waiting for AWS localstack to finish initializing.");
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// NOSONAR do nothing
 			}
 		}
 	}
