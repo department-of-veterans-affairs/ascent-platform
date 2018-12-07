@@ -131,7 +131,6 @@ public class AscentEmbeddedAwsLocalstackApplication {
 		for (int i = 0; i < maxTries; i++) {
 			try {
 				amazonS3Client.createBucket(sourcebucket);
-				i = maxTries;
 				break;
 			} catch (Exception e) {
 				if (e.getMessage().contains("Connection refused")
@@ -148,7 +147,6 @@ public class AscentEmbeddedAwsLocalstackApplication {
 		for (int i = 0; i < maxTries; i++) {
 			try {
 				amazonS3Client.createBucket(targetbucket);
-				i = maxTries;
 				break;
 			} catch (Exception e) {
 				if (e.getMessage().contains("Connection refused")
@@ -187,7 +185,6 @@ public class AscentEmbeddedAwsLocalstackApplication {
 				attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
 
 				client.createQueue(new CreateQueueRequest(sqsProperties.getQueueName()).withAttributes(attributeMap));
-				i = maxTries;
 				break;
 			} catch (Exception e) {
 				if (e.getMessage().contains("Connection refused")
