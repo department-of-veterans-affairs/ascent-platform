@@ -51,7 +51,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 	/** The Constant LOGGER. */
 	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentEmbeddedAwsLocalstackApplication.class);
 
-	private static final int MAX_RETRIES = 30;
+	private static final int MAX_RETRIES = 300;
 
 	private static LocalstackDocker localstackDocker = LocalstackDocker.getLocalstackDocker();
 
