@@ -32,7 +32,7 @@ import gov.va.ascent.starter.aws.config.ConfigConstants;
 public class S3Config {
 	private final AscentLogger logger = AscentLoggerFactory.getLogger(S3Config.class);
 
-	@Value("${ascent.s3.region}")
+	@Value("${aws.s3.region}")
 	private String region;
 
 	@Autowired
@@ -43,6 +43,7 @@ public class S3Config {
 	 * <p>
 	 * Side note, this does not need to be a spring bean, and should be accessed from the transferManager.
 	 */
+	@SuppressWarnings("static-access")
 	protected AmazonS3 s3client() {
 		// get the localstack implementation if running under a "embedded aws" profile
 		for (final String profileName : environment.getActiveProfiles()) {
@@ -58,9 +59,7 @@ public class S3Config {
 		}
 
 		// otherwise, get a real client
-		final BasicAWSCredentials awsCreds = new BasicAWSCredentials(ConfigConstants.AWS_LOCALSTACK_ID, ConfigConstants.AWS_LOCALSTACK_KEY);
-		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
-				.withCredentials(new AWSStaticCredentialsProvider(awsCreds)).build();
+		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region)).standard().build();
 	}
 
 	/**

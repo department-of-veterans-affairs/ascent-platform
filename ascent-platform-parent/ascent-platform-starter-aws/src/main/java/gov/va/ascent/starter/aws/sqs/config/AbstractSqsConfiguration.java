@@ -61,7 +61,7 @@ public abstract class AbstractSqsConfiguration {
 		AmazonSQS sqsClient = createAmazonSQSClient(sqsProperties);
 
 		ProviderConfiguration providerConfiguration = new ProviderConfiguration();
-		sqsProperties.getNumberOfMessagesToPrefetch().ifPresent(providerConfiguration::setNumberOfMessagesToPrefetch);
+		sqsProperties.getPrefetch().ifPresent(providerConfiguration::setNumberOfMessagesToPrefetch);
 
 		return new SQSConnectionFactory(providerConfiguration, sqsClient);
 	}

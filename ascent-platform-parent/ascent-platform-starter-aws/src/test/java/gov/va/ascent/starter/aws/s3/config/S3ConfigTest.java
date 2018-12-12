@@ -57,13 +57,6 @@ public class S3ConfigTest {
 		assertNotNull(amazonS3);
 	}
 
-	@Test
-	public void testS3Client_localIntProfile() throws Exception {
-		String[] profiles = { AscentCommonSpringProfiles.PROFILE_ENV_LOCAL_INT };
-		when(environment.getActiveProfiles()).thenReturn(profiles);
-		AmazonS3 amazonS3 = s3Config.s3client();
-		assertNotNull(amazonS3);
-	}
 
 	@Test
 	public void testS3TransferManager() throws Exception {

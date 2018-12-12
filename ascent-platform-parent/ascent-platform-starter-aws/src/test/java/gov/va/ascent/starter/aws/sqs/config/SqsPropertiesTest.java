@@ -107,7 +107,7 @@ public class SqsPropertiesTest {
     public void testSetDlqRetriesCount() {
         int dlqRetriesCount = 0;
         SqsProperties instance = new SqsProperties();
-        instance.setDlqRetriesCount(dlqRetriesCount);
+        instance.setRetries(dlqRetriesCount);
     }
     
 }
