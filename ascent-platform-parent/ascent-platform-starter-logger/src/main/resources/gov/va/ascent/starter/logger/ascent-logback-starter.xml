@@ -20,7 +20,7 @@
 				<pattern>
 					<pattern>
 						{
-						"logType": "%mdc{logType:-applogs}",
+						"logType": "%mdc{logType:-perftest}",
 						"severity": "%level",
 						"class": "%logger{40}",
 						"pid": "${PID:-}"
