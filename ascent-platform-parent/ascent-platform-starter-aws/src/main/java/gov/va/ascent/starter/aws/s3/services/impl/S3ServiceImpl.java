@@ -130,9 +130,7 @@ public class S3ServiceImpl implements S3Service {
 				uploadResultRequest.getFileName(), new ByteArrayInputStream(uploadResultRequest.getByteData()),
 				uploadResultRequest.getPropertyMap());
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
-		}
+		logger.debug(UPLOAD_RESULT, ReflectionToStringBuilder.toString(putObjectResult));
 
 		return putObjectResult;
 	}
@@ -157,7 +155,7 @@ public class S3ServiceImpl implements S3Service {
 			logger.error(ERROR_MESSAGE, e);
 			if (e.getMessage() != null) {
 				throw new S3Exception(e.getMessage());
-			} 
+			}
 
 		} finally {
 			IOUtils.closeQuietly(is);
@@ -285,14 +283,10 @@ public class S3ServiceImpl implements S3Service {
 			downloadResultResponse.setContentType(MediaType.APPLICATION_OCTET_STREAM.toString());
 			downloadResultResponse.setFileName(fileName);
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
-				logger.debug("S3Object: {}", ReflectionToStringBuilder.toString(s3Object));
-				logger.debug("File Name: {}", fileName);
-				if (bytes != null) {
-					logger.debug("Bytes Length: {}", bytes.length);
-				}
-			}
+			logger.debug("GetObjectRequest: {}", ReflectionToStringBuilder.toString(getObjectRequest));
+			logger.debug("S3Object: {}", ReflectionToStringBuilder.toString(s3Object));
+			logger.debug("File Name: {}", fileName);
+			logger.debug("Bytes Length: {}", bytes == null ? "null" : bytes.length);
 
 			return downloadResultResponse;
 
