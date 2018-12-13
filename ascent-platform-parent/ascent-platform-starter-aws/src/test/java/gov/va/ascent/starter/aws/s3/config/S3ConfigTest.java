@@ -56,6 +56,14 @@ public class S3ConfigTest {
 		AmazonS3 amazonS3 = s3Config.s3client();
 		assertNotNull(amazonS3);
 	}
+	
+	@Test(expected=Exception.class)
+	public void testS3NonEmbeddedAWSClient() throws Exception {
+		String[] profiles = { AscentCommonSpringProfiles.PROFILE_ENV_LOCAL_INT };
+		when(environment.getActiveProfiles()).thenReturn(profiles);
+		AmazonS3 amazonS3 = s3Config.s3client();
+		assertNotNull(amazonS3);
+	}
 
 
 	@Test

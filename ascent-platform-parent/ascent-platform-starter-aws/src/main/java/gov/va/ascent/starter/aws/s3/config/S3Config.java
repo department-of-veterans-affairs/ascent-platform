@@ -59,7 +59,7 @@ public class S3Config {
 		}
 
 		// otherwise, get a real client
-		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region)).standard().build();
+		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region)).standard().build();   // NOSONAR
 	}
 
 	/**
