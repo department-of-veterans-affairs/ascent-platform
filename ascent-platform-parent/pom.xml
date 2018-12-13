@@ -35,7 +35,6 @@
 			*** THE VERSION GIVEN HERE must be MANUALLY UPDATED when the
 			    actual artifact version changes. ***
 		-->
-		<ascent-test-framework.version>0.0.11-SNAPSHOT</ascent-test-framework.version>
 		<ascent-jsr303keygen-maven-plugin.versionRange>[0.0.4,)</ascent-jsr303keygen-maven-plugin.versionRange>
 		<ascent-jsr303keygen-maven-plugin.version>0.0.5-SNAPSHOT</ascent-jsr303keygen-maven-plugin.version>
 		
