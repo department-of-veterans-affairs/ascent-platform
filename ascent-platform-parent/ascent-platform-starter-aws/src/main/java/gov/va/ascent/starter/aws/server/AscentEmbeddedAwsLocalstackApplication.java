@@ -52,7 +52,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 	/** The Constant LOGGER. */
 	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentEmbeddedAwsLocalstackApplication.class);
 
-	private static final int MAX_RETRIES = 3000;
+	private static final int MAX_RETRIES = 60;
 
 	private static LocalstackDocker localstackDocker = LocalstackDocker.getLocalstackDocker();
 
@@ -147,7 +147,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// NOSONAR do nothing
 			}
@@ -166,7 +166,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// NOSONAR do nothing
 			}
@@ -194,7 +194,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// NOSONAR do nothing
 			}
@@ -217,7 +217,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// NOSONAR do nothing
 			}
@@ -251,7 +251,7 @@ public class AscentEmbeddedAwsLocalstackApplication {
 						+ ", waiting for AWS localstack to finish initializing.");
 			}
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// NOSONAR do nothing
 			}
