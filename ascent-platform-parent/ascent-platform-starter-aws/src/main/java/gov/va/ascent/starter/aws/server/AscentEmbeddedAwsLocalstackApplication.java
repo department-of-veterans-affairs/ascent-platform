@@ -33,6 +33,7 @@ import gov.va.ascent.framework.config.AscentCommonSpringProfiles;
 import gov.va.ascent.framework.exception.AscentRuntimeException;
 import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
+import gov.va.ascent.starter.aws.s3.config.S3Properties;
 import gov.va.ascent.starter.aws.server.AscentAwsLocalstackProperties.Services;
 import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
 
@@ -45,7 +46,7 @@ import gov.va.ascent.starter.aws.sqs.config.SqsProperties;
  */
 @Configuration
 @Profile(AscentCommonSpringProfiles.PROFILE_EMBEDDED_AWS)
-@EnableConfigurationProperties({ AscentAwsLocalstackProperties.class, SqsProperties.class })
+@EnableConfigurationProperties({ AscentAwsLocalstackProperties.class, SqsProperties.class, S3Properties.class })
 public class AscentEmbeddedAwsLocalstackApplication {
 
 	/** The Constant LOGGER. */
@@ -68,11 +69,14 @@ public class AscentEmbeddedAwsLocalstackApplication {
 
 	@Autowired
 	private SqsProperties sqsProperties;
+	
+	@Autowired
+	private S3Properties s3Properties;
 
-	@Value("${ascent.s3.bucket:sourcebucket}")
+	@Value("${aws.s3.bucket:sourcebucket}")
 	private String sourcebucket;
 
-	@Value("${ascent.s3.target.bucket:targetbucket}")
+	@Value("${aws.s3.target.bucket:targetbucket}")
 	private String targetbucket;
 
 	public LocalstackDocker getLocalstackDocker() {
@@ -223,11 +227,13 @@ public class AscentEmbeddedAwsLocalstackApplication {
 				+ queueAttributesResult.getAttributes().get(QueueAttributeName.QueueArn.name()) + "\"}";
 
 		Map<String, String> attributeMap = new HashMap<>();
-		attributeMap.put("DelaySeconds", "0");
-		attributeMap.put("MaximumMessageSize", "262144");
-		attributeMap.put("MessageRetentionPeriod", "1209600");
-		attributeMap.put("ReceiveMessageWaitTimeSeconds", "20");
-		attributeMap.put("VisibilityTimeout", "30");
+		attributeMap.put("DelaySeconds", sqsProperties.getDelay().toString());
+		attributeMap.put("MaximumMessageSize", sqsProperties.getMaxmessagesize());
+		attributeMap.put("MessageRetentionPeriod", sqsProperties.getMessageretentionperiod());
+		attributeMap.put("ReceiveMessageWaitTimeSeconds", sqsProperties.getWaittime().toString());
+		attributeMap.put("VisibilityTimeout", sqsProperties.getVisibilitytimeout().toString());
+		attributeMap.put("FifoQueue", sqsProperties.getQueuetype().toString());  
+		attributeMap.put("ContentBasedDeduplication", sqsProperties.getContentbasedduplication().toString());
 		attributeMap.put(QueueAttributeName.RedrivePolicy.name(), redrivePolicy);
 
 		// retry the operation until the localstack responds

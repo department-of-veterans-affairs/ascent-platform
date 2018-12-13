@@ -22,6 +22,31 @@ import gov.va.ascent.starter.aws.exception.SqsException;
 import gov.va.ascent.starter.aws.s3.dto.SendMessageResponse;
 import gov.va.ascent.starter.aws.sqs.services.SqsService;
 
+/**
+ * 
+ * @author srikanthvanapalli
+ * 
+ * How to set the Queue attributes programatically ?? 
+ * 
+ * https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SetQueueAttributes.html
+ * We need to send a request using the queue URL with action=SetQueueAttributes
+ * and specifying the attributes and their values that need to be set. 
+ * 
+ * Currently we do an implementation for that action and as per the link above
+ * we need to write an API to modify queue attributes. This is not something
+ * we do with every queue message that is sent out.
+ * 
+ * Example request: 
+ * https://sqs.us-east-2.amazonaws.com/123456789012/MyQueue/
+		  	?Action=SetQueueAttributes
+			&DelaySeconds=45
+			&Expires=2020-12-20T22%3A52%3A43PST
+			&Version=2012-11-05
+			&AUTHPARAMS
+ * 
+ * 
+ *
+ */
 @Service
 public class SqsServiceImpl implements SqsService {
 

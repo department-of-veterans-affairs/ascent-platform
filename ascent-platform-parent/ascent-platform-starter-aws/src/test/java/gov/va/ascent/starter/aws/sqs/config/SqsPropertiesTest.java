@@ -7,6 +7,8 @@ package gov.va.ascent.starter.aws.sqs.config;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Optional;
+
 import org.junit.Test;
 
 /**
@@ -18,14 +20,15 @@ public class SqsPropertiesTest {
     /**
      * Test of getNumberOfMessagesToPrefetch method, of class SqsProperties.
      */
-/*    @Test
+    @Test
     public void testGetNumberOfMessagesToPrefetch() {
+    	Integer preFetch = 8;
         SqsProperties instance = new SqsProperties();
-        Optional<Integer> result = instance.getNumberOfMessagesToPrefetch();
-		ReflectionTestUtils.setField(instance, "numberOfMessagesToPrefetch", 1);
+        instance.setPrefetch(preFetch);
 
-        assertEquals(1, result);
-    }*/
+
+        assertEquals(instance.getPrefetch(), Optional.ofNullable(preFetch));
+    }
 
     /**
      * Test of getQueueName method, of class SqsProperties.
@@ -107,7 +110,85 @@ public class SqsPropertiesTest {
     public void testSetDlqRetriesCount() {
         int dlqRetriesCount = 0;
         SqsProperties instance = new SqsProperties();
-        instance.setDlqRetriesCount(dlqRetriesCount);
+        instance.setRetries(dlqRetriesCount);
+        assertEquals(dlqRetriesCount, instance.getRetries());
+    }
+    
+    /**
+     * Test of queueType method, of class SqsProperties.
+     */
+    @Test
+    public void testSetQueueType() {
+        boolean queueType = false;
+        SqsProperties instance = new SqsProperties();
+        instance.setQueuetype(queueType);
+        assertEquals(queueType, instance.getQueuetype());
+    }
+    
+    /**
+     * Test of ContentBasedDuplication method, of class SqsProperties.
+     */
+    @Test
+    public void testSetContentBasedDuplication() {
+        boolean contentBased = false;
+        SqsProperties instance = new SqsProperties();
+        instance.setContentbasedduplication(contentBased);
+        assertEquals(contentBased, instance.getContentbasedduplication());
+    }
+    
+    /**
+     * Test of Delay method, of class SqsProperties.
+     */
+    @Test
+    public void testSetDelay() {
+        Integer delay = 5;
+        SqsProperties instance = new SqsProperties();
+        instance.setDelay(delay);
+        assertEquals(delay, instance.getDelay());
+    }
+    
+    /**
+     * Test of Max method, of class SqsProperties.
+     */
+    @Test
+    public void testSetMaxmessagesize() {
+        String max = "5";
+        SqsProperties instance = new SqsProperties();
+        instance.setMaxmessagesize(max);
+        assertEquals(max, instance.getMaxmessagesize());
+    }
+    
+    /**
+     * Test of MessageRet method, of class SqsProperties.
+     */
+    @Test
+    public void testSetMessageretentionperiod() {
+        String ret = "5";
+        SqsProperties instance = new SqsProperties();
+        instance.setMessageretentionperiod(ret);
+        assertEquals(ret, instance.getMessageretentionperiod());
+    }
+    
+    /**
+     * Test of Waittime method, of class SqsProperties.
+     */
+    @Test
+    public void testSetWaittime() {
+        Integer waittime = 5;
+        SqsProperties instance = new SqsProperties();
+        instance.setWaittime(waittime);
+        assertEquals(waittime, instance.getWaittime());
+    }
+    
+    /**
+     * Test of Visibility method, of class SqsProperties.
+     */
+    @Test
+    public void testSetVisibility() {
+        Integer visibility = 5;
+        SqsProperties instance = new SqsProperties();
+        instance.setVisibilitytimeout(visibility);
+        assertEquals(visibility, instance.getVisibilitytimeout());
     }
     
 }
