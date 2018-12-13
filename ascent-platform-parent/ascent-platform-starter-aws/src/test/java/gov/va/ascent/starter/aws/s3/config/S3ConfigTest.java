@@ -1,8 +1,10 @@
 package gov.va.ascent.starter.aws.s3.config;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,9 +27,7 @@ import gov.va.ascent.framework.log.AscentLoggerFactory;
 @RunWith(MockitoJUnitRunner.class)
 public class S3ConfigTest {
 
-
 	private static final String TEST_AWS_REGION = "us-east-1";
-
 
 	@InjectMocks
 	S3Config s3Config = new S3Config();
@@ -56,15 +56,22 @@ public class S3ConfigTest {
 		AmazonS3 amazonS3 = s3Config.s3client();
 		assertNotNull(amazonS3);
 	}
-	
-	@Test(expected=Exception.class)
+
+	@Test(expected = Exception.class)
 	public void testS3NonEmbeddedAWSClient() throws Exception {
 		String[] profiles = { AscentCommonSpringProfiles.PROFILE_ENV_LOCAL_INT };
 		when(environment.getActiveProfiles()).thenReturn(profiles);
-		AmazonS3 amazonS3 = s3Config.s3client();
-		assertNotNull(amazonS3);
+		AmazonS3 amazonS3;
+		try {
+			amazonS3 = s3Config.s3client();
+		} catch (Throwable e) {
+			System.out.print("Rrethrowing caught exception " + e.getClass().getName() + ": " + e.getMessage());
+			throw e;
+		}
+		fail("Should have thrown exception on s3Config.s3client(). Instead it returned "
+				+ ReflectionToStringBuilder.toString(amazonS3));
+//		assertNotNull("Got AmazonS3 instance when one was not expected: " + ReflectionToStringBuilder.toString(amazonS3), amazonS3);
 	}
-
 
 	@Test
 	public void testS3TransferManager() throws Exception {
