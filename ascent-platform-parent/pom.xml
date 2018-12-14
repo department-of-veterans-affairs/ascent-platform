@@ -36,7 +36,6 @@
 			    actual artifact version changes. ***
 		-->
 		<ascent-jsr303keygen-maven-plugin.versionRange>[0.0.4,)</ascent-jsr303keygen-maven-plugin.versionRange>
-		<ascent-jsr303keygen-maven-plugin.version>0.0.5-SNAPSHOT</ascent-jsr303keygen-maven-plugin.version>
 		
 		<!-- 3rd party library versions -->
 		<spring-cloud-dependencies.version>Dalston.SR5</spring-cloud-dependencies.version>
