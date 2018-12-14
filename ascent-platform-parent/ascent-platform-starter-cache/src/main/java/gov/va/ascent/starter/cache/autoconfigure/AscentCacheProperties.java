@@ -45,7 +45,9 @@ public class AscentCacheProperties {
 		return this.redisConfig;
 	}
 
-	/** Inner class with Redis specific config properties */
+	/**
+	 * Inner class to hold the time to live (ttl) for a given cache name.
+	 */
 	public static class RedisExpires {
 
 		/** Redis Host */
@@ -71,7 +73,9 @@ public class AscentCacheProperties {
 		}
 	}
 
-	/** Inner class with Redis specific config properties */
+	/**
+	 * Inner class for a redis host and the port it runs on.
+	 */
 	public static class RedisConfig {
 
 		/** Redis Host */
