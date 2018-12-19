@@ -2,7 +2,7 @@
 For local development, we've setup a SonarQube 6.5 Docker Image, a container for configure the SonarQube server, and a PostgreSQL 9.6.5-Alpine Docker Image using Docker Compose. 
 
 Follow through the link below for details
-https://github.com/department-of-veterans-affairs/ascent-platform/wiki/Local-SonarQube-Docker-Setup
+https://github.com/department-of-veterans-affairs/ascent-platform/wiki/DEV-:-Local-SonarQube-Docker-Setup
 
 ## Local testing with jenkins and sonarqube
 To test automating the configuration of jenkins and sonarqube through an api, you could do it one of two ways

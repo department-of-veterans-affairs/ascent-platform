@@ -1,27 +1,53 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>gov.va.ascent</groupId>
-    <artifactId>ascent-platform-parent</artifactId>
-    <version>0.0.14-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>gov.va.ascent</groupId>
+		<artifactId>ascent-platform-parent</artifactId>
+		<version>0.0.14-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>ascent-platform-starter-logger</artifactId>
-  <name>${project.artifactId}</name>
-  <description>Ascent platform starter for Logger</description>
-  
-  <build>
-	    <plugins>
-	      <plugin>
-	        <groupId>org.springframework.boot</groupId>
-	        <artifactId>spring-boot-maven-plugin</artifactId>
-	        <inherited>false</inherited>
-	        <configuration>
-	          <skip>true</skip>
-	        </configuration>
-	      </plugin>
-	    </plugins>
-   </build>
+	<artifactId>ascent-platform-starter-logger</artifactId>
+	<name>${project.artifactId}</name>
+	<description>Ascent platform starter for Logger</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>spring-test</artifactId>
+			<groupId>org.springframework</groupId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<inherited>false</inherited>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
