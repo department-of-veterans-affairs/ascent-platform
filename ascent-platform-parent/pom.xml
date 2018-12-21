@@ -50,12 +50,12 @@
 			<dependency>
 				<groupId>gov.va.ascent</groupId>
 				<artifactId>ascent-framework</artifactId>
-				<version>0.0.12</version>
+				<version>0.0.13-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>gov.va.ascent</groupId>
 				<artifactId>ascent-security</artifactId>
-				<version>0.0.12</version>
+				<version>0.0.13-SNAPSHOT</version>
 			</dependency>
 			
 			<!-- spring cloud dependencies -->
