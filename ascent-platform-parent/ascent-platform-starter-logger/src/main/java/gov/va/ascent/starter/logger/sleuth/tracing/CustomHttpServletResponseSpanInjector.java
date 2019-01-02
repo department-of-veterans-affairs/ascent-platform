@@ -16,7 +16,6 @@ public class CustomHttpServletResponseSpanInjector extends ZipkinHttpSpanInjecto
 	@Override
 	public void inject(Span span, SpanTextMap carrier) {
 		super.inject(span, carrier);
-		carrier.put(Span.TRACE_ID_NAME, span.traceIdString());
-		carrier.put(Span.SPAN_ID_NAME, Span.idToHex(span.getSpanId()));
+
 	}
 }

@@ -4,7 +4,6 @@ import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.cloud.sleuth.instrument.web.HttpSpanInjector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import gov.va.ascent.starter.logger.sleuth.tracing.CustomHttpServletResponseSpanInjector;
 import gov.va.ascent.starter.logger.sleuth.tracing.HttpResponseInjectingTraceFilter;
 
@@ -43,4 +42,5 @@ public class SleuthAutoConfiguration {
 	HttpResponseInjectingTraceFilter responseInjectingTraceFilter(Tracer tracer) {
 		return new HttpResponseInjectingTraceFilter(tracer, customHttpServletResponseSpanInjector());
 	}
+	
 }
