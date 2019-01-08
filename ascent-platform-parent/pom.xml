@@ -55,7 +55,7 @@
 			<dependency>
 				<groupId>gov.va.ascent</groupId>
 				<artifactId>ascent-security</artifactId>
-				<version>0.0.13-SNAPSHOT</version>
+				<version>0.0.13</version>
 			</dependency>
 			
 			<!-- spring cloud dependencies -->
