@@ -10,6 +10,13 @@ import gov.va.ascent.framework.log.AscentLogger;
 import gov.va.ascent.framework.log.AscentLoggerFactory;
 import gov.va.ascent.security.jwt.JwtTokenService;
 
+/**
+ * An implementation of {@link RequestInterceptor} that adds the JWT token
+ * from the originating request, and adds it to the outgoing request. No changes are
+ * made to the response.
+ * <p>
+ * Use this class when making feign assisted (e.g. {@code @EnableFeignClients}) inter-=service REST calls that require PersonTraits.
+ */
 public class TokenFeignRequestInterceptor implements RequestInterceptor {
 
 	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(TokenFeignRequestInterceptor.class);
@@ -17,6 +24,12 @@ public class TokenFeignRequestInterceptor implements RequestInterceptor {
 	@Autowired
 	private JwtTokenService tokenService;
 
+	/**
+	 * Add token header from the originating request to the outgoing request.
+	 * No changes made to the response.
+	 *
+	 * @see feign.RequestInterceptor#apply(feign.RequestTemplate)
+	 */
 	@Override
 	public void apply(RequestTemplate template) {
 		Map<String, String> tokenMap = tokenService.getTokenFromRequest();
