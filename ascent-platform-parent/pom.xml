@@ -12,8 +12,8 @@
 		<relativePath>../</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
-	<version>0.0.14-SNAPSHOT</version>
 	<artifactId>ascent-platform-parent</artifactId>
+	<version>0.0.14-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>Ascent Platform Starters Parent</description>

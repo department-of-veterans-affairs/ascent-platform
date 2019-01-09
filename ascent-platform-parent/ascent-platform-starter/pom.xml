@@ -12,6 +12,7 @@
 	<artifactId>ascent-platform-starter</artifactId>
 	<name>${project.artifactId}</name>
 	<description>Starter for using Ascent Platform's core</description>
+	
 	<dependencies>
 		<dependency>
 			<groupId>gov.va.ascent</groupId>
