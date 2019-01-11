@@ -30,7 +30,7 @@ public class AscentFeignAutoConfiguration {
 
 	private static final AscentLogger LOGGER = AscentLoggerFactory.getLogger(AscentFeignAutoConfiguration.class);
 
-	@Value("${ascent.rest.client.connection-timeout:0}")
+	@Value("${ascent.rest.client.connection-timeout:20000}")
 	private String connectionTimeout;
 
 	private String groupKey = "defaultGroup";

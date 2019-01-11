@@ -21,7 +21,7 @@ import gov.va.ascent.framework.util.Defense;
 @Configuration
 public class AscentRestAutoConfiguration {
 
-	@Value("${ascent.rest.client.connection-timeout:0}")
+	@Value("${ascent.rest.client.connection-timeout:20000}")
 	private String connectionTimeout;
 
 	/**
