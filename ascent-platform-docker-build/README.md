@@ -2,60 +2,62 @@
 
 This project includes docker build and deployment for the Ascent Platform
 
-### containers
-Holds all containers needed for ascent-platform-docker-build. Use the container/{container_name}/docker-compose_local directory for deploying locally. For example, to deploy the elasticsearch container:
-```
-cd containers/elasticsearch/docker-compose_local
-docker-compose up --build
-```
-If you want to deploy more than one container, you would need to use `-f` with the path of each docker-compose.yml files (not the recommended way). Instead, use the run-docker binary file in the run-docker directory (see below).
+## containers
+Holds local containers developers need to run with platform services. The only service that developers will need to start manually will be **sonarqube**. Vault is automatically brought up with every service locally when `docker-compose up` is run in that project (if needed). See **Local Deployment** for list of containers.
 
-### run-docker
-Contains the golang code and binary for run-docker, which consolidates all of the `docker-compose -f ...` commands into a single command line application. Do `run-docker/run-docker` from the ascent-platform-docker-build dir to see all of the options or see the [README](https://github.com/department-of-veterans-affairs/ascent-platform/tree/development/ascent-platform-docker-build/run-docker) in the run-docker directory for more details.
 
-### swarm
-Contains all of the docker-compose files necessary for deploying a stack to a swarm.
+## swarm
+Contains docker-compose files and scripts necessary for deploying a stack to a swarm.
 
-## Deployment
+## Deployment of Containers
 
 ### Tool Needed
 The following tools will need to be installed before you can successfully deploy and use the Ascent Platform Logging solution.
 * [Docker](https://store.docker.com/search?type=edition&offering=community)
 
 ### Local Deployment
-To deploy our logging stack locally, run the following command in your terminal:
+For each container that you want to bring up, you'll do the following:
 
-```bash
-cd ascent-platform-docker-build/run-docker
-./run-docker start logging
 ```
-See README in the run-docker folder for more details and options
+cd containers/[CONTAINER_NAME]
+
+# This makes output come through your console....
+docker-compose up --build
+
+# This runs the container in the background...
+docker-compose up --build -d
+```
+
+To bring down the container...
+
+```
+cd containers/[CONTAINER_NAME]
+
+# This just stops/deletes containers
+docker-compose down
+
+# This deletes containers and associated images/layered images
+docker-compose down --rmi all
+```
+
+- **Sonarqube** - The only container that developers will need to manually start so that code can be scanned.
+
+- **jenkins-jmeter-localint** -  a container that brings up a jenkins instance with jmeter plugins to execute jmeter tests.
+
+- **jenkins-sonar-config** - a jenkins and sonar instance where sonarqube and jenkins are configured to run together with proper settings.
+
+- **jenkins** - a jenkins container used for testing configurations
+
+- **elasticsearch/kibana** - containers that can be run with application services if one wanted to even better simulate the higher environment. Not recommended for developer use because it's a drain on local resources and doesn't work reliably for local development.
+
+- **vault** - container that simulates the vaults in the higher environments for local development. Does not need to be brought up manually, as every service has a local vault image/container defined already.
 
 ### Swarm Deployment
-To deploy our logging stack to a Docker Swarm, run the following command in your terminal:
+The **swarm** directory contains scripts that the ops team can use to test stacks in a local swarm environment.
 
-```bash
-docker stack deploy -c swarm/docker-compose/docker-compose.logging.yml logging
-```
-## Usage
-The Kibana UI should be available at [http://localhost:5601](http://localhost:5601). The default credentials are:<br/>
-_Username:_ elastic<br/>
-_Password:_ changeme
 
-## Custom Configuration
+## Custom Configurations
 The following environment variables can be set when the containers are launched in order to customize their configuration:
-* Filebeat
-    * __LOGPATH__ - Path to the Docker logs directory in the container. Defaults to "/dockerlogs".
-    * __LS_HOST__ - The Logstash service hostname. Defaults to "logstash".
-    * __LS_PORT__ - The port of the Logstash service. Defaults to "5044".
-    * __VAULT_TOKEN__ - The token to authenticate to vault with. When this is specified, Filebeat will configure itself to use SSL authentication with Logstash. It will pull its SSL information from Vault using the VAULT_ADDR env variable value.
-    * __VAULT_ADDR__ - The address of the vault server. Defaults to "https://vault:8200"
-* LogStash
-    * __ES_HOST__ - Hostname of the ElasticSearch service. Defaults to "elasticsearch"
-    * __ES_USER__ - Username to authenticate to ElasticSearch service. Defaults to "elastic".
-    * __ES_PASSWORD__ - Password for the ElasticSearch user. Defaults to "changeme".
-    * __VAULT_TOKEN__ - The token to authenticate to vault with. When this is specified, Logstash will configure itself to use SSL authentication with Filebeat. It will pull its SSL information from Vault using the VAULT_ADDR env variable value.
-    * __VAULT_ADDR__ - The address of the vault server. Defaults to "https://vault:8200"
 * ElasticSearch
     * __VAULT_TOKEN__ - The token to authenticate to vault with. When this is specified, ElasticSearch will configure itself to use SSL authentication with Logstash and Kibana. It will pull its SSL information from Vault using the VAULT_ADDR env variable value.
     * __VAULT_ADDR__ - The address of the vault server. Defaults to "https://vault:8200"
