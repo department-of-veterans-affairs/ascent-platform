@@ -46,10 +46,20 @@ The repository contains the start up script **ascent-builds.sh** that gets the c
 
 <h3>Running the core services in docker-demo profile</h3>
 
-Upon successfully building the docker images, running the **run-docker/run-docker start all** command should bring up the docker containers for the core platform services,elk stack,filebeat and redis. Run the **run-docker/run-docker stop all** command to bring down the docker containers.
-There are many other options for run-docker. **run-docker/run-docker** to print out menu or see run-docker's README on the development branch.
+Upon successfully building the docker images, change directories into the project that you want to run. For instance, if you wanted to run ascent-gateway, use the command `cd ../ascent-gateway`. After that, run ascent-gateway with its supporting services with
+
+```
+docker-compose up
+```
+
+It will start the ascent-gateway service along with all of its supporting services.
 
 <h3>Integrating application services with core platform services</h3>
 
 A few sample services are created in order to demonstrate how the applications would integrate with the core platform services. The code base for these services are pushed under the **ascent-sample** repository.
 See the [Ascent Sample quick start guide](https://github.com/department-of-veterans-affairs/ascent-sample/wiki/DEV-:-Quick-Start-Guide-for-Ascent-Sample) for step by step details.
+
+As we create new application services, we ensure that `docker-compose up` brings up all supporting platform services so that all you need to do is checkout the project and run the docker-compose command. Doing this locally mirrors what happens in the higher environments as closely as possible, with the only major difference being that the logging for your containers are output to standard output or standard error, when the higher environments stream your logs to elasticsearch.
+
+<h3>Getting a better view of your logs</h3>
+It is worthy to note that instead of having all of your container logs spit out into the standard output/error console you can use [Kitematic](https://kitematic.com/), and run `docker-compose up -d` instead, so you get can view your logs split out according to container in Kitematic along with other useful information.
