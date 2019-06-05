@@ -2,8 +2,6 @@
 ENV_CONSUL_CONFIG=/opt/sonarqube/template/envconsul-config.hcl
 ENV_CONSUL_CMD="envconsul -config $ENV_CONSUL_CONFIG -vault-addr=$VAULT_ADDR -vault-token=$VAULT_TOKEN"
 
-# Install Github plugin
-./provision/install_github_plugin.sh
 
 if [[ $VAULT_TOKEN ]]; then
    # poll for vault
