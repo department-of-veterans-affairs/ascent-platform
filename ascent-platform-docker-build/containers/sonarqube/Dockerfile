@@ -1,7 +1,7 @@
-FROM sonarqube:6.5
+FROM sonarqube:6.7
 
 ENV LANGUAGE java
-ENV PROFILE_NAME ASCENT
+ENV PROFILE_NAME Blue
 
 # Install unzip for unzipping the vault package
 RUN apt-get install unzip
